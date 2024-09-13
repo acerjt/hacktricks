@@ -1,46 +1,46 @@
-# Ασφάλεια & Ανόδος Προνομίων στο macOS
+# macOS Security & Privilege Escalation
 
 {% hint style="success" %}
-Μάθετε & εξασκηθείτε στο Hacking του AWS:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**Εκπαίδευση HackTricks AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Μάθετε & εξασκηθείτε στο Hacking του GCP: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**Εκπαίδευση HackTricks GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Μάθετε & εξασκηθείτε στο AWS Hacking:<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Μάθετε & εξασκηθείτε στο GCP Hacking: <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
-<summary>Υποστηρίξτε το HackTricks</summary>
+<summary>Υποστήριξη HackTricks</summary>
 
 * Ελέγξτε τα [**σχέδια συνδρομής**](https://github.com/sponsors/carlospolop)!
-* **Συμμετέχετε** 💬 στην [**ομάδα Discord**](https://discord.gg/hRep4RUj7f) ή στην [**ομάδα telegram**](https://t.me/peass) ή **ακολουθήστε** μας στο **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Μοιραστείτε κόλπα hacking υποβάλλοντας PRs** στα αποθετήρια [**HackTricks**](https://github.com/carlospolop/hacktricks) και [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud).
+* **Εγγραφείτε στην** 💬 [**ομάδα Discord**](https://discord.gg/hRep4RUj7f) ή στην [**ομάδα telegram**](https://t.me/peass) ή **ακολουθήστε** μας στο **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Μοιραστείτε κόλπα hacking υποβάλλοντας PRs στα** [**HackTricks**](https://github.com/carlospolop/hacktricks) και [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
 
 </details>
 {% endhint %}
 
 <figure><img src="../../.gitbook/assets/image (380).png" alt=""><figcaption></figcaption></figure>
 
-Συμμετέχετε στο [**HackenProof Discord**](https://discord.com/invite/N3FrSbmwdy) server για επικοινωνία με έμπειρους χάκερ και κυνηγούς ευρημάτων ασφαλείας!
+Εγγραφείτε στον [**HackenProof Discord**](https://discord.com/invite/N3FrSbmwdy) server για να επικοινωνήσετε με έμπειρους hackers και hunters bug bounty!
 
-**Εισαγωγή στο Hacking**\
-Ασχοληθείτε με περιεχόμενο που εξετάζει την αγωνία και τις προκλήσεις του hacking
+**Ενημερώσεις Hacking**\
+Ασχοληθείτε με περιεχόμενο που εμβαθύνει στην αδρεναλίνη και τις προκλήσεις του hacking
 
-**Ειδήσεις Hacking σε Πραγματικό Χρόνο**\
-Μείνετε ενημερωμένοι με τον γρήγορο κόσμο του hacking μέσω ειδήσεων και αναλύσεων σε πραγματικό χρόνο
+**Ειδήσεις Hack σε Πραγματικό Χρόνο**\
+Μείνετε ενημερωμένοι με τον ταχύτατο κόσμο του hacking μέσω ειδήσεων και πληροφοριών σε πραγματικό χρόνο
 
 **Τελευταίες Ανακοινώσεις**\
-Μείνετε ενήμεροι με τις νεότερες ανταμοιβές ευρημάτων και τις κρίσιμες ενημερώσεις πλατφόρμας
+Μείνετε ενημερωμένοι με τις πιο πρόσφατες bug bounties που ξεκινούν και κρίσιμες ενημερώσεις πλατφόρμας
 
-**Συμμετέχετε στο** [**Discord**](https://discord.com/invite/N3FrSbmwdy) και αρχίστε τη συνεργασία με κορυφαίους χάκερ σήμερα!
+**Εγγραφείτε μαζί μας στο** [**Discord**](https://discord.com/invite/N3FrSbmwdy) και ξεκινήστε να συνεργάζεστε με κορυφαίους hackers σήμερα!
 
-## Βασικά για το macOS
+## Βασικά MacOS
 
-Αν δεν είστε εξοικειωμένοι με το macOS, θα πρέπει να αρχίσετε να μάθετε τα βασικά του macOS:
+Αν δεν είστε εξοικειωμένοι με το macOS, θα πρέπει να ξεκινήσετε να μαθαίνετε τα βασικά του macOS:
 
-* Ειδικά αρχεία & δικαιώματα του macOS:
+* Ειδικά αρχεία & δικαιώματα macOS:
 
 {% content-ref url="macos-files-folders-and-binaries/" %}
 [macos-files-folders-and-binaries](macos-files-folders-and-binaries/)
 {% endcontent-ref %}
 
-* Συνηθισμένοι χρήστες του macOS
+* Κοινές **χρήστες macOS**
 
 {% content-ref url="macos-users.md" %}
 [macos-users.md](macos-users.md)
@@ -52,36 +52,36 @@
 [macos-applefs.md](macos-applefs.md)
 {% endcontent-ref %}
 
-* Η **αρχιτεκτονική** του πυρήνα
+* Η **αρχιτεκτονική** του k**ernel**
 
 {% content-ref url="mac-os-architecture/" %}
 [mac-os-architecture](mac-os-architecture/)
 {% endcontent-ref %}
 
-* Συνηθισμένες υπηρεσίες & πρωτόκολλα δικτύου του macOS
+* Κοινές υπηρεσίες & πρωτόκολλα δικτύου macOS
 
 {% content-ref url="macos-protocols.md" %}
 [macos-protocols.md](macos-protocols.md)
 {% endcontent-ref %}
 
-* **Opensource** macOS: [https://opensource.apple.com/](https://opensource.apple.com/)
-* Για να κατεβάσετε ένα `tar.gz` αλλάξτε ένα URL όπως [https://opensource.apple.com/**source**/dyld/](https://opensource.apple.com/source/dyld/) σε [https://opensource.apple.com/**tarballs**/dyld/**dyld-852.2.tar.gz**](https://opensource.apple.com/tarballs/dyld/dyld-852.2.tar.gz)
+* **Ανοιχτού κώδικα** macOS: [https://opensource.apple.com/](https://opensource.apple.com/)
+* Για να κατεβάσετε ένα `tar.gz` αλλάξτε μια διεύθυνση URL όπως [https://opensource.apple.com/**source**/dyld/](https://opensource.apple.com/source/dyld/) σε [https://opensource.apple.com/**tarballs**/dyld/**dyld-852.2.tar.gz**](https://opensource.apple.com/tarballs/dyld/dyld-852.2.tar.gz)
 
-### Διαχείριση Συστημάτων macOS MDM
+### MacOS MDM
 
-Στις εταιρείες τα συστήματα **macOS** είναι πιθανόν να διαχειρίζονται με ένα MDM. Επομένως, από την άποψη ενός επιτιθέμενου είναι ενδιαφέρον να γνωρίζει **πώς λειτουργεί αυτό**:
+Σε εταιρείες, τα συστήματα **macOS** είναι πολύ πιθανό να είναι **διαχειριζόμενα με MDM**. Επομένως, από την προοπτική ενός επιτιθέμενου είναι ενδιαφέρον να γνωρίζει **πώς λειτουργεί**:
 
 {% content-ref url="../macos-red-teaming/macos-mdm/" %}
 [macos-mdm](../macos-red-teaming/macos-mdm/)
 {% endcontent-ref %}
 
-### macOS - Επιθεώρηση, Αποσφαλμάτωση και Fuzzing
+### MacOS - Επιθεώρηση, Αποσφαλμάτωση και Fuzzing
 
 {% content-ref url="macos-apps-inspecting-debugging-and-fuzzing/" %}
 [macos-apps-inspecting-debugging-and-fuzzing](macos-apps-inspecting-debugging-and-fuzzing/)
 {% endcontent-ref %}
 
-## Προστασίες Ασφαλείας του macOS
+## Προστασίες Ασφαλείας MacOS
 
 {% content-ref url="macos-security-protections/" %}
 [macos-security-protections](macos-security-protections/)
@@ -91,41 +91,52 @@
 
 ### Δικαιώματα Αρχείων
 
-Αν ένα **διεργασία που τρέχει ως ριζοχρήστης γράφει** ένα αρχείο που μπορεί να ελεγχθεί από έναν χρήστη, ο χρήστης μπορεί να εκμεταλλευτεί αυτό για **ανόδο προνομίων**.\
-Αυτό μπορεί να συμβεί στις ακόλουθες καταστάσεις:
+Αν μια **διαδικασία που εκτελείται ως root γράφει** ένα αρχείο που μπορεί να ελεγχθεί από έναν χρήστη, ο χρήστης θα μπορούσε να το εκμεταλλευτεί για να **κάνει κλιμάκωση δικαιωμάτων**.\
+Αυτό θα μπορούσε να συμβεί στις παρακάτω καταστάσεις:
 
-* Το αρχείο που χρησιμοποιήθηκε είχε ήδη δημιουργηθεί από έναν χρήστη (ανήκε στον χρήστη)
-* Το αρχείο που χρησιμοποιήθηκε είναι εγγράψιμο από τον χρήστη λόγω ενός γκρουπ
-* Το αρχείο που χρησιμοποιήθηκε βρίσκεται μέσα σε έναν κατάλογο που ανήκει στον χρήστη (ο χρήστης θα μπορούσε να δημιουργήσει το αρχείο)
-* Το αρχείο που χρησιμοποιήθηκε βρίσκεται μέσα σε έναν κατάλογο που ανήκει στο ριζοχρήστη αλλά ο χρήστης έχει δικαίωμα εγγραφής επάνω του λόγω ενός γκρουπ (ο χρήστης θα μπορούσε να δημιουργήσει το αρχείο)
+* Το αρχείο που χρησιμοποιήθηκε είχε ήδη δημιουργηθεί από έναν χρήστη (ανήκει στον χρήστη)
+* Το αρχείο που χρησιμοποιήθηκε είναι εγγράψιμο από τον χρήστη λόγω ομάδας
+* Το αρχείο που χρησιμοποιήθηκε είναι μέσα σε έναν φάκελο που ανήκει στον χρήστη (ο χρήστης θα μπορούσε να δημιουργήσει το αρχείο)
+* Το αρχείο που χρησιμοποιήθηκε είναι μέσα σε έναν φάκελο που ανήκει στο root αλλά ο χρήστης έχει δικαίωμα εγγραφής σε αυτόν λόγω ομάδας (ο χρήστης θα μπορούσε να δημιουργήσει το αρχείο)
 
-Το να μπορεί κάποιος **να δημιουργήσει ένα αρχείο** που θα **χρησιμοποιηθεί από τον ριζοχρήστη**, επιτρέπει σε έναν χρήστη να **εκμεταλλευτεί το περιεχόμενό του** ή ακόμη να δημιουργήσει **συμβολικούς συνδέσμους/σκληρούς συνδέσμους** για να τον κατευθύνει σε άλλο μέρος.
+Η δυνατότητα **δημιουργίας ενός αρχείου** που πρόκειται να **χρησιμοποιηθεί από το root**, επιτρέπει σε έναν χρήστη να **εκμεταλλευτεί το περιεχόμενό του** ή ακόμη και να δημιουργήσει **symlinks/hardlinks** για να το δείξει σε άλλη τοποθεσία.
 
-Για αυτού του είδους τις ευπάθειες μην ξεχνάτε να **ελέγχετε ευάλωτους εγκαταστάτες `.pkg`**:
+Για αυτού του είδους τις ευπάθειες μην ξεχάσετε να **ελέγξετε ευάλωτους εγκαταστάτες `.pkg`**:
 
 {% content-ref url="macos-files-folders-and-binaries/macos-installers-abuse.md" %}
 [macos-installers-abuse.md](macos-files-folders-and-binaries/macos-installers-abuse.md)
 {% endcontent-ref %}
 
-### Επέκταση Αρχείου & Χειριστές εφαρμογών σχήματος URL
+### Χειριστές εφαρμογών επεκτάσεων αρχείων & URL scheme
 
-Παράξενες εφαρμογές που έχουν καταχωρηθεί από επεκτάσεις αρχείων μπορούν να εκμεταλλευτούνται και διαφορετικές εφαρμογές μπορούν να καταχωρηθούν για να ανοίγουν συγκεκριμένα πρωτόκολλα
+Περίεργες εφαρμογές που έχουν καταχωρηθεί από επεκτάσεις αρχείων θα μπορούσαν να εκμεταλλευτούν και διαφορετικές εφαρμογές μπορούν να καταχωρηθούν για να ανοίξουν συγκεκριμένα πρωτόκολλα
 
 {% content-ref url="macos-file-extension-apps.md" %}
 [macos-file-extension-apps.md](macos-file-extension-apps.md)
 {% endcontent-ref %}
 
-## Ανόδος Προνομίων TCC / SIP στο macOS
+## macOS TCC / SIP Κλιμάκωση Δικαιωμάτων
 
-Στο macOS **εφαρμογές και δυαδικά αρχεία μπορούν να έχουν δικαιώματα** πρόσβασης σε φακέλους ή ρυθμίσεις που τα καθιστούν πιο προνομιούχα από άλλα.
+Στο macOS **οι εφαρμογές και τα αρχεία εκτελέσιμα μπορούν να έχουν δικαιώματα** για πρόσβαση σε φακέλους ή ρυθμίσεις που τους καθιστούν πιο προνομιούχους από άλλους.
 
-Επομένως, ένας επιτιθέμενος που θέλει να διακινδυνεύσει με επιτυχία ένα μηχάνημα macOS θα πρέπει να **αναβαθμίσει τα προνόμιά του στο TCC** (ή ακόμη και **να παρακάμψει το SIP**, ανάλογα με τις ανάγκες του).
+Επομένως, ένας επιτιθέμενος που θέλει να συμβιβάσει με επιτυχία μια μηχανή macOS θα χρειαστεί να **κλιμακώσει τα δικαιώματα TCC** του (ή ακόμη και **να παρακάμψει το SIP**, ανάλογα με τις ανάγκες του).
 
-Αυτά τα προνόμια συνήθως δίνονται στη μορφή **δικαιωμάτων** με τα οποία η εφαρμογή είναι υπογεγραμμένη, ή η εφαρμογή μπορεί να ζητήσει κάποιες προσβάσεις και μετά την **έγκριση του χρήστη** μπορούν να βρεθούν στις **βάσεις δεδομένων TCC**. Ένας άλλος τρόπος με τον οποίο μια διαδικασία μπορεί να αποκτήσει αυτά τα προνόμια είναι να είναι **παιδί μιας διαδικασίας** με αυτά τα **προνόμια**, καθώς συνήθως **κληρονομούνται**.
+Αυτά τα δικαιώματα δίνονται συνήθως με τη μορφή **entitlements** με τα οποία είναι υπογεγραμμένη η εφαρμογή, ή η εφαρμογή μπορεί να ζητήσει κάποιες προσβάσεις και μετά την **έγκριση τους από τον χρήστη** μπορούν να βρεθούν στις **βάσεις δεδομένων TCC**. Ένας άλλος τρόπος με τον οποίο μια διαδικασία μπορεί να αποκτήσει αυτά τα δικαιώματα είναι να είναι **παιδί μιας διαδικασίας** με αυτά τα **δικαιώματα** καθώς συνήθως **κληρονομούνται**.
 
-Ακολουθήστε αυτούς τους συνδέσμους για να βρείτε διαφορετικούς τρόπους για [**ανόδο προνομίων στο TCC**](macos-security-protections/macos-tcc/#tcc-privesc-and-bypasses), για [**παράκαμψη του TCC**](macos-security-protections/macos-tcc/macos-tcc-bypasses/) και πώς στο παρελθόν [**έχει παρακαμφθεί το SIP**](macos-security-protections/macos-sip.md#sip-bypasses).
+Ακολουθήστε αυτούς τους συνδέσμους για να βρείτε διαφορετικούς τρόπους για [**να κλιμακώσετε δικαιώματα στο TCC**](macos-security-protections/macos-tcc/#tcc-privesc-and-bypasses), για [**να παρακάμψετε το TCC**](macos-security-protections/macos-tcc/macos-tcc-bypasses/) και πώς στο παρελθόν [**το SIP έχει παρακαμφθεί**](macos-security-protections/macos-sip.md#sip-bypasses).
 
-## Κλασική
+## macOS Παραδοσιακή Κλιμάκωση Δικαιωμάτων
+
+Φυσικά από την προοπτική των κόκκινων ομάδων θα πρέπει επίσης να ενδιαφέρεστε να κλιμακώσετε σε root. Ελέγξτε την παρακάτω ανάρτηση για μερικές συμβουλές:
+
+{% content-ref url="macos-privilege-escalation.md" %}
+[macos-privilege-escalation.md](macos-privilege-escalation.md)
+{% endcontent-ref %}
+
+## Συμμόρφωση macOS
+
+* [https://github.com/usnistgov/macos\_security](https://github.com/usnistgov/macos\_security)
+
 ## Αναφορές
 
 * [**OS X Incident Response: Scripting and Analysis**](https://www.amazon.com/OS-Incident-Response-Scripting-Analysis-ebook/dp/B01FHOHHVS)
@@ -136,30 +147,30 @@
 
 <figure><img src="../../.gitbook/assets/image (380).png" alt=""><figcaption></figcaption></figure>
 
-Συμμετέχετε στον [**HackenProof Discord**](https://discord.com/invite/N3FrSbmwdy) διακομιστή για να επικοινωνήσετε με έμπειρους χάκερ και κυνηγούς ευρημάτων ασφαλείας!
+Εγγραφείτε στον [**HackenProof Discord**](https://discord.com/invite/N3FrSbmwdy) server για να επικοινωνήσετε με έμπειρους hackers και hunters bug bounty!
 
-**Εισαγωγή στο Hacking**\
-Ασχοληθείτε με περιεχόμενο που εξερευνά την αγωνία και τις προκλήσεις του χάκινγκ
+**Ενημερώσεις Hacking**\
+Ασχοληθείτε με περιεχόμενο που εμβαθύνει στην αδρεναλίνη και τις προκλήσεις του hacking
 
-**Ειδήσεις Χάκινγκ σε Πραγματικό Χρόνο**\
-Μείνετε ενήμεροι με τον γρήγορο κόσμο του χάκινγκ μέσω ειδήσεων και αναλύσεων σε πραγματικό χρόνο
+**Ειδήσεις Hack σε Πραγματικό Χρόνο**\
+Μείνετε ενημερωμένοι με τον ταχύτατο κόσμο του hacking μέσω ειδήσεων και πληροφοριών σε πραγματικό χρόνο
 
 **Τελευταίες Ανακοινώσεις**\
-Μείνετε ενήμεροι με τις νεότερες ανακοινώσεις για νέες αμοιβές ευρετηρίων και κρίσιμες ενημερώσεις πλατφόρμας
+Μείνετε ενημερωμένοι με τις πιο πρόσφατες bug bounties που ξεκινούν και κρίσιμες ενημερώσεις πλατφόρμας
 
-**Συμμετέχετε στο** [**Discord**](https://discord.com/invite/N3FrSbmwdy) και αρχίστε τη συνεργασία με κορυφαίους χάκερ σήμερα!
+**Εγγραφείτε μαζί μας στο** [**Discord**](https://discord.com/invite/N3FrSbmwdy) και ξεκινήστε να συνεργάζεστε με κορυφαίους hackers σήμερα!
 
 {% hint style="success" %}
-Μάθετε & εξασκηθείτε στο AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Μάθετε & εξασκηθείτε στο GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Μάθετε & εξασκηθείτε στο AWS Hacking:<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Μάθετε & εξασκηθείτε στο GCP Hacking: <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
-<summary>Υποστηρίξτε το HackTricks</summary>
+<summary>Υποστήριξη HackTricks</summary>
 
 * Ελέγξτε τα [**σχέδια συνδρομής**](https://github.com/sponsors/carlospolop)!
-* **Συμμετέχετε** 💬 στην ομάδα [**Discord**](https://discord.gg/hRep4RUj7f) ή στην ομάδα [**telegram**](https://t.me/peass) ή **ακολουθήστε** μας στο **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Κοινοποιήστε χάκινγκ κόλπα υποβάλλοντας PRs στα** [**HackTricks**](https://github.com/carlospolop/hacktricks) και [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) αποθετήρια στο GitHub.
+* **Εγγραφείτε στην** 💬 [**ομάδα Discord**](https://discord.gg/hRep4RUj7f) ή στην [**ομάδα telegram**](https://t.me/peass) ή **ακολουθήστε** μας στο **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Μοιραστείτε κόλπα hacking υποβάλλοντας PRs στα** [**HackTricks**](https://github.com/carlospolop/hacktricks) και [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
 
 </details>
 {% endhint %}
