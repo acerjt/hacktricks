@@ -3,7 +3,7 @@
 <figure><img src="../.gitbook/assets/image (48).png" alt=""><figcaption></figcaption></figure>
 
 \
-Gebruik [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) om maklik te bou en **outomatiese werksvloei** te skep wat aangedryf word deur die wêreld se **mees gevorderde** gemeenskapstools.\
+Gebruik [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) om maklik te bou en **outomatiese werksvloei** te skep wat aangedryf word deur die wêreld se **mees gevorderde** gemeenskapstoestelle.\
 Kry Toegang Vandag:
 
 {% embed url="https://trickest.com/?utm_source=hacktricks&utm_medium=banner&utm_campaign=ppc&utm_content=brute-force" %}
@@ -16,8 +16,8 @@ Leer & oefen GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size=
 
 <summary>Support HackTricks</summary>
 
-* Kyk na die [**subskripsieplanne**](https://github.com/sponsors/carlospolop)!
-* **Sluit aan by die** 💬 [**Discord-groep**](https://discord.gg/hRep4RUj7f) of die [**telegram-groep**](https://t.me/peass) of **volg** ons op **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* Kyk na die [**subskripsie planne**](https://github.com/sponsors/carlospolop)!
+* **Sluit aan by die** 💬 [**Discord groep**](https://discord.gg/hRep4RUj7f) of die [**telegram groep**](https://t.me/peass) of **volg** ons op **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
 * **Deel hacking truuks deur PRs in te dien na die** [**HackTricks**](https://github.com/carlospolop/hacktricks) en [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
 
 </details>
@@ -104,7 +104,7 @@ Finished in 0.920s.
 <figure><img src="../.gitbook/assets/image (48).png" alt=""><figcaption></figcaption></figure>
 
 \
-Gebruik [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) om maklik te bou en **werkvloei** te **automate** wat aangedryf word deur die wêreld se **meest gevorderde** gemeenskapstoestelle.\
+Gebruik [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) om maklik te bou en **werkvloei** te **automate** wat aangedryf word deur die wêreld se **meest gevorderde** gemeenskapstools.\
 Kry Toegang Vandag:
 
 {% embed url="https://trickest.com/?utm_source=hacktricks&utm_medium=banner&utm_campaign=ppc&utm_content=brute-force" %}
@@ -240,6 +240,25 @@ use auxiliary/scanner/mongodb/mongodb_login
 legba mongodb --target localhost:27017 --username root --password data/passwords.txt
 ```
 ### MSSQL
+
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)
+```shell
+# Bruteforce using tickets, hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using tickets against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt
+
+# Bruteforce using passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -pl passwords.txt
+
+# Bruteforce using hashes against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt
+```
+
 ```bash
 legba mssql --username SA --password wordlists/passwords.txt --target localhost:1433
 ```
@@ -405,7 +424,7 @@ legba ssh --username admin --password '@/some/path/*' --ssh-auth-mode key --targ
 ```
 #### Swak SSH sleutels / Debian voorspelbare PRNG
 
-Sommige stelsels het bekende gebreke in die willekeurige saad wat gebruik word om kriptografiese materiaal te genereer. Dit kan lei tot 'n dramaties verminderde sleutelspektrum wat met gereedskap soos [snowdroppe/ssh-keybrute](https://github.com/snowdroppe/ssh-keybrute) gebruteforce kan word. Voor-gegenerateerde stelle van swak sleutels is ook beskikbaar soos [g0tmi1k/debian-ssh](https://github.com/g0tmi1k/debian-ssh).
+Sommige stelsels het bekende gebreke in die willekeurige saad wat gebruik word om kriptografiese materiaal te genereer. Dit kan lei tot 'n dramaties verminderde sleutelruimte wat met gereedskap soos [snowdroppe/ssh-keybrute](https://github.com/snowdroppe/ssh-keybrute) gebruteforce kan word. Voor-gegenererde stelle van swak sleutels is ook beskikbaar soos [g0tmi1k/debian-ssh](https://github.com/g0tmi1k/debian-ssh).
 
 ### STOMP (ActiveMQ, RabbitMQ, HornetQ en OpenMQ)
 
@@ -451,7 +470,7 @@ crackmapexec winrm <IP> -d <Domain Name> -u usernames.txt -p passwords.txt
 
 \
 Gebruik [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) om maklik **werkvloei** te bou en te **automate** wat deur die wêreld se **mees gevorderde** gemeenskapstools aangedryf word.\
-Kry Vandag Toegang:
+Kry Toegang Vandag:
 
 {% embed url="https://trickest.com/?utm_source=hacktricks&utm_medium=banner&utm_campaign=ppc&utm_content=brute-force" %}
 
@@ -491,8 +510,8 @@ hashcat.exe -m 13600 -a 0 .\hashzip.txt .\wordlists\rockyou.txt
 ```
 #### Bekende platte teks zip aanval
 
-Jy moet die **platte teks** (of 'n deel van die platte teks) **van 'n lêer wat binne** die versleutelde zip bevat, weet. Jy kan **lêername en grootte van lêers wat binne** 'n versleutelde zip bevat, nagaan deur: **`7z l encrypted.zip`**\
-Laai [**bkcrack** ](https://github.com/kimci86/bkcrack/releases/tag/v1.4.0)af van die vrylating bladsy.
+Jy moet die **platte teks** (of 'n deel van die platte teks) **van 'n lêer wat binne** die versleutelde zip bevat, weet. Jy kan **lêername en grootte van lêers wat binne** 'n versleutelde zip is, nagaan deur: **`7z l encrypted.zip`**\
+Laai [**bkcrack** ](https://github.com/kimci86/bkcrack/releases/tag/v1.4.0) van die vrylating bladsy af.
 ```bash
 # You need to create a zip file containing only the file that is inside the encrypted zip
 zip plaintext.zip plaintext.file
@@ -603,7 +622,7 @@ Gebruik [https://github.com/openwall/john/blob/bleeding-jumbo/run/DPAPImk2john.p
 
 ### Open Office Wachtwoord Beskermde Kolom
 
-As jy 'n xlsx-lêer het met 'n kolom wat deur 'n wagwoord beskerm word, kan jy dit ontbeskerm:
+As jy 'n xlsx-lêer het met 'n kolom wat deur 'n wagwoord beskerm word, kan jy dit ontprotect:
 
 * **Laai dit op na google drive** en die wagwoord sal outomaties verwyder word
 * Om dit **handmatig** te **verwyder**:
@@ -625,7 +644,7 @@ crackpkcs12 -d /usr/share/wordlists/rockyou.txt ./cert.pfx
 <figure><img src="../.gitbook/assets/image (48).png" alt=""><figcaption></figcaption></figure>
 
 \
-Gebruik [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) om maklik **werkvloei** te bou en te **automate** wat aangedryf word deur die wêreld se **meest gevorderde** gemeenskapstools.\
+Gebruik [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) om maklik **werkvloei** te bou en te **automate** wat deur die wêreld se **meest gevorderde** gemeenskapstools aangedryf word.\
 Kry Toegang Vandag:
 
 {% embed url="https://trickest.com/?utm_source=hacktricks&utm_medium=banner&utm_campaign=ppc&utm_content=brute-force" %}
@@ -646,7 +665,7 @@ hash-identifier
 * [**Kaonashi**](https://github.com/kaonashi-passwords/Kaonashi/tree/master/wordlists)
 * [**Seclists - Passwords**](https://github.com/danielmiessler/SecLists/tree/master/Passwords)
 
-### **Wordlist Generasie Gereedskap**
+### **Wordlist Generation Tools**
 
 * [**kwprocessor**](https://github.com/hashcat/kwprocessor)**:** Gevorderde sleutelbord-wandelgenerator met konfigureerbare basis karakters, sleutelkaart en roetes.
 ```bash
@@ -734,12 +753,12 @@ Kraak van Linux Hashes - /etc/shadow lêer
 7400 | sha256crypt $5$, SHA256(Unix)                    | Operating-Systems
 1800 | sha512crypt $6$, SHA512(Unix)                    | Operating-Systems
 ```
-Kraak Windows Hashes
+Kraak Windows Hasse
 ```
 3000 | LM                                               | Operating-Systems
 1000 | NTLM                                             | Operating-Systems
 ```
-Kraak van Algemene Toepassing Hashes
+Kraak Algemene Toepassing Hashes
 ```
 900 | MD4                                              | Raw Hash
 0 | MD5                                              | Raw Hash
@@ -767,7 +786,7 @@ Leer & oefen GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size=
 <figure><img src="../.gitbook/assets/image (48).png" alt=""><figcaption></figcaption></figure>
 
 \
-Gebruik [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) om maklik te bou en **werkvloei** te **automate** wat aangedryf word deur die wêreld se **mees gevorderde** gemeenskapstoestelle.\
+Gebruik [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) om maklik te bou en **werkvloei** te **automate** wat aangedryf word deur die wêreld se **meest gevorderde** gemeenskap gereedskap.\
 Kry Toegang Vandag:
 
 {% embed url="https://trickest.com/?utm_source=hacktricks&utm_medium=banner&utm_campaign=ppc&utm_content=brute-force" %}

