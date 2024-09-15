@@ -1,9 +1,9 @@
-# Brute Force - CheatSheet
+# ブルートフォース - チートシート
 
 <figure><img src="../.gitbook/assets/image (48).png" alt=""><figcaption></figcaption></figure>
 
 \
-[**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force)を使用して、世界で最も高度なコミュニティツールによって強化された**ワークフローを簡単に構築し、自動化**します。\
+[**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force)を使用して、世界で最も高度なコミュニティツールによって駆動される**ワークフローを簡単に構築し、自動化**します。\
 今すぐアクセスを取得：
 
 {% embed url="https://trickest.com/?utm_source=hacktricks&utm_medium=banner&utm_campaign=ppc&utm_content=brute-force" %}
@@ -17,8 +17,8 @@ GCPハッキングを学び、実践する：<img src="/.gitbook/assets/grte.png
 <summary>HackTricksをサポートする</summary>
 
 * [**サブスクリプションプラン**](https://github.com/sponsors/carlospolop)を確認してください！
-* **💬 [**Discordグループ**](https://discord.gg/hRep4RUj7f)または[**Telegramグループ**](https://t.me/peass)に参加するか、**Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**をフォローしてください。**
-* **ハッキングトリックを共有するために、[**HackTricks**](https://github.com/carlospolop/hacktricks)および[**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud)のGitHubリポジトリにPRを提出してください。**
+* **💬 [**Discordグループ**](https://discord.gg/hRep4RUj7f)または[**テレグラムグループ**](https://t.me/peass)に参加するか、**Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**をフォローしてください。**
+* **ハッキングのトリックを共有するために、[**HackTricks**](https://github.com/carlospolop/hacktricks)および[**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud)のGitHubリポジトリにPRを提出してください。**
 
 </details>
 {% endhint %}
@@ -67,7 +67,7 @@ python3 cupp.py -h
 ```
 ### [Wister](https://github.com/cycurity/wister)
 
-単語リストジェネレーターツールで、単語のセットを提供することができ、指定された単語から複数のバリエーションを作成し、特定のターゲットに関して使用するためのユニークで理想的な単語リストを作成することができます。
+単語のリストを生成するツールで、単語のセットを提供することができ、指定された単語から複数のバリエーションを作成し、特定のターゲットに関して使用するためのユニークで理想的な単語リストを作成することができます。
 ```bash
 python3 wister.py -w jane doe 2022 summer madrid 1998 -c 1 2 3 4 5 -o wordlist.lst
 
@@ -180,7 +180,7 @@ hydra -L /usr/share/brutex/wordlists/simple-users.txt -P /usr/share/brutex/wordl
 ```
 For http**s**は「http-post-form」から「**https-post-form」に変更する必要があります。
 
-### **HTTP - CMS --** (W)ordpress, (J)oomlaまたは(D)rupalまたは(M)oodle
+### **HTTP - CMS --** (W)ordpress、(J)oomla、(D)rupal、または(M)oodle
 ```bash
 cmsmap -f W/J/D/M -u a -p a https://wordpress.com
 # Check also https://github.com/evilsocket/legba/wiki/HTTP
@@ -240,6 +240,25 @@ use auxiliary/scanner/mongodb/mongodb_login
 legba mongodb --target localhost:27017 --username root --password data/passwords.txt
 ```
 ### MSSQL
+
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)
+```shell
+# Bruteforce using tickets, hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using tickets against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt
+
+# Bruteforce using passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -pl passwords.txt
+
+# Bruteforce using hashes against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt
+```
+
 ```bash
 legba mssql --username SA --password wordlists/passwords.txt --target localhost:1433
 ```
@@ -407,9 +426,9 @@ legba ssh --username admin --password '@/some/path/*' --ssh-auth-mode key --targ
 
 一部のシステムには、暗号材料を生成するために使用されるランダムシードに既知の欠陥があります。これにより、[snowdroppe/ssh-keybrute](https://github.com/snowdroppe/ssh-keybrute)のようなツールでブルートフォース攻撃が可能な大幅に減少したキー空間が生じる可能性があります。弱いキーの事前生成されたセットも利用可能であり、例えば[g0tmi1k/debian-ssh](https://github.com/g0tmi1k/debian-ssh)があります。
 
-### STOMP (ActiveMQ、RabbitMQ、HornetQ、OpenMQ)
+### STOMP (ActiveMQ, RabbitMQ, HornetQ および OpenMQ)
 
-STOMPテキストプロトコルは、RabbitMQ、ActiveMQ、HornetQ、OpenMQなどの人気のあるメッセージキューサービスとの**シームレスな通信と相互作用を可能にする**広く使用されているメッセージングプロトコルです。メッセージを交換し、さまざまなメッセージング操作を実行するための標準化された効率的なアプローチを提供します。
+STOMPテキストプロトコルは、RabbitMQ、ActiveMQ、HornetQ、およびOpenMQなどの人気のあるメッセージキューサービスとの**シームレスな通信と相互作用を可能にする**広く使用されているメッセージングプロトコルです。メッセージを交換し、さまざまなメッセージング操作を実行するための標準化された効率的なアプローチを提供します。
 ```bash
 legba stomp --target localhost:61613 --username admin --password data/passwords.txt
 ```
@@ -450,7 +469,7 @@ crackmapexec winrm <IP> -d <Domain Name> -u usernames.txt -p passwords.txt
 <figure><img src="../.gitbook/assets/image (48).png" alt=""><figcaption></figcaption></figure>
 
 \
-[**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force)を使用して、世界で最も高度なコミュニティツールによって駆動される**ワークフロー**を簡単に構築し、**自動化**します。\
+[**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force)を使用して、世界で最も**高度な**コミュニティツールによって**ワークフローを簡単に構築し、自動化**します。\
 今すぐアクセスを取得：
 
 {% embed url="https://trickest.com/?utm_source=hacktricks&utm_medium=banner&utm_campaign=ppc&utm_content=brute-force" %}
@@ -492,7 +511,7 @@ hashcat.exe -m 13600 -a 0 .\hashzip.txt .\wordlists\rockyou.txt
 #### 既知平文zip攻撃
 
 暗号化されたzip内に含まれる**ファイルの** **平文**（または平文の一部）を知っている必要があります。暗号化されたzip内に含まれる**ファイル名とファイルのサイズ**を確認するには、次のコマンドを実行します: **`7z l encrypted.zip`**\
-[**bkcrack** ](https://github.com/kimci86/bkcrack/releases/tag/v1.4.0)をリリースページからダウンロードしてください。
+リリースページから[**bkcrack** ](https://github.com/kimci86/bkcrack/releases/tag/v1.4.0)をダウンロードしてください。
 ```bash
 # You need to create a zip file containing only the file that is inside the encrypted zip
 zip plaintext.zip plaintext.file
@@ -603,7 +622,7 @@ john --wordlist=/usr/share/wordlists/rockyou.txt ./hash
 
 ### Open Office パスワード保護された列
 
-パスワードで保護された列を持つ xlsx ファイルがある場合、次の方法で保護を解除できます：
+パスワードで保護された列を持つ xlsx ファイルがある場合、次のようにして保護を解除できます：
 
 * **Google ドライブにアップロード**すると、パスワードが自動的に削除されます。
 * **手動で**それを**削除**するには：
@@ -625,7 +644,7 @@ crackpkcs12 -d /usr/share/wordlists/rockyou.txt ./cert.pfx
 <figure><img src="../.gitbook/assets/image (48).png" alt=""><figcaption></figcaption></figure>
 
 \
-[**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force)を使用して、世界で最も高度なコミュニティツールによって強化された**ワークフロー**を簡単に構築し、**自動化**します。\
+[**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force)を使用して、世界で最も**高度な**コミュニティツールによって**ワークフローを自動化**することが簡単にできます。\
 今すぐアクセスを取得：
 
 {% embed url="https://trickest.com/?utm_source=hacktricks&utm_medium=banner&utm_campaign=ppc&utm_content=brute-force" %}
@@ -665,7 +684,7 @@ john --wordlist=words.txt --rules=all --stdout > w_mutated.txt #Apply all rules
 
 * **ワードリスト攻撃** (`-a 0`) ルール付き
 
-**Hashcat** にはすでに **ルールを含むフォルダー** が付属していますが、[**他の興味深いルールはここにあります**](https://github.com/kaonashi-passwords/Kaonashi/tree/master/rules)。
+**Hashcat** にはすでに **ルールを含むフォルダー** が付属していますが、[**他の興味深いルールはここで見つけることができます**](https://github.com/kaonashi-passwords/Kaonashi/tree/master/rules)。
 ```
 hashcat.exe -a 0 -m 1000 C:\Temp\ntlm.txt .\rockyou.txt -r rules\best64.rule
 ```
@@ -727,7 +746,7 @@ hashcat.exe -a 7 -m 1000 C:\Temp\ntlm.txt ?d?d?d?d \wordlist.txt
 ```bash
 hashcat --example-hashes | grep -B1 -A2 "NTLM"
 ```
-Linuxハッシュのクラック - /etc/shadowファイル
+Linuxハッシュのクラッキング - /etc/shadowファイル
 ```
 500 | md5crypt $1$, MD5(Unix)                          | Operating-Systems
 3200 | bcrypt $2*$, Blowfish(Unix)                      | Operating-Systems
@@ -758,8 +777,8 @@ GCPハッキングを学び、実践する: <img src="/.gitbook/assets/grte.png"
 <summary>HackTricksをサポートする</summary>
 
 * [**サブスクリプションプラン**](https://github.com/sponsors/carlospolop)を確認してください!
-* **💬 [**Discordグループ**](https://discord.gg/hRep4RUj7f)または[**テレグラムグループ**](https://t.me/peass)に参加するか、**Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**をフォローしてください。**
-* **ハッキングトリックを共有するには、[**HackTricks**](https://github.com/carlospolop/hacktricks)と[**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud)のGitHubリポジトリにPRを提出してください。**
+* **💬 [**Discordグループ**](https://discord.gg/hRep4RUj7f)または[**Telegramグループ**](https://t.me/peass)に参加するか、**Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**をフォローしてください。**
+* **ハッキングトリックを共有するには、[**HackTricks**](https://github.com/carlospolop/hacktricks)と[**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud)のGitHubリポジトリにPRを送信してください。**
 
 </details>
 {% endhint %}

