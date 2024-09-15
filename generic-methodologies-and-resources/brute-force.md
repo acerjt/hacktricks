@@ -18,7 +18,7 @@ Ucz się i ćwicz Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data-
 
 * Sprawdź [**plany subskrypcyjne**](https://github.com/sponsors/carlospolop)!
 * **Dołącz do** 💬 [**grupy Discord**](https://discord.gg/hRep4RUj7f) lub [**grupy telegram**](https://t.me/peass) lub **śledź** nas na **Twitterze** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Podziel się trikami hackingowymi, przesyłając PR do** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repozytoriów github.
+* **Podziel się trikami hackingowymi, przesyłając PR-y do** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repozytoriów github.
 
 </details>
 {% endhint %}
@@ -61,7 +61,7 @@ cewl example.com -m 5 -w words.txt
 ```
 ### [CUPP](https://github.com/Mebus/cupp)
 
-Generuj hasła na podstawie twojej wiedzy o ofierze (imiona, daty...)
+Generuj hasła na podstawie swojej wiedzy o ofierze (imiona, daty...)
 ```
 python3 cupp.py -h
 ```
@@ -240,6 +240,25 @@ use auxiliary/scanner/mongodb/mongodb_login
 legba mongodb --target localhost:27017 --username root --password data/passwords.txt
 ```
 ### MSSQL
+
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)
+```shell
+# Bruteforce using tickets, hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using tickets against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt
+
+# Bruteforce using passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -pl passwords.txt
+
+# Bruteforce using hashes against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt
+```
+
 ```bash
 legba mssql --username SA --password wordlists/passwords.txt --target localhost:1433
 ```
@@ -405,7 +424,7 @@ legba ssh --username admin --password '@/some/path/*' --ssh-auth-mode key --targ
 ```
 #### Słabe klucze SSH / Przewidywalny PRNG w Debianie
 
-Niektóre systemy mają znane wady w losowym ziarnie używanym do generowania materiału kryptograficznego. Może to prowadzić do dramatycznie zmniejszonej przestrzeni kluczy, która może być brutalnie łamana za pomocą narzędzi takich jak [snowdroppe/ssh-keybrute](https://github.com/snowdroppe/ssh-keybrute). Dostępne są również wstępnie wygenerowane zestawy słabych kluczy, takie jak [g0tmi1k/debian-ssh](https://github.com/g0tmi1k/debian-ssh).
+Niektóre systemy mają znane wady w losowym ziarnie używanym do generowania materiału kryptograficznego. Może to prowadzić do dramatycznie zmniejszonej przestrzeni kluczy, która może być łamana za pomocą narzędzi takich jak [snowdroppe/ssh-keybrute](https://github.com/snowdroppe/ssh-keybrute). Dostępne są również wstępnie wygenerowane zestawy słabych kluczy, takie jak [g0tmi1k/debian-ssh](https://github.com/g0tmi1k/debian-ssh).
 
 ### STOMP (ActiveMQ, RabbitMQ, HornetQ i OpenMQ)
 
@@ -492,7 +511,7 @@ hashcat.exe -m 13600 -a 0 .\hashzip.txt .\wordlists\rockyou.txt
 #### Atak znanego tekstu jawnego zip
 
 Musisz znać **tekst jawny** (lub część tekstu jawnego) **pliku zawartego w** zaszyfrowanym zipie. Możesz sprawdzić **nazwy plików i rozmiar plików zawartych w** zaszyfrowanym zipie, uruchamiając: **`7z l encrypted.zip`**\
-Pobierz [**bkcrack** ](https://github.com/kimci86/bkcrack/releases/tag/v1.4.0) z strony wydań.
+Pobierz [**bkcrack** ](https://github.com/kimci86/bkcrack/releases/tag/v1.4.0)z strony z wydaniami.
 ```bash
 # You need to create a zip file containing only the file that is inside the encrypted zip
 zip plaintext.zip plaintext.file
@@ -597,7 +616,7 @@ john --wordlist=/usr/share/wordlists/rockyou.txt ./hash
 
 <figure><img src="../.gitbook/assets/image (663).png" alt=""><figcaption></figcaption></figure>
 
-### Klucz Mistrzowski DPAPI
+### Klucz Mistrza DPAPI
 
 Użyj [https://github.com/openwall/john/blob/bleeding-jumbo/run/DPAPImk2john.py](https://github.com/openwall/john/blob/bleeding-jumbo/run/DPAPImk2john.py) a następnie john
 
@@ -605,7 +624,7 @@ Użyj [https://github.com/openwall/john/blob/bleeding-jumbo/run/DPAPImk2john.py]
 
 Jeśli masz plik xlsx z kolumną chronioną hasłem, możesz ją odblokować:
 
-* **Prześlij go do google drive** a hasło zostanie automatycznie usunięte
+* **Prześlij go na google drive** a hasło zostanie automatycznie usunięte
 * Aby **usunąć** je **ręcznie**:
 ```bash
 unzip file.xlsx
@@ -759,7 +778,7 @@ Ucz się i ćwicz Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data-
 
 * Sprawdź [**plany subskrypcyjne**](https://github.com/sponsors/carlospolop)!
 * **Dołącz do** 💬 [**grupy Discord**](https://discord.gg/hRep4RUj7f) lub [**grupy telegramowej**](https://t.me/peass) lub **śledź** nas na **Twitterze** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Podziel się trikami hackingowymi, przesyłając PR-y do** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repozytoriów github.
+* **Dziel się trikami hackingowymi, przesyłając PR-y do** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repozytoriów na githubie.
 
 </details>
 {% endhint %}
