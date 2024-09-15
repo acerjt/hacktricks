@@ -67,7 +67,7 @@ python3 cupp.py -h
 ```
 ### [Wister](https://github.com/cycurity/wister)
 
-Alat za generisanje rečnika, koji vam omogućava da navedete skup reči, dajući vam mogućnost da kreirate više varijacija od datih reči, stvarajući jedinstven i idealan rečnik za korišćenje u vezi sa specifičnim ciljem.
+Alat za generisanje rečnika, koji vam omogućava da obezbedite skup reči, dajući vam mogućnost da kreirate više varijacija iz datih reči, stvarajući jedinstven i idealan rečnik za korišćenje u vezi sa specifičnim ciljem.
 ```bash
 python3 wister.py -w jane doe 2022 summer madrid 1998 -c 1 2 3 4 5 -o wordlist.lst
 
@@ -104,7 +104,7 @@ Finished in 0.920s.
 <figure><img src="../.gitbook/assets/image (48).png" alt=""><figcaption></figcaption></figure>
 
 \
-Koristite [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) za lako kreiranje i **automatizaciju radnih tokova** pokretanih **najnaprednijim** alatima zajednice.\
+Koristite [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) za lako kreiranje i **automatizaciju radnih tokova** pokretanih najnaprednijim **alatima** zajednice.\
 Pribavite pristup danas:
 
 {% embed url="https://trickest.com/?utm_source=hacktricks&utm_medium=banner&utm_campaign=ppc&utm_content=brute-force" %}
@@ -157,11 +157,11 @@ ncrack -p 21 --user root -P passwords.txt <IP> [-T 5]
 medusa -u root -P 500-worst-passwords.txt -h <IP> -M ftp
 legba ftp --username admin --password wordlists/passwords.txt --target localhost:21
 ```
-### HTTP Generic Brute
+### HTTP Generički Brute
 
 #### [**WFuzz**](../pentesting-web/web-tool-wfuzz.md)
 
-### HTTP Basic Auth
+### HTTP Osnovna Autentifikacija
 ```bash
 hydra -L /usr/share/brutex/wordlists/simple-users.txt -P /usr/share/brutex/wordlists/password.lst sizzle.htb.local http-get /certsrv/
 # Use https-get mode for https
@@ -240,6 +240,25 @@ use auxiliary/scanner/mongodb/mongodb_login
 legba mongodb --target localhost:27017 --username root --password data/passwords.txt
 ```
 ### MSSQL
+
+[MSSQLPwner](https://github.com/ScorpionesLabs/MSSqlPwner)
+```shell
+# Bruteforce using tickets, hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using hashes, and passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt -pl passwords.txt
+
+# Bruteforce using tickets against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -tl tickets.txt -ul users.txt
+
+# Bruteforce using passwords against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -pl passwords.txt
+
+# Bruteforce using hashes against the hosts listed on the hosts.txt
+mssqlpwner hosts.txt brute -ul users.txt -hl hashes.txt
+```
+
 ```bash
 legba mssql --username SA --password wordlists/passwords.txt --target localhost:1433
 ```
@@ -405,7 +424,7 @@ legba ssh --username admin --password '@/some/path/*' --ssh-auth-mode key --targ
 ```
 #### Slabi SSH ključevi / Debian predvidljiv PRNG
 
-Neki sistemi imaju poznate greške u nasumičnom semenu koje se koristi za generisanje kriptografskog materijala. To može rezultirati dramatično smanjenim prostorom ključeva koji se može bruteforovati alatima kao što su [snowdroppe/ssh-keybrute](https://github.com/snowdroppe/ssh-keybrute). Takođe su dostupni unapred generisani setovi slabih ključeva kao što su [g0tmi1k/debian-ssh](https://github.com/g0tmi1k/debian-ssh).
+Neki sistemi imaju poznate greške u nasumičnom semenu koje se koristi za generisanje kriptografskog materijala. To može rezultirati dramatično smanjenim prostorom ključeva koji se može bruteforced sa alatima kao što je [snowdroppe/ssh-keybrute](https://github.com/snowdroppe/ssh-keybrute). Takođe su dostupni unapred generisani setovi slabih ključeva kao što je [g0tmi1k/debian-ssh](https://github.com/g0tmi1k/debian-ssh).
 
 ### STOMP (ActiveMQ, RabbitMQ, HornetQ i OpenMQ)
 
@@ -464,7 +483,7 @@ Pribavite pristup danas:
 * [https://www.onlinehashcrack.com/](https://www.onlinehashcrack.com) (Hashovi, WPA2 snimci i arhive MSOffice, ZIP, PDF...)
 * [https://crackstation.net/](https://crackstation.net) (Hashovi)
 * [https://md5decrypt.net/](https://md5decrypt.net) (MD5)
-* [https://gpuhash.me/](https://gpuhash.me) (Hashovi i hashovi datoteka)
+* [https://gpuhash.me/](https://gpuhash.me) (Hashovi i hashovi fajlova)
 * [https://hashes.org/search.php](https://hashes.org/search.php) (Hashovi)
 * [https://www.cmd5.org/](https://www.cmd5.org) (Hashovi)
 * [https://hashkiller.co.uk/Cracker](https://hashkiller.co.uk/Cracker) (MD5, NTLM, SHA1, MySQL5, SHA256, SHA512)
@@ -491,7 +510,7 @@ hashcat.exe -m 13600 -a 0 .\hashzip.txt .\wordlists\rockyou.txt
 ```
 #### Napad poznatim otvorenim tekstom na zip
 
-Potrebno je da znate **otvoreni tekst** (ili deo otvorenog teksta) **fajla koji se nalazi unutar** enkriptovanog zip-a. Možete proveriti **imena fajlova i veličinu fajlova koji se nalaze unutar** enkriptovanog zip-a pokretanjem: **`7z l encrypted.zip`**\
+Morate znati **otvoreni tekst** (ili deo otvorenog teksta) **datoteke koja se nalazi unutar** enkriptovanog zip-a. Možete proveriti **imena datoteka i veličinu datoteka koje se nalaze unutar** enkriptovanog zip-a pokretanjem: **`7z l encrypted.zip`**\
 Preuzmite [**bkcrack** ](https://github.com/kimci86/bkcrack/releases/tag/v1.4.0) sa stranice za preuzimanje.
 ```bash
 # You need to create a zip file containing only the file that is inside the encrypted zip
@@ -606,7 +625,7 @@ Koristite [https://github.com/openwall/john/blob/bleeding-jumbo/run/DPAPImk2john
 Ako imate xlsx datoteku sa kolonom zaštićenom lozinkom, možete je otključati:
 
 * **Otpremite je na google drive** i lozinka će biti automatski uklonjena
-* Da **uklonite** ručno:
+* Da **uklonite** to **ručno**:
 ```bash
 unzip file.xlsx
 grep -R "sheetProtection" ./*
@@ -625,7 +644,7 @@ crackpkcs12 -d /usr/share/wordlists/rockyou.txt ./cert.pfx
 <figure><img src="../.gitbook/assets/image (48).png" alt=""><figcaption></figcaption></figure>
 
 \
-Koristite [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) da lako izgradite i **automatizujete radne tokove** pokretane najnaprednijim **alatima** zajednice na svetu.\
+Koristite [**Trickest**](https://trickest.com/?utm_source=hacktricks&utm_medium=text&utm_campaign=ppc&utm_content=brute-force) da lako izgradite i **automatizujete radne tokove** pokretane **najnaprednijim** alatima zajednice na svetu.\
 Pribavite pristup danas:
 
 {% embed url="https://trickest.com/?utm_source=hacktricks&utm_medium=banner&utm_campaign=ppc&utm_content=brute-force" %}
@@ -715,7 +734,7 @@ hashcat.exe -a 3 -m 1000 C:\Temp\ntlm.txt -1 ?d?s ?u?l?l?l?l?l?l?l?1
 ## Use it to crack the password
 hashcat.exe -a 3 -m 1000 C:\Temp\ntlm.txt .\masks.hcmask
 ```
-* Wordlist + Mask (`-a 6`) / Mask + Wordlist (`-a 7`) напад
+* Lista reči + Maska (`-a 6`) / Maska + Lista reči (`-a 7`) napad
 ```bash
 # Mask numbers will be appended to each word in the wordlist
 hashcat.exe -a 6 -m 1000 C:\Temp\ntlm.txt \wordlist.txt ?d?d?d?d
