@@ -1,8 +1,8 @@
 # Bypass FS protections: read-only / no-exec / Distroless
 
 {% hint style="success" %}
-Impara e pratica Hacking AWS:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Impara e pratica Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Impara e pratica Hacking AWS:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Impara e pratica Hacking GCP: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -15,9 +15,9 @@ Impara e pratica Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data-s
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-Se sei interessato a una **carriera di hacking** e a hackare l'inhackabile - **stiamo assumendo!** (_richiesta di polacco fluente scritto e parlato_).
+Se sei interessato a una **carriera nell'hacking** e a hackare l'inhackabile - **stiamo assumendo!** (_richiesta di polacco fluente scritto e parlato_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
@@ -68,9 +68,9 @@ Se hai alcuni potenti motori di script all'interno della macchina, come **Python
 Per questo puoi facilmente usare il progetto [**fileless-elf-exec**](https://github.com/nnsee/fileless-elf-exec). Puoi passargli un binario e genererà uno script nel linguaggio indicato con il **binario compresso e codificato in b64** con le istruzioni per **decodificarlo e decomprimerlo** in un **fd** creato chiamando la syscall `create_memfd` e una chiamata alla syscall **exec** per eseguirlo.
 
 {% hint style="warning" %}
-Questo non funziona in altri linguaggi di scripting come PHP o Node perché non hanno alcun modo **predefinito per chiamare syscall raw** da uno script, quindi non è possibile chiamare `create_memfd` per creare il **memory fd** per memorizzare il binario.
+Questo non funziona in altri linguaggi di scripting come PHP o Node perché non hanno alcun **modo predefinito per chiamare syscall raw** da uno script, quindi non è possibile chiamare `create_memfd` per creare il **fd di memoria** per memorizzare il binario.
 
-Inoltre, creare un **fd regolare** con un file in `/dev/shm` non funzionerà, poiché non ti sarà permesso eseguirlo a causa della **protezione no-exec** che si applicherà.
+Inoltre, creare un **fd regolare** con un file in `/dev/shm` non funzionerà, poiché non ti sarà permesso eseguirlo a causa dell'applicazione della **protezione no-exec**.
 {% endhint %}
 
 ### DDexec / EverythingExec
@@ -106,19 +106,19 @@ Con uno scopo simile a DDexec, la tecnica [**memdlopen**](https://github.com/arg
 
 ### Cos'è distroless
 
-I container distroless contengono solo i **componenti minimi necessari per eseguire un'applicazione o un servizio specifico**, come librerie e dipendenze di runtime, ma escludono componenti più grandi come un gestore di pacchetti, shell o utilità di sistema.
+I container distroless contengono solo i **componenti minimi necessari per eseguire un'applicazione o servizio specifico**, come librerie e dipendenze di runtime, ma escludono componenti più grandi come un gestore di pacchetti, shell o utilità di sistema.
 
 L'obiettivo dei container distroless è **ridurre la superficie di attacco dei container eliminando componenti non necessari** e minimizzando il numero di vulnerabilità che possono essere sfruttate.
 
 ### Reverse Shell
 
-In un container distroless potresti **non trovare nemmeno `sh` o `bash`** per ottenere una shell regolare. Non troverai nemmeno binari come `ls`, `whoami`, `id`... tutto ciò che di solito esegui in un sistema.
+In un container distroless potresti **non trovare nemmeno `sh` o `bash`** per ottenere una shell normale. Non troverai nemmeno binari come `ls`, `whoami`, `id`... tutto ciò che di solito esegui in un sistema.
 
 {% hint style="warning" %}
 Pertanto, **non** sarai in grado di ottenere una **reverse shell** o **enumerare** il sistema come fai di solito.
 {% endhint %}
 
-Tuttavia, se il container compromesso sta eseguendo ad esempio un'app web Flask, allora Python è installato, e quindi puoi ottenere una **reverse shell Python**. Se sta eseguendo Node, puoi ottenere una reverse shell Node, e lo stesso vale per quasi qualsiasi **linguaggio di scripting**.
+Tuttavia, se il container compromesso sta eseguendo ad esempio un'app Flask, allora Python è installato, e quindi puoi ottenere una **reverse shell Python**. Se sta eseguendo Node, puoi ottenere una reverse shell Node, e lo stesso vale per quasi qualsiasi **linguaggio di scripting**.
 
 {% hint style="success" %}
 Utilizzando il linguaggio di scripting potresti **enumerare il sistema** utilizzando le capacità del linguaggio.
@@ -127,20 +127,20 @@ Utilizzando il linguaggio di scripting potresti **enumerare il sistema** utilizz
 Se non ci sono protezioni **`read-only/no-exec`** potresti abusare della tua reverse shell per **scrivere nel file system i tuoi binari** e **eseguirli**.
 
 {% hint style="success" %}
-Tuttavia, in questo tipo di container queste protezioni di solito esistono, ma potresti utilizzare le **precedenti tecniche di esecuzione in memoria per bypassarle**.
+Tuttavia, in questo tipo di container queste protezioni di solito esistono, ma potresti utilizzare le **tecniche di esecuzione in memoria precedenti per bypassarle**.
 {% endhint %}
 
 Puoi trovare **esempi** su come **sfruttare alcune vulnerabilità RCE** per ottenere reverse shell di linguaggi di scripting ed eseguire binari dalla memoria in [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Se sei interessato a una **carriera nel hacking** e a hackare l'inhackabile - **stiamo assumendo!** (_richiesta di polacco fluente scritto e parlato_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
 {% hint style="success" %}
-Impara e pratica Hacking AWS:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Impara e pratica Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Impara e pratica Hacking AWS:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Impara e pratica Hacking GCP: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -148,7 +148,7 @@ Impara e pratica Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data-s
 
 * Controlla i [**piani di abbonamento**](https://github.com/sponsors/carlospolop)!
 * **Unisciti al** 💬 [**gruppo Discord**](https://discord.gg/hRep4RUj7f) o al [**gruppo telegram**](https://t.me/peass) o **seguici** su **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Condividi trucchi di hacking inviando PR ai** [**HackTricks**](https://github.com/carlospolop/hacktricks) e [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repos su github.
+* **Condividi trucchi di hacking inviando PR ai** [**HackTricks**](https://github.com/carlospolop/hacktricks) e [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repos di github.
 
 </details>
 {% endhint %}
