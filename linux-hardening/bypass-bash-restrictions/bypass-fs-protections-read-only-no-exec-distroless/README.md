@@ -1,8 +1,8 @@
 # Bypass FS protections: read-only / no-exec / Distroless
 
 {% hint style="success" %}
-Aprenda e pratique Hacking AWS:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Aprenda e pratique Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Aprenda e pratique Hacking AWS:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Aprenda e pratique Hacking GCP: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -15,7 +15,7 @@ Aprenda e pratique Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Se você está interessado em **carreira de hacking** e hackear o inhackeável - **estamos contratando!** (_fluência em polonês escrita e falada é necessária_).
 
@@ -59,7 +59,7 @@ No entanto, isso não é suficiente para executar seu backdoor binário ou outra
 
 ## Bypasses de Memória
 
-Se você quiser executar um binário, mas o sistema de arquivos não está permitindo isso, a melhor maneira de fazê-lo é **executá-lo da memória**, já que as **proteções não se aplicam lá**.
+Se você quiser executar um binário, mas o sistema de arquivos não permitir isso, a melhor maneira de fazê-lo é **executá-lo da memória**, já que **as proteções não se aplicam lá**.
 
 ### Bypass de FD + syscall exec
 
@@ -106,9 +106,9 @@ Com um propósito semelhante ao DDexec, a técnica [**memdlopen**](https://githu
 
 ### O que é distroless
 
-Contêineres distroless contêm apenas os **componentes mínimos necessários para executar um aplicativo ou serviço específico**, como bibliotecas e dependências de tempo de execução, mas excluem componentes maiores, como um gerenciador de pacotes, shell ou utilitários de sistema.
+Contêineres distroless contêm apenas os **componentes mínimos necessários para executar um aplicativo ou serviço específico**, como bibliotecas e dependências de tempo de execução, mas excluem componentes maiores como um gerenciador de pacotes, shell ou utilitários do sistema.
 
-O objetivo dos contêineres distroless é **reduzir a superfície de ataque dos contêineres, eliminando componentes desnecessários** e minimizando o número de vulnerabilidades que podem ser exploradas.
+O objetivo dos contêineres distroless é **reduzir a superfície de ataque dos contêineres eliminando componentes desnecessários** e minimizando o número de vulnerabilidades que podem ser exploradas.
 
 ### Shell Reverso
 
@@ -118,7 +118,7 @@ Em um contêiner distroless, você pode **não encontrar nem `sh` nem `bash`** p
 Portanto, você **não** poderá obter um **shell reverso** ou **enumerar** o sistema como costuma fazer.
 {% endhint %}
 
-No entanto, se o contêiner comprometido estiver executando, por exemplo, um flask web, então o python está instalado, e portanto você pode obter um **shell reverso Python**. Se estiver executando node, você pode obter um shell rev Node, e o mesmo com praticamente qualquer **linguagem de script**.
+No entanto, se o contêiner comprometido estiver executando, por exemplo, um flask web, então o python está instalado, e portanto você pode obter um **shell reverso Python**. Se estiver executando node, você pode obter um shell reverso Node, e o mesmo com praticamente qualquer **linguagem de script**.
 
 {% hint style="success" %}
 Usando a linguagem de script, você poderia **enumerar o sistema** usando as capacidades da linguagem.
@@ -132,15 +132,15 @@ No entanto, neste tipo de contêiner, essas proteções geralmente existirão, m
 
 Você pode encontrar **exemplos** de como **explorar algumas vulnerabilidades RCE** para obter shells reversos de linguagens de script e executar binários da memória em [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Se você está interessado em uma **carreira em hacking** e hackear o inhackeável - **estamos contratando!** (_fluência em polonês escrita e falada é necessária_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
 {% hint style="success" %}
-Aprenda e pratique Hacking AWS:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Aprenda e pratique Hacking GCP: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Aprenda e pratique Hacking AWS:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Aprenda e pratique Hacking GCP: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
