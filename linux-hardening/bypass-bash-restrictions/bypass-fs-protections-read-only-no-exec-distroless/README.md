@@ -15,7 +15,7 @@ Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 If you are interested in **hacking career** and hack the unhackable - **we are hiring!** (_wymagana biegła znajomość języka polskiego w mowie i piśmie_).
 
@@ -108,17 +108,17 @@ Z podobnym celem do DDexec, technika [**memdlopen**](https://github.com/arget13/
 
 Kontenery distroless zawierają tylko **najmniejsze niezbędne komponenty do uruchomienia konkretnej aplikacji lub usługi**, takie jak biblioteki i zależności uruchomieniowe, ale wykluczają większe komponenty, takie jak menedżer pakietów, powłoka czy narzędzia systemowe.
 
-Celem kontenerów distroless jest **zmniejszenie powierzchni ataku kontenerów poprzez eliminację niepotrzebnych komponentów** i minimalizowanie liczby podatności, które mogą być wykorzystane.
+Celem kontenerów distroless jest **zmniejszenie powierzchni ataku kontenerów poprzez eliminację niepotrzebnych komponentów** i minimalizację liczby podatności, które mogą być wykorzystane.
 
 ### Odwrócona powłoka
 
-W kontenerze distroless możesz **nawet nie znaleźć `sh` lub `bash`**, aby uzyskać zwykłą powłokę. Nie znajdziesz również plików binarnych takich jak `ls`, `whoami`, `id`... wszystko, co zwykle uruchamiasz w systemie.
+W kontenerze distroless możesz **nawet nie znaleźć `sh` ani `bash`**, aby uzyskać zwykłą powłokę. Nie znajdziesz również plików binarnych, takich jak `ls`, `whoami`, `id`... wszystko, co zwykle uruchamiasz w systemie.
 
 {% hint style="warning" %}
-Dlatego **nie będziesz** w stanie uzyskać **odwróconej powłoki** ani **enumerować** systemu, jak zwykle to robisz.
+Dlatego **nie będziesz** w stanie uzyskać **odwróconej powłoki** ani **enumerować** systemu, jak zwykle.
 {% endhint %}
 
-Jednak jeśli skompromitowany kontener uruchamia na przykład aplikację flask, to python jest zainstalowany, a zatem możesz uzyskać **odwróconą powłokę Pythona**. Jeśli działa node, możesz uzyskać odwróconą powłokę Node, i to samo z większością **języków skryptowych**.
+Jednak jeśli skompromitowany kontener uruchamia na przykład aplikację flask, to python jest zainstalowany, a zatem możesz uzyskać **odwróconą powłokę Pythona**. Jeśli uruchamia node, możesz uzyskać odwróconą powłokę Node, i to samo z większością **języków skryptowych**.
 
 {% hint style="success" %}
 Używając języka skryptowego, możesz **enumerować system** korzystając z możliwości języka.
@@ -132,7 +132,7 @@ Jednak w tego rodzaju kontenerach te zabezpieczenia zazwyczaj istnieją, ale mo�
 
 Możesz znaleźć **przykłady** na to, jak **wykorzystać niektóre podatności RCE**, aby uzyskać odwrócone powłoki języków skryptowych i wykonywać pliki binarne z pamięci w [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 If you are interested in **hacking career** and hack the unhackable - **we are hiring!** (_fluent polish written and spoken required_).
 
