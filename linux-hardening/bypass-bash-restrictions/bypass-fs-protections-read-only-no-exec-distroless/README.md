@@ -15,7 +15,7 @@ Aprenda e pratique Hacking GCP: <img src="../../../.gitbook/assets/grte.png" alt
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Se você está interessado em **carreira de hacking** e hackear o inhackeável - **estamos contratando!** (_fluência em polonês escrita e falada é necessária_).
 
@@ -59,7 +59,7 @@ No entanto, isso não é suficiente para executar seu backdoor binário ou outra
 
 ## Bypasses de Memória
 
-Se você quiser executar um binário, mas o sistema de arquivos não permitir isso, a melhor maneira de fazê-lo é **executá-lo da memória**, já que **as proteções não se aplicam lá**.
+Se você quiser executar um binário, mas o sistema de arquivos não está permitindo isso, a melhor maneira de fazê-lo é **executá-lo da memória**, já que as **proteções não se aplicam lá**.
 
 ### Bypass de FD + syscall exec
 
@@ -132,7 +132,7 @@ No entanto, neste tipo de contêiner, essas proteções geralmente existirão, m
 
 Você pode encontrar **exemplos** de como **explorar algumas vulnerabilidades RCE** para obter shells reversos de linguagens de script e executar binários da memória em [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Se você está interessado em uma **carreira em hacking** e hackear o inhackeável - **estamos contratando!** (_fluência em polonês escrita e falada é necessária_).
 
@@ -144,11 +144,11 @@ Aprenda e pratique Hacking GCP: <img src="../../../.gitbook/assets/grte.png" alt
 
 <details>
 
-<summary>Support HackTricks</summary>
+<summary>Suporte ao HackTricks</summary>
 
 * Confira os [**planos de assinatura**](https://github.com/sponsors/carlospolop)!
-* **Junte-se ao** 💬 [**grupo Discord**](https://discord.gg/hRep4RUj7f) ou ao [**grupo telegram**](https://t.me/peass) ou **siga**-nos no **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Compartilhe truques de hacking enviando PRs para os repositórios do** [**HackTricks**](https://github.com/carlospolop/hacktricks) e [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud).
+* **Junte-se ao** 💬 [**grupo do Discord**](https://discord.gg/hRep4RUj7f) ou ao [**grupo do telegram**](https://t.me/peass) ou **siga**-nos no **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Compartilhe truques de hacking enviando PRs para o** [**HackTricks**](https://github.com/carlospolop/hacktricks) e [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repositórios do github.
 
 </details>
 {% endhint %}
