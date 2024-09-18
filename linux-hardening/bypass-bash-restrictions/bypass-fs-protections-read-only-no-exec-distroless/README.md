@@ -1,36 +1,36 @@
 # Bypass FS protections: read-only / no-exec / Distroless
 
 {% hint style="success" %}
-Jifunze na fanya mazoezi ya AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
-Jifunze na fanya mazoezi ya GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
 <summary>Support HackTricks</summary>
 
-* Angalia [**mpango wa usajili**](https://github.com/sponsors/carlospolop)!
-* **Jiunge na** 💬 [**kikundi cha Discord**](https://discord.gg/hRep4RUj7f) au [**kikundi cha telegram**](https://t.me/peass) au **tufuatilie** kwenye **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Shiriki mbinu za hacking kwa kuwasilisha PRs kwa** [**HackTricks**](https://github.com/carlospolop/hacktricks) na [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repos za github.
+* Check the [**subscription plans**](https://github.com/sponsors/carlospolop)!
+* **Join the** 💬 [**Discord group**](https://discord.gg/hRep4RUj7f) or the [**telegram group**](https://t.me/peass) or **follow** us on **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Share hacking tricks by submitting PRs to the** [**HackTricks**](https://github.com/carlospolop/hacktricks) and [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
 
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-Ikiwa unavutiwa na **kazi ya hacking** na kuhack yasiyoweza kuhackwa - **tunatafuta wafanyakazi!** (_kuandika na kuzungumza kwa ufasaha kwa Kiholanzi kunahitajika_).
+If you are interested in **hacking career** and hack the unhackable - **we are hiring!** (_fluent polish written and spoken required_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
 ## Videos
 
-Katika video zifuatazo unaweza kupata mbinu zilizotajwa kwenye ukurasa huu zikielezewa kwa undani zaidi:
+In the following videos you can find the techniques mentioned in this page explained more in depth:
 
 * [**DEF CON 31 - Exploring Linux Memory Manipulation for Stealth and Evasion**](https://www.youtube.com/watch?v=poHirez8jk4)
 * [**Stealth intrusions with DDexec-ng & in-memory dlopen() - HackTricks Track 2023**](https://www.youtube.com/watch?v=VM\_gjjiARaU)
 
 ## read-only / no-exec scenario
 
-Ni kawaida zaidi na zaidi kupata mashine za linux zilizowekwa na **ulinzi wa mfumo wa faili wa kusoma tu (ro)**, hasa katika kontena. Hii ni kwa sababu kuendesha kontena na mfumo wa faili wa ro ni rahisi kama kuweka **`readOnlyRootFilesystem: true`** katika `securitycontext`:
+Ni kawaida zaidi na zaidi kukutana na mashine za linux zilizowekwa na **read-only (ro) file system protection**, hasa katika kontena. Hii ni kwa sababu kuendesha kontena na mfumo wa faili wa ro ni rahisi kama kuweka **`readOnlyRootFilesystem: true`** katika `securitycontext`:
 
 <pre class="language-yaml"><code class="lang-yaml">apiVersion: v1
 kind: Pod
@@ -45,10 +45,10 @@ securityContext:
 </strong>    command: ["sh", "-c", "while true; do sleep 1000; done"]
 </code></pre>
 
-Hata hivyo, hata kama mfumo wa faili umewekwa kama ro, **`/dev/shm`** bado itaandikwa, hivyo ni uongo kwamba hatuwezi kuandika chochote kwenye diski. Hata hivyo, folda hii itakuwa **imewekwa na ulinzi wa no-exec**, hivyo ikiwa utashusha binary hapa huwezi **kuweza kuitekeleza**.
+Hata hivyo, hata kama mfumo wa faili umewekwa kama ro, **`/dev/shm`** bado itaandikwa, hivyo ni uongo hatuwezi kuandika chochote kwenye diski. Hata hivyo, folda hii itakuwa **imewekwa na no-exec protection**, hivyo ikiwa utashusha binary hapa huwezi **kuweza kuitekeleza**.
 
 {% hint style="warning" %}
-Kutoka kwa mtazamo wa timu nyekundu, hii inafanya **kuwa ngumu kupakua na kutekeleza** binaries ambazo hazipo kwenye mfumo tayari (kama backdoors au waorodheshi kama `kubectl`).
+Kutoka kwa mtazamo wa timu nyekundu, hii inafanya **kuwa ngumu kupakua na kutekeleza** binaries ambazo hazipo kwenye mfumo tayari (kama backdoors au enumerators kama `kubectl`).
 {% endhint %}
 
 ## Easiest bypass: Scripts
@@ -63,21 +63,21 @@ Ikiwa unataka kutekeleza binary lakini mfumo wa faili haukuruhusu, njia bora ya 
 
 ### FD + exec syscall bypass
 
-Ikiwa una injini za script zenye nguvu ndani ya mashine, kama **Python**, **Perl**, au **Ruby** unaweza kupakua binary ili kuitekeleza kutoka kwenye kumbukumbu, kuihifadhi katika desktopu ya kumbukumbu (`create_memfd` syscall), ambayo haitalindwa na ulinzi huo na kisha kuita **`exec` syscall** ikionyesha **fd kama faili ya kutekeleza**.
+Ikiwa una baadhi ya injini za script zenye nguvu ndani ya mashine, kama **Python**, **Perl**, au **Ruby** unaweza kupakua binary ili kuitekeleza kutoka kwenye kumbukumbu, kuihifadhi katika file descriptor ya kumbukumbu (`create_memfd` syscall), ambayo haitalindwa na ulinzi huo na kisha kuita **`exec` syscall** ikionyesha **fd kama faili ya kutekeleza**.
 
-Kwa hili unaweza kwa urahisi kutumia mradi [**fileless-elf-exec**](https://github.com/nnsee/fileless-elf-exec). Unaweza kupitisha binary na itaunda script katika lugha iliyoonyeshwa na **binary iliyoshinikizwa na b64 encoded** na maagizo ya **kufungua na kuondoa shinikizo** katika **fd** iliyoundwa kwa kuita `create_memfd` syscall na wito wa **exec** syscall kuikimbia.
+Kwa hili unaweza kwa urahisi kutumia mradi [**fileless-elf-exec**](https://github.com/nnsee/fileless-elf-exec). Unaweza kupitisha binary na itaunda script katika lugha iliyoonyeshwa na **binary iliyoshinikizwa na b64 encoded** na maagizo ya **kufungua na kuondoa shinikizo** katika **fd** iliyoundwa kwa kuita `create_memfd` syscall na wito kwa **exec** syscall kuikimbia.
 
 {% hint style="warning" %}
-Hii haifanyi kazi katika lugha nyingine za scripting kama PHP au Node kwa sababu hazina njia yoyote ya **kawaida ya kuita syscalls za moja kwa moja** kutoka kwenye script, hivyo haiwezekani kuita `create_memfd` kuunda **memory fd** kuhifadhi binary.
+Hii haiwezi kufanya kazi katika lugha nyingine za scripting kama PHP au Node kwa sababu hazina njia yoyote ya **kawaida ya kuita raw syscalls** kutoka kwenye script, hivyo haiwezekani kuita `create_memfd` kuunda **memory fd** kuhifadhi binary.
 
-Zaidi ya hayo, kuunda **fd ya kawaida** na faili katika `/dev/shm` haitafanya kazi, kwani hutaruhusiwa kuikimbia kwa sababu **ulinzi wa no-exec** utaweza kutumika.
+Zaidi ya hayo, kuunda **regular fd** na faili katika `/dev/shm` hakutafanya kazi, kwani hutaruhusiwa kuikimbia kwa sababu **no-exec protection** itatumika.
 {% endhint %}
 
 ### DDexec / EverythingExec
 
-[**DDexec / EverythingExec**](https://github.com/arget13/DDexec) ni mbinu inayokuruhusu **kubadilisha kumbukumbu ya mchakato wako mwenyewe** kwa kuandika tena **`/proc/self/mem`**.
+[**DDexec / EverythingExec**](https://github.com/arget13/DDexec) ni mbinu inayokuruhusu **kubadilisha kumbukumbu ya mchakato wako** kwa kuandika tena **`/proc/self/mem`**.
 
-Kwa hivyo, **kuweza kudhibiti msimbo wa mkusanyiko** unaotekelezwa na mchakato, unaweza kuandika **shellcode** na "kubadilisha" mchakato ili **utekeleze msimbo wowote wa kawaida**.
+Kwa hivyo, **kuweza kudhibiti msimbo wa mkusanyiko** unaotekelezwa na mchakato, unaweza kuandika **shellcode** na "kubadilisha" mchakato ili **kuendesha msimbo wowote wa kawaida**.
 
 {% hint style="success" %}
 **DDexec / EverythingExec** itakuruhusu kupakia na **kutekeleza** shellcode yako mwenyewe au **binary yoyote** kutoka **kumbukumbu**.
@@ -118,13 +118,13 @@ Katika mizigo ya distroless huenda **usipate hata `sh` au `bash`** kupata shell 
 Hivyo, **hutaweza** kupata **reverse shell** au **kuhesabu** mfumo kama kawaida unavyofanya.
 {% endhint %}
 
-Hata hivyo, ikiwa kontena lililoathirika linaendesha kwa mfano flask web, basi python imewekwa, na hivyo unaweza kupata **Python reverse shell**. Ikiwa linaendesha node, unaweza kupata Node rev shell, na vivyo hivyo na lugha nyingi za **scripting**.
+Hata hivyo, ikiwa kontena lililovunjwa linaendesha kwa mfano flask web, basi python imewekwa, na hivyo unaweza kupata **Python reverse shell**. Ikiwa linaendesha node, unaweza kupata Node rev shell, na vivyo hivyo na lugha nyingi za **scripting**.
 
 {% hint style="success" %}
 Kwa kutumia lugha ya scripting unaweza **kuhesabu mfumo** kwa kutumia uwezo wa lugha hiyo.
 {% endhint %}
 
-Ikiwa hakuna **`read-only/no-exec`** ulinzi unaweza kutumia reverse shell yako ku **andika kwenye mfumo wa faili binaries zako** na **kuziendesha**.
+Ikiwa hakuna **`read-only/no-exec`** ulinzi unaweza kutumia reverse shell yako **kuandika kwenye mfumo wa faili binaries zako** na **kuziendesha**.
 
 {% hint style="success" %}
 Hata hivyo, katika aina hii ya mizigo ulinzi huu kwa kawaida utawepo, lakini unaweza kutumia **mbinu za awali za utekelezaji wa kumbukumbu kuzipita**.
@@ -132,7 +132,7 @@ Hata hivyo, katika aina hii ya mizigo ulinzi huu kwa kawaida utawepo, lakini una
 
 Unaweza kupata **mfano** wa jinsi ya **kutumia udhaifu wa RCE** kupata lugha za scripting **reverse shells** na kuendesha binaries kutoka kwenye kumbukumbu katika [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Ikiwa unavutiwa na **kazi ya hacking** na kuhack yasiyoweza kuhackwa - **tunatafuta wafanyakazi!** (_kuandika na kuzungumza kwa kiswahili vizuri kunahitajika_).
 
