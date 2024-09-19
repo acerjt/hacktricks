@@ -15,7 +15,7 @@ Learn & practice GCP Hacking: <img src="../../.gitbook/assets/grte.png" alt="" d
 </details>
 {% endhint %}
 
-<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 If you are interested in **hacking career** and hack the unhackable - **we are hiring!** (_fluent polish written and spoken required_).
 
@@ -35,8 +35,8 @@ If you are interested in **hacking career** and hack the unhackable - **we are h
 ### **인수**
 
 우선, **주요 회사가 소유한 다른 회사**를 알아야 합니다.\
-한 가지 옵션은 [https://www.crunchbase.com/](https://www.crunchbase.com)를 방문하여 **주요 회사**를 **검색**하고 "**인수**"를 클릭하는 것입니다. 거기서 주요 회사가 인수한 다른 회사를 볼 수 있습니다.\
-다른 옵션은 주요 회사의 **위키피디아** 페이지를 방문하여 **인수**를 검색하는 것입니다.
+한 가지 방법은 [https://www.crunchbase.com/](https://www.crunchbase.com)를 방문하여 **주요 회사**를 **검색**하고 "**인수**"를 클릭하는 것입니다. 거기에서 주요 회사가 인수한 다른 회사를 볼 수 있습니다.\
+또 다른 방법은 주요 회사의 **위키피디아** 페이지를 방문하여 **인수**를 검색하는 것입니다.
 
 > 좋습니다. 이 시점에서 범위 내의 모든 회사를 알아야 합니다. 이제 그들의 자산을 찾는 방법을 알아봅시다.
 
@@ -45,7 +45,7 @@ If you are interested in **hacking career** and hack the unhackable - **we are h
 자율 시스템 번호(**ASN**)는 **인터넷 할당 번호 관리 기관(IANA)**에 의해 **자율 시스템**(AS)에 할당된 **고유 번호**입니다.\
 **AS**는 외부 네트워크에 접근하기 위한 명확하게 정의된 정책을 가진 **IP 주소 블록**으로 구성되며, 단일 조직에 의해 관리되지만 여러 운영자로 구성될 수 있습니다.
 
-회사가 **할당된 ASN**이 있는지 찾아 **IP 범위**를 찾는 것이 흥미롭습니다. **범위** 내의 모든 **호스트**에 대해 **취약성 테스트**를 수행하고 이 IP 내의 **도메인**을 찾아보는 것이 좋습니다.\
+회사가 **할당된 ASN**이 있는지 확인하여 **IP 범위**를 찾는 것이 흥미롭습니다. **범위** 내의 모든 **호스트**에 대해 **취약성 테스트**를 수행하고 이 IP 내의 **도메인**을 찾아보는 것이 좋습니다.\
 [**https://bgp.he.net/**](https://bgp.he.net)에서 회사 **이름**, **IP** 또는 **도메인**으로 **검색**할 수 있습니다.\
 **회사의 지역에 따라 이 링크가 더 많은 데이터를 수집하는 데 유용할 수 있습니다:** [**AFRINIC**](https://www.afrinic.net) **(아프리카),** [**Arin**](https://www.arin.net/about/welcome/region/)**(북미),** [**APNIC**](https://www.apnic.net) **(아시아),** [**LACNIC**](https://www.lacnic.net) **(라틴 아메리카),** [**RIPE NCC**](https://www.ripe.net) **(유럽). 어쨌든, 아마도 모든** 유용한 정보 **(IP 범위 및 Whois)**는 첫 번째 링크에 이미 나타납니다.
 ```bash
@@ -137,11 +137,11 @@ Did you know that we can find related domains and sub domains to our target by l
 cat my_targets.txt | xargs -I %% bash -c 'echo "http://%%/favicon.ico"' > targets.txt
 python3 favihash.py -f https://target/favicon.ico -t targets.txt -s
 ```
-![favihash - 동일한 파비콘 아이콘 해시를 가진 도메인 발견](https://www.infosecmatter.com/wp-content/uploads/2020/07/favihash.jpg)
+![favihash - discover domains with the same favicon icon hash](https://www.infosecmatter.com/wp-content/uploads/2020/07/favihash.jpg)
 
-간단히 말해, favihash는 우리의 타겟과 동일한 파비콘 아이콘 해시를 가진 도메인을 발견할 수 있게 해줍니다.
+간단히 말해, favihash는 우리의 타겟과 동일한 favicon 아이콘 해시를 가진 도메인을 발견할 수 있게 해줍니다.
 
-게다가, [**이 블로그 포스트**](https://medium.com/@Asm0d3us/weaponizing-favicon-ico-for-bugbounties-osint-and-what-not-ace3c214e139)에서 설명한 대로 파비콘 해시를 사용하여 기술을 검색할 수도 있습니다. 즉, **취약한 버전의 웹 기술의 파비콘 해시를 알고 있다면** shodan에서 검색하여 **더 많은 취약한 장소를 찾을 수 있습니다**:
+게다가, [**이 블로그 포스트**](https://medium.com/@Asm0d3us/weaponizing-favicon-ico-for-bugbounties-osint-and-what-not-ace3c214e139)에서 설명한 대로 favicon 해시를 사용하여 기술을 검색할 수도 있습니다. 즉, **취약한 버전의 웹 기술의 favicon 해시**를 알고 있다면 shodan에서 검색하여 **더 많은 취약한 장소를 찾을 수** 있습니다:
 ```bash
 shodan search org:"Target" http.favicon.hash:116323821 --fields ip_str,port --separator " " | awk '{print $1":"$2}'
 ```
@@ -204,7 +204,7 @@ If you find any **domain with an IP different** from the ones you already found 
 _Note that sometimes the domain is hosted inside an IP that is not controlled by the client, so it's not in the scope, be careful._
 
 <img src="../../.gitbook/assets/i3.png" alt="" data-size="original">\
-**버그 바운티 팁**: **가입하세요** **Intigriti**에, 해커를 위해 만들어진 프리미엄 **버그 바운티 플랫폼**! 오늘 [**https://go.intigriti.com/hacktricks**](https://go.intigriti.com/hacktricks)에서 저희와 함께하고 최대 **$100,000**의 보상을 받기 시작하세요!
+**버그 바운티 팁**: **가입하세요** **Intigriti**, 해커를 위해 만들어진 프리미엄 **버그 바운티 플랫폼**! 오늘 [**https://go.intigriti.com/hacktricks**](https://go.intigriti.com/hacktricks)에서 저희와 함께하고 최대 **$100,000**의 보상을 받기 시작하세요!
 
 {% embed url="https://go.intigriti.com/hacktricks" %}
 
@@ -346,7 +346,7 @@ python3 DomainTrail.py -d example.com
 
 ### **DNS 브루트 포스**
 
-가능한 서브도메인 이름을 사용하여 DNS 서버를 브루트 포싱하여 새로운 **서브도메인**을 찾아보겠습니다.
+가능한 서브도메인 이름을 사용하여 DNS 서버를 브루트 포스하여 새로운 **서브도메인**을 찾아보겠습니다.
 
 이 작업을 위해서는 다음과 같은 **일반 서브도메인 단어 목록**이 필요합니다:
 
@@ -358,7 +358,7 @@ python3 DomainTrail.py -d example.com
 
 또한 좋은 DNS 해석기의 IP도 필요합니다. 신뢰할 수 있는 DNS 해석기 목록을 생성하기 위해 [https://public-dns.info/nameservers-all.txt](https://public-dns.info/nameservers-all.txt)에서 해석기를 다운로드하고 [**dnsvalidator**](https://github.com/vortexau/dnsvalidator)를 사용하여 필터링할 수 있습니다. 또는 다음을 사용할 수 있습니다: [https://raw.githubusercontent.com/trickest/resolvers/main/resolvers-trusted.txt](https://raw.githubusercontent.com/trickest/resolvers/main/resolvers-trusted.txt)
 
-DNS 브루트 포스에 가장 추천되는 도구는:
+DNS 브루트 포스에 가장 추천되는 도구는 다음과 같습니다:
 
 * [**massdns**](https://github.com/blechschmidt/massdns): 이는 효과적인 DNS 브루트 포스를 수행한 첫 번째 도구입니다. 매우 빠르지만 잘못된 긍정 반응이 발생할 수 있습니다.
 ```bash
@@ -395,7 +395,7 @@ cat subdomains.txt | dnsgen -
 ```bash
 goaltdns -l subdomains.txt -w /tmp/words-permutations.txt -o /tmp/final-words-s3.txt
 ```
-* [**gotator**](https://github.com/Josue87/gotator)**:** 도메인과 서브도메인을 기반으로 순열을 생성합니다. 순열 파일이 지정되지 않으면 gotator는 자체 파일을 사용합니다.
+* [**gotator**](https://github.com/Josue87/gotator)**:** 도메인과 서브도메인을 기반으로 순열을 생성합니다. 순열 파일이 지정되지 않은 경우 gotator는 자체 파일을 사용합니다.
 ```
 gotator -sub subdomains.txt -silent [-perm /tmp/words-permutations.txt]
 ```
@@ -434,15 +434,15 @@ echo www | subzuf facebook.com
 
 ### **VHosts / 가상 호스트**
 
-서브도메인에 속하는 **하나 이상의 웹 페이지**를 포함하는 IP 주소를 찾았다면, **OSINT 소스**에서 IP의 도메인을 찾아보거나 **해당 IP에서 VHost 도메인 이름을 브루트 포스하여 다른 서브도메인을 찾을 수 있습니다**.
+서브도메인에 속하는 **하나 이상의 웹 페이지**를 포함하는 IP 주소를 찾았다면, **OSINT 소스**에서 IP의 도메인을 찾거나 **해당 IP에서 VHost 도메인 이름을 브루트 포스**하여 **다른 서브도메인**을 찾을 수 있습니다.
 
 #### OSINT
 
-[**HostHunter**](https://github.com/SpiderLabs/HostHunter) **또는 기타 API를 사용하여 IP에서 일부 VHosts를 찾을 수 있습니다**.
+[**HostHunter**](https://github.com/SpiderLabs/HostHunter) **또는 기타 API를 사용하여 IP에서 일부 VHosts를 찾을 수 있습니다.**
 
 **브루트 포스**
 
-어떤 서브도메인이 웹 서버에 숨겨져 있을 수 있다고 의심된다면, 브루트 포스를 시도해 볼 수 있습니다:
+어떤 서브도메인이 웹 서버에 숨겨져 있다고 의심되면, 브루트 포스를 시도해 볼 수 있습니다:
 ```bash
 ffuf -c -w /path/to/wordlist -u http://victim.com -H "Host: FUZZ.victim.com"
 
@@ -457,7 +457,7 @@ vhostbrute.py --url="example.com" --remoteip="10.1.1.15" --base="www.example.com
 VHostScan -t example.com
 ```
 {% hint style="info" %}
-이 기술을 사용하면 내부/숨겨진 엔드포인트에 접근할 수 있을지도 모릅니다.
+이 기술을 사용하면 내부/숨겨진 엔드포인트에 접근할 수도 있습니다.
 {% endhint %}
 
 ### **CORS Brute Force**
@@ -473,7 +473,7 @@ ffuf -w subdomains-top1million-5000.txt -u http://10.10.10.208 -H 'Origin: http:
 
 ### **모니터링**
 
-도메인의 **새 서브도메인**이 생성되는지 **Certificate Transparency** 로그를 모니터링하여 확인할 수 있습니다. [**sublert**](https://github.com/yassineaboukir/sublert/blob/master/sublert.py)가 이를 수행합니다.
+도메인의 **새로운 서브도메인**이 생성되는지 **Certificate Transparency** 로그를 모니터링하여 확인할 수 있습니다. [**sublert**](https://github.com/yassineaboukir/sublert/blob/master/sublert.py)가 이를 수행합니다.
 
 ### **취약점 찾기**
 
@@ -486,7 +486,7 @@ _서브도메인이 클라이언트가 제어하지 않는 IP 내에 호스팅�
 ## IPs
 
 초기 단계에서 **일부 IP 범위, 도메인 및 서브도메인**을 **발견했을 수 있습니다**.\
-이제 **해당 범위의 모든 IP를 수집**하고 **도메인/서브도메인(DNS 쿼리)**에 대한 IP를 수집할 시간입니다.
+이제 **그 범위에서 모든 IP를 수집할** 시간입니다. **도메인/서브도메인(DNS 쿼리)**에 대한 IP도 포함됩니다.
 
 다음 **무료 API**의 서비스를 사용하여 **도메인 및 서브도메인에서 사용된 이전 IP**를 찾을 수 있습니다. 이 IP는 여전히 클라이언트가 소유하고 있을 수 있으며, [**CloudFlare 우회**](../../network-services-pentesting/pentesting-web/uncovering-cloudflare.md)를 찾는 데 도움이 될 수 있습니다.
 
@@ -496,7 +496,7 @@ _서브도메인이 클라이언트가 제어하지 않는 IP 내에 호스팅�
 
 ### **취약점 찾기**
 
-**CDN에 속하지 않는 모든 IP에 대해 포트 스캔**을 수행하세요(여기서는 흥미로운 것을 찾지 못할 가능성이 높습니다). 발견된 실행 중인 서비스에서 **취약점을 찾을 수 있을 것입니다**.
+**CDN에 속하지 않는 모든 IP에 대해 포트 스캔을 수행하세요**(여기서는 흥미로운 것을 찾지 못할 가능성이 높습니다). 발견된 실행 중인 서비스에서 **취약점을 찾을 수 있을지도 모릅니다**.
 
 **호스트 스캔 방법에 대한** [**가이드를 찾으세요**](../pentesting-network/).
 
@@ -504,7 +504,7 @@ _서브도메인이 클라이언트가 제어하지 않는 IP 내에 호스팅�
 
 > 우리는 모든 회사와 그 자산을 찾았고, 범위 내의 IP 범위, 도메인 및 서브도메인을 알고 있습니다. 이제 웹 서버를 검색할 시간입니다.
 
-이전 단계에서 이미 발견된 IP와 도메인에 대한 **재콘을 수행했을 가능성이 높으므로**, **모든 가능한 웹 서버를 이미 찾았을 수 있습니다**. 그러나 찾지 못했다면 이제 범위 내에서 웹 서버를 검색하기 위한 **빠른 요령**을 살펴보겠습니다.
+이전 단계에서 이미 발견된 **IP 및 도메인에 대한 일부 재콘을 수행했을 가능성이 높으므로**, **모든 가능한 웹 서버를 이미 찾았을 수 있습니다**. 그러나 찾지 못했다면 이제 범위 내에서 웹 서버를 검색하기 위한 **빠른 요령**을 살펴보겠습니다.
 
 이것은 **웹 앱 발견**을 위한 **지향적**이므로, **취약점** 및 **포트 스캔**도 수행해야 합니다(**범위에서 허용되는 경우**).
 
@@ -516,11 +516,11 @@ cat /tmp/domains.txt | httprobe -p http:8080 -p https:8443 #Check port 80, 443 a
 ```
 ### **스크린샷**
 
-이제 **범위 내의 모든 웹 서버**(회사의 **IP**와 모든 **도메인** 및 **서브도메인** 중)에 대해 발견했으므로, 아마도 **어디서 시작해야 할지 모를 것입니다**. 그러니 간단하게 시작하여 모든 웹 서버의 스크린샷을 찍어보세요. **메인 페이지**를 **살펴보는 것만으로도** **이상한** 엔드포인트를 발견할 수 있으며, 이는 **취약점**이 있을 가능성이 더 높습니다.
+이제 **범위 내의 모든 웹 서버**를 발견했으므로 (**회사의 **IP**와 모든 **도메인** 및 **서브도메인** 중에서) 아마도 **어디서 시작해야 할지 모를 것입니다**. 그러니 간단하게 시작하여 모든 웹 서버의 스크린샷을 찍어보세요. **메인 페이지**를 **살펴보는 것만으로도** **이상한** 엔드포인트를 발견할 수 있으며, 이는 **취약점**이 있을 가능성이 더 높습니다.
 
-제안된 아이디어를 수행하기 위해 [**EyeWitness**](https://github.com/FortyNorthSecurity/EyeWitness), [**HttpScreenshot**](https://github.com/breenmachine/httpscreenshot), [**Aquatone**](https://github.com/michenriksen/aquatone), [**Shutter**](https://shutter-project.org/downloads/third-party-packages/), [**Gowitness**](https://github.com/sensepost/gowitness) 또는 [**webscreenshot**](https://github.com/maaaaz/webscreenshot)**.**를 사용할 수 있습니다.
+제안된 아이디어를 수행하기 위해 [**EyeWitness**](https://github.com/FortyNorthSecurity/EyeWitness), [**HttpScreenshot**](https://github.com/breenmachine/httpscreenshot), [**Aquatone**](https://github.com/michenriksen/aquatone), [**Shutter**](https://shutter-project.org/downloads/third-party-packages/), [**Gowitness**](https://github.com/sensepost/gowitness) 또는 [**webscreenshot**](https://github.com/maaaaz/webscreenshot)**를 사용할 수 있습니다.**
 
-또한, [**eyeballer**](https://github.com/BishopFox/eyeballer)를 사용하여 모든 **스크린샷**을 분석하여 **취약점이 있을 가능성이 있는 것**과 그렇지 않은 것을 알려줄 수 있습니다.
+또한, [**eyeballer**](https://github.com/BishopFox/eyeballer)를 사용하여 모든 **스크린샷**을 분석하여 **취약점이 있을 가능성이 있는 것**과 **없는 것**을 알려줄 수 있습니다.
 
 ## 퍼블릭 클라우드 자산
 
@@ -532,15 +532,15 @@ cat /tmp/domains.txt | httprobe -p http:8080 -p https:8443 #Check port 80, 443 a
 * [https://raw.githubusercontent.com/infosec-au/altdns/master/words.txt](https://raw.githubusercontent.com/infosec-au/altdns/master/words.txt)
 * [https://raw.githubusercontent.com/jordanpotti/AWSBucketDump/master/BucketNames.txt](https://raw.githubusercontent.com/jordanpotti/AWSBucketDump/master/BucketNames.txt)
 
-그런 다음, 이러한 단어로 **순열**을 생성해야 합니다(자세한 내용은 [**두 번째 라운드 DNS 브루트포스**](./#second-dns-bruteforce-round)를 참조하세요).
+그런 다음, 이러한 단어로 **순열**을 생성해야 합니다 (자세한 내용은 [**두 번째 라운드 DNS 브루트포스**](./#second-dns-bruteforce-round)를 참조하세요).
 
-결과 단어 목록을 사용하여 [**cloud\_enum**](https://github.com/initstring/cloud\_enum)**,** [**CloudScraper**](https://github.com/jordanpotti/CloudScraper)**,** [**cloudlist**](https://github.com/projectdiscovery/cloudlist) **또는** [**S3Scanner**](https://github.com/sa7mon/S3Scanner)**.**와 같은 도구를 사용할 수 있습니다.
+결과로 얻은 단어 목록을 사용하여 [**cloud\_enum**](https://github.com/initstring/cloud\_enum)**,** [**CloudScraper**](https://github.com/jordanpotti/CloudScraper)**,** [**cloudlist**](https://github.com/projectdiscovery/cloudlist) **또는** [**S3Scanner**](https://github.com/sa7mon/S3Scanner)**와 같은 도구를 사용할 수 있습니다.**
 
 클라우드 자산을 찾을 때는 **AWS의 버킷 이상으로 찾아야 한다는 점을 기억하세요**.
 
 ### **취약점 찾기**
 
-**열린 버킷이나 노출된 클라우드 기능**과 같은 것을 발견하면 **접속하여** 그들이 제공하는 것이 무엇인지, 그리고 이를 악용할 수 있는지 확인해야 합니다.
+**열린 버킷이나 노출된 클라우드 기능**과 같은 것을 발견하면 **접속하여** 제공하는 내용을 확인하고 이를 악용할 수 있는지 확인해야 합니다.
 
 ## 이메일
 
@@ -573,13 +573,13 @@ cat /tmp/domains.txt | httprobe -p http:8080 -p https:8443 #Check port 80, 443 a
 ### 깃허브 유출
 
 자격 증명 및 API는 **회사의 공개 리포지토리** 또는 해당 깃허브 회사에서 일하는 **사용자**의 공개 리포지토리에 유출될 수 있습니다.\
-**Leakos**라는 **도구**를 사용하여 **조직**과 그 **개발자**의 모든 **공개 리포지토리**를 **다운로드**하고, [**gitleaks**](https://github.com/zricethezav/gitleaks)를 자동으로 실행할 수 있습니다.
+**Leakos**라는 **도구**를 사용하여 **조직**과 그 **개발자**의 모든 **공개 리포지토리**를 **다운로드**하고 자동으로 [**gitleaks**](https://github.com/zricethezav/gitleaks)를 실행할 수 있습니다.
 
 **Leakos**는 또한 제공된 **URL**에 대해 **gitleaks**를 실행하는 데 사용할 수 있으며, 때때로 **웹 페이지에도 비밀이 포함되어 있습니다**.
 
 #### 깃허브 도크
 
-공격 중인 조직에서 검색할 수 있는 잠재적인 **깃허브 도크**에 대해서도 이 **페이지**를 확인하세요:
+공격 중인 조직에서 검색할 수 있는 잠재적인 **깃허브 도크**에 대한 **페이지**도 확인하세요:
 
 {% content-ref url="github-leaked-secrets.md" %}
 [github-leaked-secrets.md](github-leaked-secrets.md)
@@ -602,7 +602,7 @@ _정기적인 구글 브라우저를 사용하여 모든 데이터베이스를 �
 
 ## 공개 코드 취약점
 
-회사가 **오픈 소스 코드**를 가지고 있다면, 이를 **분석**하고 **취약점**을 검색할 수 있습니다.
+회사가 **오픈 소스 코드**를 가지고 있다면 이를 **분석**하고 **취약점**을 검색할 수 있습니다.
 
 **언어에 따라** 사용할 수 있는 다양한 **도구**가 있습니다:
 
@@ -618,23 +618,23 @@ _정기적인 구글 브라우저를 사용하여 모든 데이터베이스를 �
 
 **버그 헌터**가 발견한 **대부분의 취약점**은 **웹 애플리케이션** 내에 존재하므로, 이 시점에서 **웹 애플리케이션 테스트 방법론**에 대해 이야기하고 싶습니다. [**여기에서 이 정보를 찾을 수 있습니다**](../../network-services-pentesting/pentesting-web/).
 
-또한 [**웹 자동 스캐너 오픈 소스 도구**](../../network-services-pentesting/pentesting-web/#automatic-scanners) 섹션에 특별히 언급하고 싶습니다. 이 도구들은 매우 민감한 취약점을 찾는 데 기대하지 말아야 하지만, **초기 웹 정보를 얻기 위한 워크플로우에 유용합니다**.
+또한 [**웹 자동 스캐너 오픈 소스 도구**](../../network-services-pentesting/pentesting-web/#automatic-scanners) 섹션에 특별히 언급하고 싶습니다. 이 도구들은 매우 민감한 취약점을 찾을 것으로 기대하지 말아야 하지만, **초기 웹 정보를 얻기 위한 워크플로우에 유용합니다**.
 
 ## 요약
 
-> 축하합니다! 이 시점에서 **모든 기본 열거 작업**을 수행했습니다. 네, 기본적입니다. 더 많은 열거 작업이 가능하므로(나중에 더 많은 트릭을 볼 것입니다).
+> 축하합니다! 이 시점에서 **모든 기본 열거 작업**을 수행했습니다. 네, 기본적입니다. 더 많은 열거 작업이 가능하므로 (나중에 더 많은 트릭을 볼 것입니다).
 
 따라서 이미 다음을 수행했습니다:
 
 1. 범위 내의 모든 **회사**를 찾았습니다.
-2. 회사에 속하는 모든 **자산**을 찾았습니다(범위 내에서 일부 취약점 스캔 수행).
+2. 회사에 속하는 모든 **자산**을 찾았습니다 (범위 내에서 취약점 스캔 수행).
 3. 회사에 속하는 모든 **도메인**을 찾았습니다.
-4. 도메인의 모든 **서브도메인**을 찾았습니다(서브도메인 탈취 가능성은 있나요?).
-5. 범위 내의 모든 **IP**(CDN에서 온 것과 아닌 것)를 찾았습니다.
-6. 모든 **웹 서버**를 찾고 **스크린샷**을 찍었습니다(더 깊이 살펴볼 가치가 있는 이상한 점이 있나요?).
+4. 도메인의 모든 **서브도메인**을 찾았습니다 (서브도메인 탈취 가능성은 있나요?).
+5. 범위 내의 모든 **IP**를 찾았습니다 (CDN에서 온 것과 아닌 것).
+6. 모든 **웹 서버**를 찾고 **스크린샷**을 찍었습니다 (더 깊이 살펴볼 가치가 있는 이상한 점이 있나요?).
 7. 회사에 속하는 모든 **잠재적 공개 클라우드 자산**을 찾았습니다.
-8. **이메일**, **자격 증명 유출**, 및 **비밀 유출**로 인해 **매우 쉽게 큰 승리**를 얻을 수 있습니다.
-9. 발견한 모든 웹을 **펜테스팅**합니다.
+8. **이메일**, **자격 증명 유출**, 및 **비밀 유출**로 인해 **매우 쉽게 큰 승리를 얻을 수 있습니다**.
+9. **발견한 모든 웹을 펜테스팅합니다**.
 
 ## **전체 재콘 자동 도구**
 
@@ -649,9 +649,9 @@ _정기적인 구글 브라우저를 사용하여 모든 데이터베이스를 �
 
 * [**@Jhaddix**](https://twitter.com/Jhaddix)의 모든 무료 강좌, 예를 들어 [**버그 헌터의 방법론 v4.0 - 재콘 에디션**](https://www.youtube.com/watch?v=p4JgIu1mceI)
 
-<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-**해킹 경력**에 관심이 있고 해킹할 수 없는 것을 해킹하고 싶다면 - **우리는 인재를 모집하고 있습니다!** (_유창한 폴란드어 필기 및 구사 필요_).
+**해킹 경력**에 관심이 있고 해킹할 수 없는 것을 해킹하고 싶다면 - **우리는 인재를 모집하고 있습니다!** (_유창한 폴란드어 필기 및 구사 필수_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
@@ -663,9 +663,9 @@ GCP 해킹 배우고 연습하기: <img src="../../.gitbook/assets/grte.png" alt
 
 <summary>HackTricks 지원하기</summary>
 
-* [**구독 계획**](https://github.com/sponsors/carlospolop)을 확인하세요!
-* **💬 [**Discord 그룹**](https://discord.gg/hRep4RUj7f) 또는 [**텔레그램 그룹**](https://t.me/peass)에 참여하거나, **Twitter**에서 **팔로우**하세요** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **HackTricks**와 [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) 깃허브 리포지토리에 PR을 제출하여 해킹 트릭을 공유하세요.
+* [**구독 계획**](https://github.com/sponsors/carlospolop) 확인하기!
+* **💬 [**Discord 그룹**](https://discord.gg/hRep4RUj7f) 또는 [**텔레그램 그룹**](https://t.me/peass)에 참여하거나 **Twitter**에서 **팔로우**하세요** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **해킹 트릭을 공유하려면** [**HackTricks**](https://github.com/carlospolop/hacktricks) 및 [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) 깃허브 리포지토리에 PR을 제출하세요.
 
 </details>
 {% endhint %}
