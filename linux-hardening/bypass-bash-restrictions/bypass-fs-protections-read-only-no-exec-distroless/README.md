@@ -15,7 +15,7 @@ Leer & oefen GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" da
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 As jy belangstel in 'n **hacking loopbaan** en die onhackbare hack - **ons is op soek na mense!** (_vloeiend in geskryf en gesproke Pools vereis_).
 
@@ -45,15 +45,15 @@ securityContext:
 </strong>    command: ["sh", "-c", "while true; do sleep 1000; done"]
 </code></pre>
 
-Tog, selfs al is die lêerstelsel as ro gemonteer, sal **`/dev/shm`** steeds skryfbaar wees, so dit is vals dat ons nie enigiets op die skyf kan skryf nie. Hierdie gids sal egter **gemonteer wees met no-exec beskerming**, so as jy 'n binêre hier aflaai, sal jy **nie in staat wees om dit uit te voer nie**.
+Tog, selfs al is die lêerstelsel as ro gemonteer, sal **`/dev/shm`** steeds skryfbaar wees, so dit is vals dat ons nie iets op die skyf kan skryf nie. Hierdie gids sal egter **gemonteer wees met no-exec beskerming**, so as jy 'n binêre hier aflaai, sal jy **nie in staat wees om dit uit te voer nie**.
 
 {% hint style="warning" %}
-Van 'n rooi span perspektief maak dit **moeilik om binêre te aflaai en uit te voer** wat nie reeds in die stelsel is nie (soos agterdeure of enumerators soos `kubectl`).
+Van 'n rooi span perspektief maak dit **moeilik om** binêre te aflaai en uit te voer wat nie reeds in die stelsel is nie (soos agterdeure of enumerators soos `kubectl`).
 {% endhint %}
 
 ## Easiest bypass: Scripts
 
-Let daarop dat ek binêre genoem het, jy kan **enige script uitvoer** solank die interpreter binne die masjien is, soos 'n **shell script** as `sh` teenwoordig is of 'n **python** **script** as `python` geïnstalleer is.
+Let daarop dat ek binêre genoem het, jy kan **enige skrip uitvoer** solank die interpreter binne die masjien is, soos 'n **shell skrip** as `sh` teenwoordig is of 'n **python** **skrip** as `python` geïnstalleer is.
 
 Tog is dit nie net genoeg om jou binêre agterdeur of ander binêre gereedskap wat jy mag nodig hê om te loop, uit te voer nie.
 
@@ -63,24 +63,24 @@ As jy 'n binêre wil uitvoer maar die lêerstelsel dit nie toelaat nie, is die b
 
 ### FD + exec syscall bypass
 
-As jy 'n paar kragtige script enjin in die masjien het, soos **Python**, **Perl**, of **Ruby**, kan jy die binêre aflaai om uit geheue uit te voer, dit in 'n geheue lêer beskrywer (`create_memfd` syscall) stoor, wat nie deur daardie beskermings beskerm gaan word nie en dan 'n **`exec` syscall** aanroep wat die **fd as die lêer om uit te voer** aandui.
+As jy 'n paar kragtige skrip enjin in die masjien het, soos **Python**, **Perl**, of **Ruby**, kan jy die binêre aflaai om uit geheue uit te voer, dit in 'n geheue lêer beskrywer (`create_memfd` syscall) stoor, wat nie deur daardie beskermings beskerm gaan word nie en dan 'n **`exec` syscall** aanroep wat die **fd as die lêer om uit te voer** aandui.
 
-Vir hierdie kan jy maklik die projek [**fileless-elf-exec**](https://github.com/nnsee/fileless-elf-exec) gebruik. Jy kan dit 'n binêre gee en dit sal 'n script in die aangeduide taal genereer met die **binêre gecomprimeer en b64 geënkodeer** met die instruksies om dit te **dekodeer en te dekomprimeer** in 'n **fd** wat geskep is deur `create_memfd` syscall aan te roep en 'n oproep na die **exec** syscall om dit te laat loop.
+Vir hierdie kan jy maklik die projek [**fileless-elf-exec**](https://github.com/nnsee/fileless-elf-exec) gebruik. Jy kan dit 'n binêre gee en dit sal 'n skrip in die aangeduide taal genereer met die **binêre gecomprimeer en b64 geënkodeer** met die instruksies om dit te **dekodeer en te dekomprimeer** in 'n **fd** wat geskep is deur `create_memfd` syscall aan te roep en 'n oproep na die **exec** syscall om dit te laat loop.
 
 {% hint style="warning" %}
-Dit werk nie in ander skripting tale soos PHP of Node nie omdat hulle nie enige d**efault manier het om rou syscalls** van 'n script aan te roep nie, so dit is nie moontlik om `create_memfd` aan te roep om die **geheue fd** te skep om die binêre te stoor nie.
+Dit werk nie in ander skrip tale soos PHP of Node nie omdat hulle nie enige d**efault manier het om rou syscalls** van 'n skrip aan te roep nie, so dit is nie moontlik om `create_memfd` aan te roep om die **geheue fd** te skep om die binêre te stoor nie.
 
 Boonop sal die skep van 'n **regte fd** met 'n lêer in `/dev/shm` nie werk nie, aangesien jy nie toegelaat sal word om dit te laat loop nie omdat die **no-exec beskerming** van toepassing sal wees.
 {% endhint %}
 
 ### DDexec / EverythingExec
 
-[**DDexec / EverythingExec**](https://github.com/arget13/DDexec) is 'n tegniek wat jou toelaat om die **geheue van jou eie proses** te verander deur sy **`/proc/self/mem`** te oorskryf.
+[**DDexec / EverythingExec**](https://github.com/arget13/DDexec) is 'n tegniek wat jou toelaat om **die geheue van jou eie proses** te verander deur sy **`/proc/self/mem`** te oorskryf.
 
 Daarom, **beheer die assembly kode** wat deur die proses uitgevoer word, kan jy 'n **shellcode** skryf en die proses "mutate" om **enige arbitrêre kode** uit te voer.
 
 {% hint style="success" %}
-**DDexec / EverythingExec** sal jou toelaat om jou eie **shellcode** of **enige binêre** van **geheue** te laai en **uit te voer**.
+**DDexec / EverythingExec** sal jou toelaat om jou eie **shellcode** of **enige binêre** uit **geheue** te laai en **uit te voer**.
 {% endhint %}
 ```bash
 # Basic example
@@ -94,7 +94,7 @@ For more information about this technique check the Github or:
 
 ### MemExec
 
-[**Memexec**](https://github.com/arget13/memexec) is die natuurlike volgende stap van DDexec. Dit is 'n **DDexec shellcode demonised**, so elke keer wanneer jy 'n **ander binêre** wil **hardloop**, hoef jy nie DDexec weer te herlaai nie, jy kan net memexec shellcode via die DDexec-tegniek hardloop en dan **kommunikeer met hierdie demon om nuwe binêre te stuur om te laai en te hardloop**.
+[**Memexec**](https://github.com/arget13/memexec) is die natuurlike volgende stap van DDexec. Dit is 'n **DDexec shellcode demonised**, so elke keer wanneer jy 'n **ander binêre** wil **hardloop**, hoef jy nie DDexec weer te herlaai nie, jy kan net memexec shellcode via die DDexec tegniek hardloop en dan **kommunikeer met hierdie demon om nuwe binêre te stuur om te laai en te hardloop**.
 
 Jy kan 'n voorbeeld vind van hoe om **memexec te gebruik om binêre van 'n PHP reverse shell** uit te voer in [https://github.com/arget13/memexec/blob/main/a.php](https://github.com/arget13/memexec/blob/main/a.php).
 
@@ -118,21 +118,21 @@ In 'n distroless houer mag jy **nie eers `sh` of `bash`** vind om 'n gewone skul
 Daarom, jy **sal nie** in staat wees om 'n **reverse shell** of **te enumerate** die stelsel soos jy gewoonlik doen nie.
 {% endhint %}
 
-As die gecompromitteerde houer egter byvoorbeeld 'n flask web loop, dan is python geïnstalleer, en daarom kan jy 'n **Python reverse shell** kry. As dit node loop, kan jy 'n Node rev shell kry, en dieselfde met byna enige **scripting taal**.
+As die gecompromitteerde houer egter byvoorbeeld 'n flask web loop, dan is python geïnstalleer, en daarom kan jy 'n **Python reverse shell** kry. As dit node loop, kan jy 'n Node rev shell kry, en dieselfde met byna enige **skriptaal**.
 
 {% hint style="success" %}
-Met die scripting taal kan jy **die stelsel enumerate** met behulp van die taal se vermoëns.
+Met die skriptaal kan jy **die stelsel enumerate** met behulp van die taal se vermoëns.
 {% endhint %}
 
 As daar **geen `read-only/no-exec`** beskermings is nie, kan jy jou reverse shell misbruik om **in die lêerstelsel jou binêre te skryf** en **uit te voer**.
 
 {% hint style="success" %}
-Echter, in hierdie soort houers sal hierdie beskermings gewoonlik bestaan, maar jy kan die **vorige geheue-uitvoertegnieke gebruik om dit te omseil**.
+Echter, in hierdie tipe houers sal hierdie beskermings gewoonlik bestaan, maar jy kan die **vorige geheue-uitvoertegnieke gebruik om dit te omseil**.
 {% endhint %}
 
-Jy kan **voorbeelde** vind van hoe om **sommige RCE kwesbaarhede te exploiteer** om scripting tale **reverse shells** te kry en binêre uit geheue uit te voer in [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
+Jy kan **voorbeelde** vind van hoe om **sommige RCE kwesbaarhede te exploiteer** om skriptaal **reverse shells** te kry en binêre uit geheue uit te voer in [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 As jy belangstel in 'n **hacking loopbaan** en die onhackable te hack - **ons huur!** (_vloeiend Pools geskryf en gesproke vereis_).
 
