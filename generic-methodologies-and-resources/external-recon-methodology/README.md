@@ -1,8 +1,8 @@
 # Méthodologie de Reconnaissance Externe
 
 {% hint style="success" %}
-Apprenez et pratiquez le Hacking AWS :<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
-Apprenez et pratiquez le Hacking GCP : <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Apprenez et pratiquez le Hacking AWS :<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Formation AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Apprenez et pratiquez le Hacking GCP : <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Formation GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -15,9 +15,9 @@ Apprenez et pratiquez le Hacking GCP : <img src="../../.gitbook/assets/grte.png"
 </details>
 {% endhint %}
 
-<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-Si vous êtes intéressé par une **carrière en hacking** et que vous voulez hacker l'inhackable - **nous recrutons !** (_polonais courant écrit et parlé requis_).
+Si vous êtes intéressé par une **carrière en hacking** et par le fait de hacker l'inhackable - **nous recrutons !** (_polonais courant écrit et parlé requis_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
@@ -45,8 +45,8 @@ Une autre option est de visiter la page **Wikipedia** de la société principale
 Un numéro de système autonome (**ASN**) est un **numéro unique** attribué à un **système autonome** (AS) par l'**Internet Assigned Numbers Authority (IANA)**.\
 Un **AS** se compose de **blocs** d'**adresses IP** qui ont une politique clairement définie pour accéder aux réseaux externes et sont administrés par une seule organisation mais peuvent être composés de plusieurs opérateurs.
 
-Il est intéressant de trouver si la **société a attribué un ASN** pour trouver ses **plages IP.** Il sera intéressant de réaliser un **test de vulnérabilité** contre tous les **hôtes** dans le **champ d'application** et de **chercher des domaines** dans ces IP.\
-Vous pouvez **chercher** par **nom d'entreprise**, par **IP** ou par **domaine** sur [**https://bgp.he.net/**](https://bgp.he.net)**.**\
+Il est intéressant de trouver si la **société a attribué un ASN** pour trouver ses **plages IP.** Il sera intéressant de réaliser un **test de vulnérabilité** contre tous les **hôtes** dans le **champ d'application** et de **chercher des domaines** à l'intérieur de ces IPs.\
+Vous pouvez **chercher** par nom d'entreprise, par **IP** ou par **domaine** sur [**https://bgp.he.net/**](https://bgp.he.net)**.**\
 **Selon la région de l'entreprise, ces liens pourraient être utiles pour rassembler plus de données :** [**AFRINIC**](https://www.afrinic.net) **(Afrique),** [**Arin**](https://www.arin.net/about/welcome/region/)**(Amérique du Nord),** [**APNIC**](https://www.apnic.net) **(Asie),** [**LACNIC**](https://www.lacnic.net) **(Amérique Latine),** [**RIPE NCC**](https://www.ripe.net) **(Europe). Quoi qu'il en soit, probablement toutes les** informations utiles **(plages IP et Whois)** apparaissent déjà dans le premier lien.
 ```bash
 #You can try "automate" this with amass, but it's not very recommended
@@ -77,7 +77,7 @@ Vous pouvez trouver l'IP et l'ASN d'un domaine en utilisant [http://ipv4info.com
 
 À ce stade, nous connaissons **tous les actifs à l'intérieur du périmètre**, donc si vous y êtes autorisé, vous pourriez lancer un **scanner de vulnérabilités** (Nessus, OpenVAS) sur tous les hôtes.\
 De plus, vous pourriez lancer des [**scans de ports**](../pentesting-network/#discovering-hosts-from-the-outside) **ou utiliser des services comme** shodan **pour trouver** des ports ouverts **et selon ce que vous trouvez, vous devriez** consulter ce livre pour savoir comment pentester plusieurs services possibles en cours d'exécution.\
-**De plus, il pourrait être utile de mentionner que vous pouvez également préparer des listes de** noms d'utilisateur par défaut **et** mots de passe **et essayer de** bruteforcer des services avec [https://github.com/x90skysn3k/brutespray](https://github.com/x90skysn3k/brutespray).
+**De plus, il pourrait être utile de mentionner que vous pouvez également préparer des listes de** noms d'utilisateur par défaut **et de** mots de passe **et essayer de** bruteforcer des services avec [https://github.com/x90skysn3k/brutespray](https://github.com/x90skysn3k/brutespray).
 
 ## Domaines
 
@@ -122,7 +122,7 @@ Vous pouvez également effectuer une découverte automatique de whois inversé a
 Si vous trouvez le **même ID du même tracker** sur 2 pages différentes, vous pouvez supposer que **les deux pages** sont **gérées par la même équipe**.\
 Par exemple, si vous voyez le même **ID Google Analytics** ou le même **ID Adsense** sur plusieurs pages.
 
-Il existe certaines pages et outils qui vous permettent de rechercher par ces trackers et plus :
+Il existe des pages et des outils qui vous permettent de rechercher par ces trackers et plus :
 
 * [**Udon**](https://github.com/dhn/udon)
 * [**BuiltWith**](https://builtwith.com)
@@ -164,7 +164,7 @@ Recherchez dans les pages web **des chaînes qui pourraient être partagées ent
 
 ### **CRT Time**
 
-Il est courant d'avoir un travail cron tel que
+Il est courant d'avoir un cron job tel que
 ```bash
 # /etc/crontab
 37 13 */10 * * certbot renew --post-hook "systemctl reload nginx"
@@ -254,7 +254,7 @@ amass enum -d tesla.com | grep tesla.com # To just list subdomains
 # findomain, use -silent to only have subdomains in the output
 ./findomain-linux -t tesla.com [--quiet]
 ```
-* [**OneForAll**](https://github.com/shmilylty/OneForAll/tree/master/docs/en-us)
+* [**OneForAll**](https://github.com/shmilylty/OneForAll/tree/master/docs/fr)
 ```bash
 python3 oneforall.py --target tesla.com [--dns False] [--req False] [--brute False] run
 ```
@@ -275,7 +275,7 @@ vita -d tesla.com
 ```bash
 theHarvester -d tesla.com -b "anubis, baidu, bing, binaryedge, bingapi, bufferoverun, censys, certspotter, crtsh, dnsdumpster, duckduckgo, fullhunt, github-code, google, hackertarget, hunter, intelx, linkedin, linkedin_links, n45ht, omnisint, otx, pentesttools, projectdiscovery, qwant, rapiddns, rocketreach, securityTrails, spyse, sublist3r, threatcrowd, threatminer, trello, twitter, urlscan, virustotal, yahoo, zoomeye"
 ```
-Il existe **d'autres outils/API intéressants** qui, même s'ils ne sont pas directement spécialisés dans la recherche de sous-domaines, pourraient être utiles pour trouver des sous-domaines, comme :
+Il existe **d'autres outils/APIs intéressants** qui, même s'ils ne sont pas directement spécialisés dans la recherche de sous-domaines, pourraient être utiles pour trouver des sous-domaines, comme :
 
 * [**Crobat**](https://github.com/cgboal/sonarsearch)**:** Utilise l'API [https://sonar.omnisint.io](https://sonar.omnisint.io) pour obtenir des sous-domaines
 ```bash
@@ -346,7 +346,7 @@ Vous pouvez trouver une **comparaison** de nombreux outils ici : [https://blog.b
 
 ### **DNS Brute force**
 
-Essayons de trouver de nouveaux **sous-domaines** en effectuant un brute-force sur les serveurs DNS en utilisant des noms de sous-domaines possibles.
+Essayons de trouver de nouveaux **sous-domaines** en forçant les serveurs DNS avec des noms de sous-domaines possibles.
 
 Pour cette action, vous aurez besoin de quelques **listes de mots de sous-domaines courants comme** :
 
@@ -360,7 +360,7 @@ Et aussi des IP de bons résolveurs DNS. Pour générer une liste de résolveurs
 
 Les outils les plus recommandés pour le brute-force DNS sont :
 
-* [**massdns**](https://github.com/blechschmidt/massdns) : C'était le premier outil à effectuer un brute-force DNS efficace. Il est très rapide, mais il est sujet à des faux positifs.
+* [**massdns**](https://github.com/blechschmidt/massdns) : C'était le premier outil à effectuer un brute-force DNS efficace. Il est très rapide, cependant, il est sujet à des faux positifs.
 ```bash
 sed 's/$/.domain.com/' subdomains.txt > bf-subdomains.txt
 ./massdns -r resolvers.txt -w /tmp/results.txt bf-subdomains.txt
@@ -382,7 +382,7 @@ puredns bruteforce all.txt domain.com
 ```
 aiodnsbrute -r resolvers -w wordlist.txt -vv -t 1024 domain.com
 ```
-### Deuxième round de brute-force DNS
+### Deuxième Round de Brute-Force DNS
 
 Après avoir trouvé des sous-domaines en utilisant des sources ouvertes et le brute-forcing, vous pourriez générer des altérations des sous-domaines trouvés pour essayer d'en trouver encore plus. Plusieurs outils sont utiles à cet effet :
 
@@ -404,7 +404,7 @@ gotator -sub subdomains.txt -silent [-perm /tmp/words-permutations.txt]
 ```
 altdns -i subdomains.txt -w /tmp/words-permutations.txt -o /tmp/asd3
 ```
-* [**dmut**](https://github.com/bp0lr/dmut) : Un autre outil pour effectuer des permutations, des mutations et des altérations de sous-domaines. Cet outil va forcer le résultat (il ne prend pas en charge les jokers DNS).
+* [**dmut**](https://github.com/bp0lr/dmut) : Un autre outil pour effectuer des permutations, mutations et altérations de sous-domaines. Cet outil va forcer le résultat (il ne prend pas en charge les jokers DNS).
 * Vous pouvez obtenir la liste de mots de permutations d'dmut [**ici**](https://raw.githubusercontent.com/bp0lr/dmut/main/words.txt).
 ```bash
 cat subdomains.txt | dmut -d /tmp/words-permutations.txt -w 100 \
@@ -420,7 +420,7 @@ python3 main.py adobe.com adobe adobe.rules
 make_brute_list.sh adobe.rules adobe.brute
 puredns resolve adobe.brute --write adobe.valid
 ```
-* [**subzuf**](https://github.com/elceef/subzuf)**:** _subzuf_ est un fuzzer de brute-force de sous-domaines associé à un algorithme guidé par la réponse DNS extrêmement simple mais efficace. Il utilise un ensemble de données d'entrée fournies, comme une liste de mots sur mesure ou des enregistrements DNS/TLS historiques, pour synthétiser avec précision des noms de domaine correspondants et les étendre encore plus dans une boucle basée sur les informations recueillies lors de l'analyse DNS.
+* [**subzuf**](https://github.com/elceef/subzuf)**:** _subzuf_ est un fuzzer de brute-force de sous-domaines associé à un algorithme guidé par la réponse DNS, immensément simple mais efficace. Il utilise un ensemble de données d'entrée fournies, comme une liste de mots sur mesure ou des enregistrements DNS/TLS historiques, pour synthétiser avec précision des noms de domaine correspondants et les étendre encore plus dans une boucle basée sur les informations recueillies lors de l'analyse DNS.
 ```
 echo www | subzuf facebook.com
 ```
@@ -438,7 +438,7 @@ Si vous avez trouvé une adresse IP contenant **une ou plusieurs pages web** app
 
 #### OSINT
 
-Vous pouvez trouver quelques **VHosts dans des IPs en utilisant** [**HostHunter**](https://github.com/SpiderLabs/HostHunter) **ou d'autres API**.
+Vous pouvez trouver des **VHosts dans des IPs en utilisant** [**HostHunter**](https://github.com/SpiderLabs/HostHunter) **ou d'autres API**.
 
 **Brute Force**
 
@@ -486,9 +486,9 @@ _Remarque : parfois, le sous-domaine est hébergé sur une IP qui n'est pas cont
 ## IPs
 
 Dans les étapes initiales, vous avez peut-être **trouvé des plages d'IP, des domaines et des sous-domaines**.\
-Il est temps de **rassembler toutes les IP de ces plages** et pour les **domaines/sous-domaines (requêtes DNS).**
+Il est temps de **rassembler toutes les IPs de ces plages** et pour les **domaines/sous-domaines (requêtes DNS).**
 
-En utilisant les services des **API gratuites** suivantes, vous pouvez également trouver des **IP précédemment utilisées par des domaines et sous-domaines**. Ces IP peuvent encore appartenir au client (et peuvent vous permettre de trouver des [**contournements CloudFlare**](../../network-services-pentesting/pentesting-web/uncovering-cloudflare.md))
+En utilisant les services des **API gratuites** suivantes, vous pouvez également trouver des **IPs précédemment utilisées par des domaines et sous-domaines**. Ces IPs peuvent encore être détenues par le client (et peuvent vous permettre de trouver des [**contournements CloudFlare**](../../network-services-pentesting/pentesting-web/uncovering-cloudflare.md))
 
 * [**https://securitytrails.com/**](https://securitytrails.com/)
 
@@ -496,7 +496,7 @@ Vous pouvez également vérifier les domaines pointant vers une adresse IP spéc
 
 ### **Recherche de vulnérabilités**
 
-**Scannez tous les ports des IP qui n'appartiennent pas aux CDN** (car vous ne trouverez probablement rien d'intéressant là-dedans). Dans les services en cours d'exécution découverts, vous pourriez être **capable de trouver des vulnérabilités**.
+**Scannez tous les ports des IPs qui n'appartiennent pas aux CDN** (car vous ne trouverez probablement rien d'intéressant là-dedans). Dans les services en cours d'exécution découverts, vous pourriez être **capable de trouver des vulnérabilités**.
 
 **Trouvez un** [**guide**](../pentesting-network/) **sur la façon de scanner les hôtes.**
 
@@ -504,9 +504,9 @@ Vous pouvez également vérifier les domaines pointant vers une adresse IP spéc
 
 > Nous avons trouvé toutes les entreprises et leurs actifs et nous connaissons les plages d'IP, les domaines et les sous-domaines dans le périmètre. Il est temps de rechercher des serveurs web.
 
-Dans les étapes précédentes, vous avez probablement déjà effectué une **reconnaissance des IP et des domaines découverts**, donc vous avez peut-être **déjà trouvé tous les serveurs web possibles**. Cependant, si ce n'est pas le cas, nous allons maintenant voir quelques **astuces rapides pour rechercher des serveurs web** dans le périmètre.
+Dans les étapes précédentes, vous avez probablement déjà effectué une **reconnaissance des IPs et des domaines découverts**, donc vous avez peut-être **déjà trouvé tous les serveurs web possibles**. Cependant, si ce n'est pas le cas, nous allons maintenant voir quelques **astuces rapides pour rechercher des serveurs web** dans le périmètre.
 
-Veuillez noter que cela sera **orienté vers la découverte d'applications web**, donc vous devriez également **effectuer le scan de vulnérabilités** et le **scan de ports** (**si autorisé** par le périmètre).
+Veuillez noter que cela sera **orienté vers la découverte d'applications web**, donc vous devriez également **effectuer le scan de vulnérabilités** et **le scan de ports** aussi (**si autorisé** par le périmètre).
 
 Une **méthode rapide** pour découvrir les **ports ouverts** liés aux **serveurs** web en utilisant [**masscan** peut être trouvée ici](../pentesting-network/#http-port-discovery).\
 Un autre outil convivial pour rechercher des serveurs web est [**httprobe**](https://github.com/tomnomnom/httprobe)**,** [**fprobe**](https://github.com/theblackturtle/fprobe) et [**httpx**](https://github.com/projectdiscovery/httpx). Vous passez simplement une liste de domaines et il essaiera de se connecter aux ports 80 (http) et 443 (https). De plus, vous pouvez indiquer d'essayer d'autres ports :
@@ -532,7 +532,7 @@ Vous aurez également besoin de listes de mots de **mots courants utilisés dans
 * [https://raw.githubusercontent.com/infosec-au/altdns/master/words.txt](https://raw.githubusercontent.com/infosec-au/altdns/master/words.txt)
 * [https://raw.githubusercontent.com/jordanpotti/AWSBucketDump/master/BucketNames.txt](https://raw.githubusercontent.com/jordanpotti/AWSBucketDump/master/BucketNames.txt)
 
-Ensuite, avec ces mots, vous devriez générer des **permutations** (voir le [**Deuxième Tour de Brute-Force DNS**](./#second-dns-bruteforce-round) pour plus d'infos).
+Ensuite, avec ces mots, vous devriez générer des **permutations** (voir le [**Deuxième tour de brute-force DNS**](./#second-dns-bruteforce-round) pour plus d'infos).
 
 Avec les listes de mots résultantes, vous pourriez utiliser des outils tels que [**cloud\_enum**](https://github.com/initstring/cloud\_enum)**,** [**CloudScraper**](https://github.com/jordanpotti/CloudScraper)**,** [**cloudlist**](https://github.com/projectdiscovery/cloudlist) **ou** [**S3Scanner**](https://github.com/sa7mon/S3Scanner)**.**
 
@@ -557,14 +557,14 @@ Les emails seront utiles plus tard pour **brute-forcer les connexions web et les
 
 ## Fuites de Credentials
 
-Avec les **domaines**, **sous-domaines** et **emails**, vous pouvez commencer à rechercher des credentials fuités dans le passé appartenant à ces emails :
+Avec les **domaines**, **sous-domaines** et **emails**, vous pouvez commencer à rechercher des credentials qui ont fuité dans le passé appartenant à ces emails :
 
 * [https://leak-lookup.com](https://leak-lookup.com/account/login)
 * [https://www.dehashed.com/](https://www.dehashed.com/)
 
 ### **Recherche de vulnérabilités**
 
-Si vous trouvez des credentials **fuités valides**, c'est une victoire très facile.
+Si vous trouvez des credentials **valides fuyés**, c'est une victoire très facile.
 
 ## Fuites de Secrets
 
@@ -598,7 +598,7 @@ _Remarque : les outils qui s'attendent à exécuter toute la base de données en
 
 ### **Recherche de vulnérabilités**
 
-Si vous trouvez des credentials ou des tokens API **fuités valides**, c'est une victoire très facile.
+Si vous trouvez des credentials ou des tokens API **valides fuyés**, c'est une victoire très facile.
 
 ## Vulnérabilités de Code Public
 
@@ -647,11 +647,11 @@ Il existe plusieurs outils qui effectueront une partie des actions proposées co
 
 ## **Références**
 
-* Tous les cours gratuits de [**@Jhaddix**](https://twitter.com/Jhaddix) comme [**La Méthodologie du Chasseur de Bugs v4.0 - Édition Recon**](https://www.youtube.com/watch?v=p4JgIu1mceI)
+* Tous les cours gratuits de [**@Jhaddix**](https://twitter.com/Jhaddix) comme [**La méthodologie du chasseur de bugs v4.0 - Édition Recon**](https://www.youtube.com/watch?v=p4JgIu1mceI)
 
-<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-Si vous êtes intéressé par une **carrière de hacking** et par le fait de hacker l'inhackable - **nous recrutons !** (_polonais courant écrit et parlé requis_).
+Si vous êtes intéressé par une **carrière de hacking** et que vous souhaitez hacker l'inhackable - **nous recrutons !** (_polonais courant écrit et parlé requis_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
@@ -664,7 +664,7 @@ Apprenez et pratiquez le Hacking GCP : <img src="../../.gitbook/assets/grte.png"
 <summary>Soutenir HackTricks</summary>
 
 * Consultez les [**plans d'abonnement**](https://github.com/sponsors/carlospolop) !
-* **Rejoignez le** 💬 [**groupe Discord**](https://discord.gg/hRep4RUj7f) ou le [**groupe telegram**](https://t.me/peass) ou **suivez-nous** sur **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Rejoignez le** 💬 [**groupe Discord**](https://discord.gg/hRep4RUj7f) ou le [**groupe telegram**](https://t.me/peass) ou **suivez-nous sur** **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
 * **Partagez des astuces de hacking en soumettant des PRs aux** [**HackTricks**](https://github.com/carlospolop/hacktricks) et [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) dépôts github.
 
 </details>
