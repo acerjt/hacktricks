@@ -15,7 +15,7 @@ Aprenda e pratique Hacking GCP: <img src="../../../.gitbook/assets/grte.png" alt
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Se você está interessado em **carreira de hacking** e hackear o inhackeável - **estamos contratando!** (_fluência em polonês escrita e falada é necessária_).
 
@@ -106,25 +106,25 @@ Com um propósito semelhante ao DDexec, a técnica [**memdlopen**](https://githu
 
 ### O que é distroless
 
-Contêineres distroless contêm apenas os **componentes mínimos necessários para executar um aplicativo ou serviço específico**, como bibliotecas e dependências de tempo de execução, mas excluem componentes maiores como um gerenciador de pacotes, shell ou utilitários do sistema.
+Contêineres distroless contêm apenas os **componentes mínimos necessários para executar um aplicativo ou serviço específico**, como bibliotecas e dependências de tempo de execução, mas excluem componentes maiores como um gerenciador de pacotes, shell ou utilitários de sistema.
 
 O objetivo dos contêineres distroless é **reduzir a superfície de ataque dos contêineres eliminando componentes desnecessários** e minimizando o número de vulnerabilidades que podem ser exploradas.
 
-### Shell Reverso
+### Reverse Shell
 
 Em um contêiner distroless, você pode **não encontrar nem `sh` nem `bash`** para obter um shell regular. Você também não encontrará binários como `ls`, `whoami`, `id`... tudo que você normalmente executa em um sistema.
 
 {% hint style="warning" %}
-Portanto, você **não** poderá obter um **shell reverso** ou **enumerar** o sistema como costuma fazer.
+Portanto, você **não** poderá obter um **reverse shell** ou **enumerar** o sistema como costuma fazer.
 {% endhint %}
 
-No entanto, se o contêiner comprometido estiver executando, por exemplo, um flask web, então o python está instalado, e portanto você pode obter um **shell reverso Python**. Se estiver executando node, você pode obter um shell reverso Node, e o mesmo com praticamente qualquer **linguagem de script**.
+No entanto, se o contêiner comprometido estiver executando, por exemplo, um flask web, então o python está instalado, e portanto você pode obter um **Python reverse shell**. Se estiver executando node, você pode obter um shell reverso Node, e o mesmo com praticamente qualquer **linguagem de script**.
 
 {% hint style="success" %}
 Usando a linguagem de script, você poderia **enumerar o sistema** usando as capacidades da linguagem.
 {% endhint %}
 
-Se não houver proteções **`read-only/no-exec`**, você poderia abusar do seu shell reverso para **escrever no sistema de arquivos seus binários** e **executá-los**.
+Se não houver proteções **`read-only/no-exec`**, você poderia abusar do seu reverse shell para **escrever no sistema de arquivos seus binários** e **executá-los**.
 
 {% hint style="success" %}
 No entanto, neste tipo de contêiner, essas proteções geralmente existirão, mas você poderia usar as **técnicas de execução em memória anteriores para contorná-las**.
@@ -132,7 +132,7 @@ No entanto, neste tipo de contêiner, essas proteções geralmente existirão, m
 
 Você pode encontrar **exemplos** de como **explorar algumas vulnerabilidades RCE** para obter shells reversos de linguagens de script e executar binários da memória em [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Se você está interessado em uma **carreira em hacking** e hackear o inhackeável - **estamos contratando!** (_fluência em polonês escrita e falada é necessária_).
 
@@ -144,11 +144,11 @@ Aprenda e pratique Hacking GCP: <img src="../../../.gitbook/assets/grte.png" alt
 
 <details>
 
-<summary>Suporte ao HackTricks</summary>
+<summary>Support HackTricks</summary>
 
 * Confira os [**planos de assinatura**](https://github.com/sponsors/carlospolop)!
 * **Junte-se ao** 💬 [**grupo do Discord**](https://discord.gg/hRep4RUj7f) ou ao [**grupo do telegram**](https://t.me/peass) ou **siga**-nos no **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Compartilhe truques de hacking enviando PRs para o** [**HackTricks**](https://github.com/carlospolop/hacktricks) e [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repositórios do github.
+* **Compartilhe truques de hacking enviando PRs para os repositórios do** [**HackTricks**](https://github.com/carlospolop/hacktricks) e [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud).
 
 </details>
 {% endhint %}
