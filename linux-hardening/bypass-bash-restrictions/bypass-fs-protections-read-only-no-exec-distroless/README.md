@@ -15,7 +15,7 @@ Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 If you are interested in **hacking career** and hack the unhackable - **we are hiring!** (_fluent polish written and spoken required_).
 
@@ -55,7 +55,7 @@ Iz perspektive crvenog tima, ovo otežava **preuzimanje i izvršavanje** binarni
 
 Napomena da sam pomenuo binarne fajlove, možete **izvršiti bilo koji skript** sve dok je interpreter unutar mašine, kao što je **shell skript** ako je `sh` prisutan ili **python** **skript** ako je `python` instaliran.
 
-Međutim, ovo nije dovoljno samo za izvršavanje vašeg binarnog backdoor-a ili drugih binarnih alata koje možda trebate pokrenuti.
+Međutim, ovo nije dovoljno samo za izvršavanje vašeg binarnog backdoora ili drugih binarnih alata koje možda trebate pokrenuti.
 
 ## Memory Bypasses
 
@@ -63,12 +63,12 @@ Ako želite da izvršite binarni fajl, ali fajl sistem to ne dozvoljava, najbolj
 
 ### FD + exec syscall bypass
 
-Ako imate neke moćne skriptne engine unutar mašine, kao što su **Python**, **Perl**, ili **Ruby**, mogli biste preuzeti binarni fajl za izvršavanje iz memorije, sačuvati ga u memorijskom fajl deskriptoru (`create_memfd` syscall), koji neće biti zaštićen tim zaštitama i zatim pozvati **`exec` syscall** označavajući **fd kao fajl za izvršavanje**.
+Ako imate neke moćne skriptne engine unutar mašine, kao što su **Python**, **Perl**, ili **Ruby**, mogli biste preuzeti binarni fajl da ga izvršite iz memorije, sačuvati ga u memorijskom fajl deskriptoru (`create_memfd` syscall), koji neće biti zaštićen tim zaštitama, a zatim pozvati **`exec` syscall** označavajući **fd kao fajl za izvršavanje**.
 
-Za ovo možete lako koristiti projekat [**fileless-elf-exec**](https://github.com/nnsee/fileless-elf-exec). Možete mu proslediti binarni fajl i on će generisati skript u naznačenom jeziku sa **binarno kompresovanim i b64 kodiranim** instrukcijama za **dekodiranje i dekompresiju** u **fd** kreiranom pozivom `create_memfd` syscall i pozivom **exec** syscall za njegovo pokretanje.
+Za ovo možete lako koristiti projekat [**fileless-elf-exec**](https://github.com/nnsee/fileless-elf-exec). Možete mu proslediti binarni fajl i on će generisati skript u naznačenom jeziku sa **binarno kompresovanim i b64 kodiranim** instrukcijama za **dekodiranje i dekompresovanje** u **fd** kreiranjem poziva `create_memfd` syscall i pozivom na **exec** syscall da ga pokrene.
 
 {% hint style="warning" %}
-Ovo ne funkcioniše u drugim skriptim jezicima poput PHP ili Node jer nemaju nikakav d**efault način za pozivanje sirovih syscalls** iz skripte, tako da nije moguće pozvati `create_memfd` za kreiranje **memorijskog fd** za skladištenje binarnog fajla.
+Ovo ne funkcioniše u drugim skriptnim jezicima poput PHP-a ili Node-a jer nemaju nikakav d**efault način da pozovu sirove syscalls** iz skripte, tako da nije moguće pozvati `create_memfd` da kreira **memorijski fd** za čuvanje binarnog fajla.
 
 Štaviše, kreiranje **običnog fd** sa fajlom u `/dev/shm` neće raditi, jer nećete moći da ga pokrenete zbog primene **no-exec zaštite**.
 {% endhint %}
@@ -132,9 +132,9 @@ Međutim, u ovakvim kontejnerima ove zaštite obično postoje, ali mogli biste k
 
 Možete pronaći **primere** kako da **iskoristite neke RCE ranjivosti** da dobijete scripting jezike **reverz shell-ove** i izvršite binarne fajlove iz memorije na [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-Ako ste zainteresovani za **hakersku karijeru** i hakovanje nehakovanog - **zapošljavamo!** (_potrebno je tečno pisanje i govorenje poljskog_).
+Ako ste zainteresovani za **hacking karijeru** i hakovanje nehakovanog - **zapošljavamo!** (_potrebno je tečno pisanje i govorenje poljskog_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
@@ -148,7 +148,7 @@ Učite i vežbajte GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt
 
 * Proverite [**planove pretplate**](https://github.com/sponsors/carlospolop)!
 * **Pridružite se** 💬 [**Discord grupi**](https://discord.gg/hRep4RUj7f) ili [**telegram grupi**](https://t.me/peass) ili **pratite** nas na **Twitter-u** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Podelite hakerske trikove slanjem PR-ova na** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repozitorijume.
+* **Podelite hacking trikove slanjem PR-ova na** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repozitorijume.
 
 </details>
 {% endhint %}
