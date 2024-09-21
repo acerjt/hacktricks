@@ -1,8 +1,8 @@
 # macOS Hassas Konumlar & İlginç Daemonlar
 
 {% hint style="success" %}
-AWS Hacking öğrenin ve pratik yapın:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Eğitim AWS Kırmızı Ekip Uzmanı (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-GCP Hacking öğrenin ve pratik yapın: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Eğitim GCP Kırmızı Ekip Uzmanı (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+AWS Hacking'i öğrenin ve pratik yapın:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Eğitim AWS Kırmızı Takım Uzmanı (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+GCP Hacking'i öğrenin ve pratik yapın: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Eğitim GCP Kırmızı Takım Uzmanı (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -19,7 +19,7 @@ GCP Hacking öğrenin ve pratik yapın: <img src="/.gitbook/assets/grte.png" alt
 
 ### Gölge Şifreler
 
-Gölge şifre, **`/var/db/dslocal/nodes/Default/users/`** konumundaki plist'lerde kullanıcının yapılandırması ile birlikte saklanır.\
+Gölge şifre, **`/var/db/dslocal/nodes/Default/users/`** konumundaki plist'lerde kullanıcının yapılandırması ile saklanır.\
 Aşağıdaki tek satırlık komut, **kullanıcılar hakkında tüm bilgileri** (hash bilgileri dahil) dökmek için kullanılabilir:
 
 {% code overflow="wrap" %}
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
+Bir kullanıcının `ShadowHashData`sını elde etmenin bir diğer yolu `dscl` kullanmaktır: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
+
+### /etc/master.passwd
+
+Bu dosya **yalnızca** sistemin **tek kullanıcı modunda** çalıştığı zaman **kullanılır** (bu yüzden çok sık değil).
+
 ### Anahtar Zinciri Dökümü
 
-Güvenlik ikili dosyasını kullanarak **şifreleri çözülmüş olarak dökmek** istediğinizde, bu işlemi onaylamak için kullanıcıdan birkaç istem isteneceğini unutmayın.
+Şifrelerin şifresinin çözüldüğü **döküm** işlemi için güvenlik ikili dosyasını kullanırken, kullanıcıdan bu işlemi onaylaması için birkaç istem olacaktır.
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -63,7 +69,7 @@ Bu yorumdan [juuso/keychaindump#10 (comment)](https://github.com/juuso/keychaind
 ```bash
 sudo vmmap <securityd PID> | grep MALLOC_TINY
 ```
-Potansiyel anahtarları belirledikten sonra, **keychaindump** belirli bir deseni (`0x0000000000000018`) göstermek için yığınlar arasında arama yapar; bu, anahtar için bir aday olduğunu gösterir. Bu anahtarı kullanmak için deobfuscation gibi ek adımlar gereklidir; bu, **keychaindump**'ın kaynak kodunda belirtilmiştir. Bu alana odaklanan analistler, anahtar zincirini şifre çözmek için kritik verilerin **securityd** sürecinin belleğinde saklandığını unutmamalıdır. **keychaindump**'ı çalıştırmak için bir örnek komut:
+Potansiyel anahtarları belirledikten sonra, **keychaindump** belirli bir deseni (`0x0000000000000018`) göstermek için yığınlar arasında arama yapar; bu, anahtar için bir aday olduğunu gösterir. Bu anahtarı kullanmak için, **keychaindump**'ın kaynak kodunda belirtildiği gibi, deşifre etme gibi ek adımlar gereklidir. Bu alana odaklanan analistler, anahtar zincirini şifrelemek için gerekli verilerin **securityd** sürecinin belleğinde saklandığını unutmamalıdır. **keychaindump**'ı çalıştırmak için bir örnek komut:
 ```bash
 sudo ./keychaindump
 ```
@@ -71,7 +77,7 @@ sudo ./keychaindump
 
 [**Chainbreaker**](https://github.com/n0fate/chainbreaker) aşağıdaki türde bilgileri adli olarak sağlam bir şekilde OSX anahtar zincirinden çıkarmak için kullanılabilir:
 
-* Kırma için uygun olan Hashlenmiş Anahtar Zinciri şifresi [hashcat](https://hashcat.net/hashcat/) veya [John the Ripper](https://www.openwall.com/john/) ile
+* Kırma için uygun, hashlenmiş Anahtar Zinciri şifresi [hashcat](https://hashcat.net/hashcat/) veya [John the Ripper](https://www.openwall.com/john/) ile
 * İnternet Şifreleri
 * Genel Şifreler
 * Özel Anahtarlar
@@ -145,7 +151,7 @@ sqlite3 $HOME/Suggestions/snippets.db 'select * from emailSnippets'
 
 Bildirim verilerini `$(getconf DARWIN_USER_DIR)/com.apple.notificationcenter/` içinde bulabilirsiniz.
 
-İlginç bilgilerin çoğu **blob** içinde olacak. Bu nedenle, o içeriği **çıkar**manız ve **insan** **okunabilir** hale **dönüştürmeniz** veya **`strings`** kullanmanız gerekecek. Erişmek için şunu yapabilirsiniz: 
+İlginç bilgilerin çoğu **blob** içinde olacak. Bu nedenle, o içeriği **çıkar**manız ve **insan** **okunabilir** hale **dönüştürmeniz** veya **`strings`** kullanmanız gerekecek. Erişmek için şunu yapabilirsiniz:
 
 {% code overflow="wrap" %}
 ```bash
@@ -169,21 +175,57 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 
 ## Tercihler
 
-macOS uygulamalarında tercihler **`$HOME/Library/Preferences`** içinde bulunur ve iOS'ta ise `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences` içindedir.&#x20;
+macOS uygulamalarında tercihler **`$HOME/Library/Preferences`** içinde bulunur ve iOS'ta `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences` içindedir.
 
-macOS'ta **`defaults`** komut satırı aracı **Tercih dosyasını değiştirmek için** kullanılabilir.
+macOS'ta cli aracı **`defaults`** **Tercih dosyasını değiştirmek** için kullanılabilir.
 
-**`/usr/sbin/cfprefsd`** XPC hizmetleri `com.apple.cfprefsd.daemon` ve `com.apple.cfprefsd.agent`'ı talep eder ve tercihler gibi işlemleri gerçekleştirmek için çağrılabilir.
+**`/usr/sbin/cfprefsd`** XPC hizmetlerini `com.apple.cfprefsd.daemon` ve `com.apple.cfprefsd.agent` talep eder ve tercihler gibi işlemleri gerçekleştirmek için çağrılabilir.
 
+## OpenDirectory permissions.plist
+
+`/System/Library/OpenDirectory/permissions.plist` dosyası düğüm niteliklerine uygulanan izinleri içerir ve SIP tarafından korunur.\
+Bu dosya, belirli kullanıcıların UUID (ve uid değil) ile belirli hassas bilgilere, örneğin `ShadowHashData`, `HeimdalSRPKey` ve `KerberosKeys` gibi bilgilere erişim izni verir:
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
 ## Sistem Bildirimleri
 
 ### Darwin Bildirimleri
 
 Bildirimler için ana daemon **`/usr/sbin/notifyd`**'dir. Bildirim almak için, istemcilerin `com.apple.system.notification_center` Mach portu üzerinden kaydolması gerekir (bunları `sudo lsmp -p <pid notifyd>` ile kontrol edin). Daemon, `/etc/notify.conf` dosyası ile yapılandırılabilir.
 
-Bildirimler için kullanılan isimler benzersiz ters DNS notasyonlarıdır ve bir bildirim bunlardan birine gönderildiğinde, bunu işleyebileceğini belirten istemci(ler) alır.
+Bildirimler için kullanılan adlar, benzersiz ters DNS notasyonlarıdır ve bir bildirim bunlardan birine gönderildiğinde, bunu işleyebileceğini belirten istemci(ler) alır.
 
-Mevcut durumu dökümlemek (ve tüm isimleri görmek) için notifyd sürecine SIGUSR2 sinyali göndererek ve oluşturulan dosyayı okuyarak mümkündür: `/var/run/notifyd_<pid>.status`:
+Mevcut durumu döküp (ve tüm adları görmek) için notifyd sürecine SIGUSR2 sinyali göndererek oluşturulan dosyayı okuyabilirsiniz: `/var/run/notifyd_<pid>.status`:
 ```bash
 ps -ef | grep -i notifyd
 0   376     1   0 15Mar24 ??        27:40.97 /usr/sbin/notifyd
@@ -227,8 +269,8 @@ Bu, kullanıcının ekranda görmesi gereken bildirimlerdir:
 * **`NSUserNotificationCenter`**: Bu, MacOS'taki iOS bülten panosudur. Bildirimlerin bulunduğu veritabanı `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db` konumundadır.
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
