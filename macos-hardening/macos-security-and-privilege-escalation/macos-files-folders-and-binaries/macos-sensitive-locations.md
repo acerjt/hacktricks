@@ -1,8 +1,8 @@
 # macOS संवेदनशील स्थान और दिलचस्प डेमन
 
 {% hint style="success" %}
-सीखें और AWS हैकिंग का अभ्यास करें:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-सीखें और GCP हैकिंग का अभ्यास करें: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+सीखें और AWS हैकिंग का अभ्यास करें:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+सीखें और GCP हैकिंग का अभ्यास करें: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -20,7 +20,7 @@
 ### शैडो पासवर्ड
 
 शैडो पासवर्ड उपयोगकर्ता की कॉन्फ़िगरेशन के साथ **`/var/db/dslocal/nodes/Default/users/`** में स्थित plist में संग्रहीत होता है।\
-निम्नलिखित एकल पंक्ति का उपयोग **उपयोगकर्ताओं के बारे में सभी जानकारी** (हैश जानकारी सहित) को डंप करने के लिए किया जा सकता है:
+उपयोगकर्ताओं के बारे में **सभी जानकारी** (हैश जानकारी सहित) निकालने के लिए निम्नलिखित एकल पंक्ति का उपयोग किया जा सकता है:
 
 {% code overflow="wrap" %}
 ```bash
@@ -28,9 +28,9 @@ for l in /var/db/dslocal/nodes/Default/users/*; do if [ -r "$l" ];then echo "$l"
 ```
 {% endcode %}
 
-[**इस तरह के स्क्रिप्ट**](https://gist.github.com/teddziuba/3ff08bdda120d1f7822f3baf52e606c2) या [**यह वाला**](https://github.com/octomagon/davegrohl.git) हैश को **hashcat** **फॉर्मेट** में बदलने के लिए उपयोग किया जा सकता है।
+[**इस तरह के स्क्रिप्ट**](https://gist.github.com/teddziuba/3ff08bdda120d1f7822f3baf52e606c2) या [**यह स्क्रिप्ट**](https://github.com/octomagon/davegrohl.git) हैश को **hashcat** **फॉर्मेट** में बदलने के लिए उपयोग किया जा सकता है।
 
-एक वैकल्पिक वन-लाइनर जो hashcat फॉर्मेट `-m 7100` (macOS PBKDF2-SHA512) में सभी गैर-सेवा खातों के क्रेडेंशियल्स को डंप करेगा:
+एक वैकल्पिक वन-लाइनर जो सभी गैर-सेवा खातों के क्रेडेंशियल्स को हैशकैट फॉर्मेट `-m 7100` (macOS PBKDF2-SHA512) में डंप करेगा: 
 
 {% code overflow="wrap" %}
 ```bash
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
+एक और तरीका है `ShadowHashData` प्राप्त करने का, जो उपयोगकर्ता का है, `dscl` का उपयोग करके: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
+
+### /etc/master.passwd
+
+यह फ़ाइल **केवल उपयोग की जाती है** जब सिस्टम **सिंगल-यूज़र मोड** में चल रहा हो (इसलिए बहुत बार नहीं)।
+
 ### Keychain Dump
 
-ध्यान दें कि सुरक्षा बाइनरी का उपयोग करके **डिक्रिप्ट किए गए पासवर्ड को डंप करने** पर, कई प्रॉम्प्ट उपयोगकर्ता से इस ऑपरेशन की अनुमति देने के लिए पूछेंगे।
+ध्यान दें कि जब सुरक्षा बाइनरी का उपयोग करके **डिक्रिप्ट किए गए पासवर्ड्स को डंप** किया जाता है, तो कई प्रॉम्प्ट उपयोगकर्ता से इस ऑपरेशन की अनुमति देने के लिए पूछेंगे।
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -167,19 +173,55 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 
 ## Preferences
 
-macOS ऐप्स की प्राथमिकताएँ **`$HOME/Library/Preferences`** में स्थित होती हैं और iOS में ये `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences` में होती हैं।&#x20;
+macOS ऐप्स की प्राथमिकताएँ **`$HOME/Library/Preferences`** में स्थित होती हैं और iOS में ये `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences` में होती हैं।
 
 macOS में CLI टूल **`defaults`** का उपयोग **प्राथमिकताएँ फ़ाइल को संशोधित करने** के लिए किया जा सकता है।
 
-**`/usr/sbin/cfprefsd`** XPC सेवाओं `com.apple.cfprefsd.daemon` और `com.apple.cfprefsd.agent` का दावा करता है और प्राथमिकताओं को संशोधित करने जैसी क्रियाएँ करने के लिए इसे कॉल किया जा सकता है।
+**`/usr/sbin/cfprefsd`** XPC सेवाओं `com.apple.cfprefsd.daemon` और `com.apple.cfprefsd.agent` का दावा करता है और प्राथमिकताओं को संशोधित करने जैसी क्रियाएँ करने के लिए इसे बुलाया जा सकता है।
 
-## System Notifications
+## OpenDirectory permissions.plist
 
-### Darwin Notifications
+फ़ाइल `/System/Library/OpenDirectory/permissions.plist` नोड विशेषताओं पर लागू की गई अनुमतियों को शामिल करती है और इसे SIP द्वारा सुरक्षित किया गया है।\
+यह फ़ाइल UUID द्वारा विशिष्ट उपयोगकर्ताओं को अनुमतियाँ प्रदान करती है (और uid द्वारा नहीं) ताकि वे `ShadowHashData`, `HeimdalSRPKey` और `KerberosKeys` जैसी विशिष्ट संवेदनशील जानकारी तक पहुँच सकें:
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
+## सिस्टम सूचनाएँ
 
-सूचनाओं के लिए मुख्य डेमन **`/usr/sbin/notifyd`** है। सूचनाएँ प्राप्त करने के लिए, क्लाइंट को `com.apple.system.notification_center` Mach पोर्ट के माध्यम से पंजीकरण कराना होगा (इन्हें `sudo lsmp -p <pid notifyd>` के साथ जांचें)। डेमन को फ़ाइल `/etc/notify.conf` के साथ कॉन्फ़िगर किया जा सकता है।
+### डार्विन सूचनाएँ
 
-सूचनाओं के लिए उपयोग किए जाने वाले नाम अद्वितीय रिवर्स DNS नोटेशन हैं और जब इनमें से किसी को सूचना भेजी जाती है, तो वे क्लाइंट जो इसे संभालने के लिए संकेतित करते हैं, इसे प्राप्त करेंगे।
+सूचनाओं के लिए मुख्य डेमन **`/usr/sbin/notifyd`** है। सूचनाएँ प्राप्त करने के लिए, क्लाइंट को `com.apple.system.notification_center` मच पोर्ट के माध्यम से पंजीकरण कराना होगा (इन्हें `sudo lsmp -p <pid notifyd>` के साथ जांचें)। डेमन को फ़ाइल `/etc/notify.conf` के साथ कॉन्फ़िगर किया जा सकता है।
+
+सूचनाओं के लिए उपयोग किए जाने वाले नाम अद्वितीय रिवर्स DNS नोटेशन हैं और जब इनमें से किसी को सूचना भेजी जाती है, तो वे क्लाइंट जो इसे संभालने के लिए संकेतित हैं, इसे प्राप्त करेंगे।
 
 वर्तमान स्थिति को डंप करना संभव है (और सभी नामों को देखना) notifyd प्रक्रिया को SIGUSR2 सिग्नल भेजकर और उत्पन्न फ़ाइल को पढ़कर: `/var/run/notifyd_<pid>.status`:
 ```bash
@@ -203,8 +245,8 @@ common: com.apple.security.octagon.joined-with-bottle
 
 ### Apple Push Notifications (APN)
 
-इस मामले में, अनुप्रयोग **topics** के लिए पंजीकरण कर सकते हैं। क्लाइंट **`apsd`** के माध्यम से Apple के सर्वरों से संपर्क करके एक टोकन उत्पन्न करेगा।\
-फिर, प्रदाता भी एक टोकन उत्पन्न करेंगे और Apple के सर्वरों से जुड़कर क्लाइंट्स को संदेश भेज सकेंगे। ये संदेश स्थानीय रूप से **`apsd`** द्वारा प्राप्त किए जाएंगे जो इसे प्रतीक्षा कर रहे अनुप्रयोग को सूचना भेजेगा।
+इस मामले में, एप्लिकेशन **topics** के लिए पंजीकरण कर सकते हैं। क्लाइंट **`apsd`** के माध्यम से Apple के सर्वरों से संपर्क करके एक टोकन उत्पन्न करेगा।\
+फिर, प्रदाता भी एक टोकन उत्पन्न करेंगे और Apple के सर्वरों से जुड़कर क्लाइंट्स को संदेश भेज सकेंगे। ये संदेश स्थानीय रूप से **`apsd`** द्वारा प्राप्त किए जाएंगे जो इसे प्रतीक्षा कर रहे एप्लिकेशन को सूचना भेजेगा।
 
 प्राथमिकताएँ `/Library/Preferences/com.apple.apsd.plist` में स्थित हैं।
 
@@ -225,8 +267,8 @@ sudo sqlite3 /Library/Application\ Support/ApplePushService/aps.db
 * **`NSUserNotificationCenter`**: यह MacOS में iOS का बुलेटिन बोर्ड है। सूचनाओं के साथ डेटाबेस `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db` में स्थित है।
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
