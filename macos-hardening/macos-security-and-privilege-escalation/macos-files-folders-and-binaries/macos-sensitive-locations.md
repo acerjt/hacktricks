@@ -1,16 +1,16 @@
-# macOS Sensitive Locations & Interesting Daemons
+# macOS Wrażliwe Lokalizacje i Interesujące Demony
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Ucz się i ćwicz Hacking AWS:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Ucz się i ćwicz Hacking GCP: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
-<summary>Support HackTricks</summary>
+<summary>Wsparcie dla HackTricks</summary>
 
-* Check the [**subscription plans**](https://github.com/sponsors/carlospolop)!
-* **Join the** 💬 [**Discord group**](https://discord.gg/hRep4RUj7f) or the [**telegram group**](https://t.me/peass) or **follow** us on **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Share hacking tricks by submitting PRs to the** [**HackTricks**](https://github.com/carlospolop/hacktricks) and [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
+* Sprawdź [**plany subskrypcyjne**](https://github.com/sponsors/carlospolop)!
+* **Dołącz do** 💬 [**grupy Discord**](https://discord.gg/hRep4RUj7f) lub [**grupy telegramowej**](https://t.me/peass) lub **śledź** nas na **Twitterze** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Dziel się trikami hackingowymi, przesyłając PR-y do** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repozytoriów github.
 
 </details>
 {% endhint %}
@@ -20,7 +20,7 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 ### Hasła Shadow
 
 Hasło shadow jest przechowywane z konfiguracją użytkownika w plikach plist znajdujących się w **`/var/db/dslocal/nodes/Default/users/`**.\
-Poniższy jednowierszowiec można użyć do zrzutu **wszystkich informacji o użytkownikach** (w tym informacji o haszach):
+Poniższy jednowierszowiec może być użyty do zrzutu **wszystkich informacji o użytkownikach** (w tym informacji o haszach):
 
 {% code overflow="wrap" %}
 ```bash
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
+Innym sposobem na uzyskanie `ShadowHashData` użytkownika jest użycie `dscl`: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
+
+### /etc/master.passwd
+
+Ten plik jest **używany tylko** wtedy, gdy system działa w **trybie pojedynczego użytkownika** (więc nie bardzo często).
+
 ### Zrzut Keychain
 
-Należy zauważyć, że podczas używania binarnego narzędzia security do **zrzutu odszyfrowanych haseł**, użytkownik zostanie poproszony o zezwolenie na tę operację.
+Należy zauważyć, że podczas używania binarnego pliku security do **zrzutu odszyfrowanych haseł**, kilka komunikatów poprosi użytkownika o zezwolenie na tę operację.
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -52,14 +58,14 @@ security dump-keychain -d #Dump all the info, included secrets (the user will be
 ### [Keychaindump](https://github.com/juuso/keychaindump)
 
 {% hint style="danger" %}
-Na podstawie tego komentarza [juuso/keychaindump#10 (komentarz)](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760) wygląda na to, że te narzędzia nie działają już w Big Sur.
+Na podstawie tego komentarza [juuso/keychaindump#10 (komentarz)](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760) wygląda na to, że te narzędzia już nie działają w Big Sur.
 {% endhint %}
 
 ### Przegląd Keychaindump
 
-Narzędzie o nazwie **keychaindump** zostało opracowane w celu wydobywania haseł z pęków kluczy macOS, ale napotyka ograniczenia w nowszych wersjach macOS, takich jak Big Sur, co wskazano w [dyskusji](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760). Użycie **keychaindump** wymaga, aby atakujący uzyskał dostęp i podniósł uprawnienia do **root**. Narzędzie wykorzystuje fakt, że pęk kluczy jest domyślnie odblokowany po zalogowaniu użytkownika dla wygody, co pozwala aplikacjom na dostęp do niego bez konieczności wielokrotnego wprowadzania hasła użytkownika. Jednak jeśli użytkownik zdecyduje się zablokować swój pęk kluczy po każdym użyciu, **keychaindump** staje się nieskuteczny.
+Narzędzie o nazwie **keychaindump** zostało opracowane w celu wydobywania haseł z pęków kluczy macOS, ale napotyka ograniczenia w nowszych wersjach macOS, takich jak Big Sur, co zostało wskazane w [dyskusji](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760). Użycie **keychaindump** wymaga, aby atakujący uzyskał dostęp i podniósł uprawnienia do **root**. Narzędzie wykorzystuje fakt, że pęk kluczy jest domyślnie odblokowany po zalogowaniu użytkownika dla wygody, co pozwala aplikacjom na dostęp do niego bez konieczności wielokrotnego wprowadzania hasła użytkownika. Jednak jeśli użytkownik zdecyduje się zablokować swój pęk kluczy po każdym użyciu, **keychaindump** staje się nieskuteczny.
 
-**Keychaindump** działa, celując w konkretny proces zwany **securityd**, opisany przez Apple jako demon do autoryzacji i operacji kryptograficznych, kluczowy do uzyskania dostępu do pęku kluczy. Proces wydobywania polega na zidentyfikowaniu **Master Key** pochodzącego z hasła logowania użytkownika. Klucz ten jest niezbędny do odczytu pliku pęku kluczy. Aby zlokalizować **Master Key**, **keychaindump** skanuje stertę pamięci **securityd** za pomocą polecenia `vmmap`, szukając potencjalnych kluczy w obszarach oznaczonych jako `MALLOC_TINY`. Następujące polecenie jest używane do inspekcji tych lokalizacji pamięci:
+**Keychaindump** działa, celując w konkretny proces zwany **securityd**, opisany przez Apple jako demon do autoryzacji i operacji kryptograficznych, kluczowy do uzyskania dostępu do pęku kluczy. Proces wydobywania polega na zidentyfikowaniu **Master Key** pochodzącego z hasła logowania użytkownika. Klucz ten jest niezbędny do odczytu pliku pęku kluczy. Aby zlokalizować **Master Key**, **keychaindump** skanuje stos pamięci **securityd** za pomocą polecenia `vmmap`, szukając potencjalnych kluczy w obszarach oznaczonych jako `MALLOC_TINY`. Następujące polecenie jest używane do inspekcji tych lokalizacji pamięci:
 ```bash
 sudo vmmap <securityd PID> | grep MALLOC_TINY
 ```
@@ -97,7 +103,7 @@ hexdump -s 8 -n 24 -e '1/1 "%.2x"' /var/db/SystemKey && echo
 ## Use the previous key to decrypt the passwords
 python2.7 chainbreaker.py --dump-all --key 0293847570022761234562947e0bcd5bc04d196ad2345697 /Library/Keychains/System.keychain
 ```
-#### **Zrzut kluczy z pęku kluczy (z hasłami) łamanie hasha**
+#### **Zrzut kluczy z pęku (z hasłami) łamanie hasha**
 ```bash
 # Get the keychain hash
 python2.7 chainbreaker.py --dump-keychain-password-hash /Library/Keychains/System.keychain
@@ -145,7 +151,7 @@ sqlite3 $HOME/Suggestions/snippets.db 'select * from emailSnippets'
 
 Możesz znaleźć dane Powiadomień w `$(getconf DARWIN_USER_DIR)/com.apple.notificationcenter/`
 
-Większość interesujących informacji będzie w **blob**. Więc będziesz musiał **wyodrębnić** tę zawartość i **przekształcić** ją na **czytelną** **dla ludzi** lub użyć **`strings`**. Aby uzyskać do niej dostęp, możesz to zrobić: 
+Większość interesujących informacji będzie w **blob**. Musisz więc **wyodrębnić** tę zawartość i **przekształcić** ją na **czytelną** **dla ludzi** lub użyć **`strings`**. Aby uzyskać do niej dostęp, możesz to zrobić: 
 
 {% code overflow="wrap" %}
 ```bash
@@ -169,21 +175,57 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 
 ## Preferencje
 
-W aplikacjach macOS preferencje znajdują się w **`$HOME/Library/Preferences`**, a w iOS są w `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.&#x20;
+W aplikacjach macOS preferencje znajdują się w **`$HOME/Library/Preferences`**, a w iOS są w `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.
 
 W macOS narzędzie cli **`defaults`** może być używane do **modyfikacji pliku preferencji**.
 
 **`/usr/sbin/cfprefsd`** obsługuje usługi XPC `com.apple.cfprefsd.daemon` i `com.apple.cfprefsd.agent` i może być wywoływane w celu wykonania działań, takich jak modyfikacja preferencji.
 
+## OpenDirectory permissions.plist
+
+Plik `/System/Library/OpenDirectory/permissions.plist` zawiera uprawnienia stosowane do atrybutów węzła i jest chroniony przez SIP.\
+Ten plik przyznaje uprawnienia określonym użytkownikom na podstawie UUID (a nie uid), aby mogli uzyskać dostęp do określonych wrażliwych informacji, takich jak `ShadowHashData`, `HeimdalSRPKey` i `KerberosKeys`, między innymi:
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
 ## Powiadomienia systemowe
 
 ### Powiadomienia Darwin
 
 Głównym demonem do powiadomień jest **`/usr/sbin/notifyd`**. Aby otrzymywać powiadomienia, klienci muszą zarejestrować się przez port Mach `com.apple.system.notification_center` (sprawdź je za pomocą `sudo lsmp -p <pid notifyd>`). Demon jest konfigurowalny za pomocą pliku `/etc/notify.conf`.
 
-Nazwy używane do powiadomień są unikalnymi notacjami DNS w odwrotnej kolejności, a gdy powiadomienie jest wysyłane do jednej z nich, klient(y), które wskazały, że mogą je obsłużyć, otrzymają je.
+Nazwy używane do powiadomień są unikalnymi notacjami DNS w odwrotnej kolejności, a gdy powiadomienie jest wysyłane do jednej z nich, klient(i), którzy wskazali, że mogą je obsłużyć, otrzymają je.
 
-Możliwe jest zrzucenie bieżącego statusu (i zobaczenie wszystkich nazw) wysyłając sygnał SIGUSR2 do procesu notifyd i odczytując wygenerowany plik: `/var/run/notifyd_<pid>.status`:
+Możliwe jest zrzucenie bieżącego stanu (i zobaczenie wszystkich nazw) wysyłając sygnał SIGUSR2 do procesu notifyd i odczytując wygenerowany plik: `/var/run/notifyd_<pid>.status`:
 ```bash
 ps -ef | grep -i notifyd
 0   376     1   0 15Mar24 ??        27:40.97 /usr/sbin/notifyd
@@ -227,8 +269,8 @@ To są powiadomienia, które użytkownik powinien zobaczyć na ekranie:
 * **`NSUserNotificationCenter`**: To jest tablica ogłoszeń iOS w MacOS. Baza danych z powiadomieniami znajduje się w `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
