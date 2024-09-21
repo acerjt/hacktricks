@@ -1,22 +1,21 @@
-# macOS Users
+# macOS ユーザーと外部アカウント
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+AWS ハッキングを学び、実践する：<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+GCP ハッキングを学び、実践する：<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
-<summary>Support HackTricks</summary>
+<summary>HackTricksをサポートする</summary>
 
-* Check the [**subscription plans**](https://github.com/sponsors/carlospolop)!
-* **Join the** 💬 [**Discord group**](https://discord.gg/hRep4RUj7f) or the [**telegram group**](https://t.me/peass) or **follow** us on **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Share hacking tricks by submitting PRs to the** [**HackTricks**](https://github.com/carlospolop/hacktricks) and [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
+* [**サブスクリプションプラン**](https://github.com/sponsors/carlospolop)を確認してください！
+* **💬 [**Discordグループ**](https://discord.gg/hRep4RUj7f)または[**Telegramグループ**](https://t.me/peass)に参加するか、**Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**をフォローしてください。**
+* **ハッキングのトリックを共有するには、[**HackTricks**](https://github.com/carlospolop/hacktricks)および[**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud)のGitHubリポジトリにPRを提出してください。**
 
 </details>
 {% endhint %}
 
-
-### Common Users
+## 一般ユーザー
 
 *   **Daemon**: システムデーモン用に予約されたユーザー。デフォルトのデーモンアカウント名は通常「\_」で始まります：
 
@@ -33,16 +32,21 @@ for i in "${state[@]}"; do sysadminctl -"${i}" status; done;
 * **誰も**: 最小限の権限が必要なときにこのユーザーでプロセスが実行されます
 * **ルート**
 
-### ユーザー権限
+## ユーザー権限
 
-* **標準ユーザー:** 最も基本的なユーザー。このユーザーは、ソフトウェアをインストールしたり、他の高度なタスクを実行しようとする際に、管理者ユーザーからの権限が必要です。自分自身ではそれを行うことができません。
-* **管理者ユーザー**: 大部分の時間を標準ユーザーとして操作しますが、ソフトウェアのインストールやその他の管理タスクなどのルートアクションを実行することも許可されています。管理者グループに属するすべてのユーザーは**sudoersファイルを介してルートにアクセスが与えられます**。
+* **標準ユーザー:** 最も基本的なユーザー。このユーザーは、ソフトウェアをインストールしたり、他の高度なタスクを実行しようとする際に、管理者ユーザーからの権限が必要です。彼らは自分自身でそれを行うことはできません。
+* **管理者ユーザー**: ほとんどの時間を標準ユーザーとして操作しますが、ソフトウェアのインストールやその他の管理タスクなどのルートアクションを実行することも許可されています。管理者グループに属するすべてのユーザーは、**sudoersファイルを介してルートにアクセスが与えられます**。
 * **ルート**: ルートはほぼすべてのアクションを実行することが許可されているユーザーです（System Integrity Protectionのような保護によって制限があります）。
 * 例えば、ルートは`/System`内にファイルを置くことはできません。
 
+## 外部アカウント
+
+MacOSは、FaceBookやGoogleなどの外部アイデンティティプロバイダーを介してログインすることもサポートしています。この作業を行う主なデーモンは`accountsd`（`/System/Library/Frameworks/Accounts.framework//Versions/A/Support/accountsd`）であり、外部認証に使用されるプラグインは`/System/Library/Accounts/Authentication/`フォルダー内にあります。\
+さらに、`accountsd`は`/Library/Preferences/SystemConfiguration/com.apple.accounts.exists.plist`からアカウントタイプのリストを取得します。
+
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 

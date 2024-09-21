@@ -1,16 +1,16 @@
-# macOSの敏感な場所と興味深いデーモン
+# macOS Sensitive Locations & Interesting Daemons
 
 {% hint style="success" %}
-AWSハッキングを学び、実践する：<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-GCPハッキングを学び、実践する：<img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
-<summary>HackTricksをサポートする</summary>
+<summary>Support HackTricks</summary>
 
-* [**サブスクリプションプラン**](https://github.com/sponsors/carlospolop)を確認してください！
-* **💬 [**Discordグループ**](https://discord.gg/hRep4RUj7f)または[**Telegramグループ**](https://t.me/peass)に参加するか、**Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**をフォローしてください。**
-* **ハッキングのトリックを共有するには、[**HackTricks**](https://github.com/carlospolop/hacktricks)と[**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud)のGitHubリポジトリにPRを提出してください。**
+* Check the [**subscription plans**](https://github.com/sponsors/carlospolop)!
+* **Join the** 💬 [**Discord group**](https://discord.gg/hRep4RUj7f) or the [**telegram group**](https://t.me/peass) or **follow** us on **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Share hacking tricks by submitting PRs to the** [**HackTricks**](https://github.com/carlospolop/hacktricks) and [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
 
 </details>
 {% endhint %}
@@ -20,7 +20,7 @@ GCPハッキングを学び、実践する：<img src="/.gitbook/assets/grte.png
 ### シャドウパスワード
 
 シャドウパスワードは、**`/var/db/dslocal/nodes/Default/users/`**にあるplistにユーザーの設定と共に保存されます。\
-次のワンライナーを使用して、**ユーザーに関するすべての情報**（ハッシュ情報を含む）をダンプできます：
+次のワンライナーを使用して**ユーザーに関するすべての情報**（ハッシュ情報を含む）をダンプできます：
 
 {% code overflow="wrap" %}
 ```bash
@@ -30,7 +30,7 @@ for l in /var/db/dslocal/nodes/Default/users/*; do if [ -r "$l" ];then echo "$l"
 
 [**このようなスクリプト**](https://gist.github.com/teddziuba/3ff08bdda120d1f7822f3baf52e606c2) または [**こちらのスクリプト**](https://github.com/octomagon/davegrohl.git) は、ハッシュを **hashcat** **フォーマット** に変換するために使用できます。
 
-非サービスアカウントのすべてのクレデンシャルをハッシュキャットフォーマット `-m 7100` (macOS PBKDF2-SHA512) でダンプする代替のワンライナー: 
+非サービスアカウントのすべてのクレデンシャルをハッシュキャットフォーマット `-m 7100` (macOS PBKDF2-SHA512) でダンプする代替のワンライナー： 
 
 {% code overflow="wrap" %}
 ```bash
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
+ユーザーの `ShadowHashData` を取得する別の方法は、`dscl` を使用することです: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
+
+### /etc/master.passwd
+
+このファイルは **単一ユーザーモード** でシステムが実行されているときに **のみ使用されます**（したがって、あまり頻繁ではありません）。
+
 ### キーチェーンダンプ
 
-セキュリティバイナリを使用して**復号化されたパスワードをダンプ**する際、いくつかのプロンプトが表示され、ユーザーにこの操作を許可するよう求められます。
+セキュリティバイナリを使用して **復号化されたパスワードをダンプ** する際、いくつかのプロンプトがユーザーにこの操作を許可するように求めます。
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -55,23 +61,23 @@ security dump-keychain -d #Dump all the info, included secrets (the user will be
 このコメントに基づくと [juuso/keychaindump#10 (comment)](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760)、これらのツールはBig Surではもう機能していないようです。
 {% endhint %}
 
-### Keychaindump 概要
+### Keychaindumpの概要
 
 **keychaindump**というツールは、macOSのキーチェーンからパスワードを抽出するために開発されましたが、Big Surのような新しいmacOSバージョンでは制限があります。**keychaindump**の使用には、攻撃者がアクセスを得て**root**権限を昇格させる必要があります。このツールは、ユーザーのログイン時にキーチェーンがデフォルトでロック解除されるという事実を利用しており、アプリケーションがユーザーのパスワードを繰り返し要求することなくアクセスできるようにしています。しかし、ユーザーが使用後にキーチェーンをロックすることを選択した場合、**keychaindump**は無効になります。
 
-**Keychaindump**は、Appleによって認可および暗号操作のためのデーモンとして説明されている特定のプロセス**securityd**をターゲットにして動作します。抽出プロセスは、ユーザーのログインパスワードから派生した**マスターキー**を特定することを含みます。このキーはキーチェーンファイルを読み取るために不可欠です。**マスターキー**を見つけるために、**keychaindump**は`vmmap`コマンドを使用して**securityd**のメモリヒープをスキャンし、`MALLOC_TINY`としてフラグ付けされた領域内の潜在的なキーを探します。これらのメモリ位置を検査するために使用されるコマンドは次のとおりです：
+**Keychaindump**は、Appleによって認証および暗号操作のためのデーモンとして説明されている特定のプロセス**securityd**をターゲットにして動作します。抽出プロセスは、ユーザーのログインパスワードから派生した**マスターキー**を特定することを含みます。このキーは、キーチェーンファイルを読み取るために不可欠です。**マスターキー**を見つけるために、**keychaindump**は`vmmap`コマンドを使用して**securityd**のメモリヒープをスキャンし、`MALLOC_TINY`としてフラグ付けされた領域内の潜在的なキーを探します。これらのメモリ位置を検査するために使用されるコマンドは次のとおりです：
 ```bash
 sudo vmmap <securityd PID> | grep MALLOC_TINY
 ```
-潜在的なマスターキーを特定した後、**keychaindump**は特定のパターン（`0x0000000000000018`）を示すヒープを検索し、マスターキーの候補を特定します。このキーを利用するには、**keychaindump**のソースコードに記載されているように、さらなる手順としてデオブフスケーションが必要です。この分野に焦点を当てるアナリストは、キーを復号化するための重要なデータが**securityd**プロセスのメモリ内に保存されていることに注意する必要があります。**keychaindump**を実行するためのコマンドの例は次のとおりです：
+潜在的なマスターキーを特定した後、**keychaindump**は特定のパターン（`0x0000000000000018`）を示すヒープを検索し、マスターキーの候補を特定します。このキーを利用するためには、**keychaindump**のソースコードに記載されているように、さらなる手順としてデオブフスケーションが必要です。この分野に焦点を当てるアナリストは、キーを復号化するための重要なデータが**securityd**プロセスのメモリ内に保存されていることに注意する必要があります。**keychaindump**を実行するためのコマンドの例は次のとおりです：
 ```bash
 sudo ./keychaindump
 ```
 ### chainbreaker
 
-[**Chainbreaker**](https://github.com/n0fate/chainbreaker) は、法的に正当な方法でOSXキーチェーンから以下の種類の情報を抽出するために使用できます：
+[**Chainbreaker**](https://github.com/n0fate/chainbreaker) は、法的に正当な方法でOSXキーチェーンから以下の情報を抽出するために使用できます：
 
-* ハッシュ化されたキーチェーンパスワード、[hashcat](https://hashcat.net/hashcat/) または [John the Ripper](https://www.openwall.com/john/) でのクラッキングに適しています
+* ハッシュ化されたキーチェーンパスワード、[hashcat](https://hashcat.net/hashcat/) または [John the Ripper](https://www.openwall.com/john/) でのクラックに適しています
 * インターネットパスワード
 * 一般的なパスワード
 * プライベートキー
@@ -82,7 +88,7 @@ sudo ./keychaindump
 
 キーチェーンのアンロックパスワード、[volafox](https://github.com/n0fate/volafox) または [volatility](https://github.com/volatilityfoundation/volatility) を使用して取得したマスターキー、またはSystemKeyのようなアンロックファイルがある場合、Chainbreakerはプレーンテキストパスワードも提供します。
 
-これらのいずれかの方法でキーチェーンをアンロックできない場合、Chainbreakerは他のすべての利用可能な情報を表示します。
+これらのキーチェーンをアンロックする方法のいずれかがない場合、Chainbreakerは他のすべての利用可能な情報を表示します。
 
 #### **Dump keychain keys**
 ```bash
@@ -128,7 +134,7 @@ python2.7 chainbreaker.py --dump-all --password-prompt /Users/<username>/Library
 
 **kcpassword**ファイルは、**ユーザーのログインパスワード**を保持するファイルですが、システム所有者が**自動ログイン**を**有効にしている**場合のみです。したがって、ユーザーはパスワードを求められることなく自動的にログインされます（これはあまり安全ではありません）。
 
-パスワードは、ファイル**`/etc/kcpassword`**に**`0x7D 0x89 0x52 0x23 0xD2 0xBC 0xDD 0xEA 0xA3 0xB9 0x1F`**というキーでXORされて保存されています。ユーザーのパスワードがキーより長い場合、キーは再利用されます。\
+パスワードは、ファイル**`/etc/kcpassword`**に**`0x7D 0x89 0x52 0x23 0xD2 0xBC 0xDD 0xEA 0xA3 0xB9 0x1F`**というキーでXORされて保存されています。ユーザーのパスワードがキーよりも長い場合、キーは再利用されます。\
 これにより、パスワードは比較的簡単に復元できます。たとえば、[**このスクリプト**](https://gist.github.com/opshope/32f65875d45215c3677d)を使用することができます。
 
 ## データベース内の興味深い情報
@@ -169,19 +175,55 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 
 ## Preferences
 
-macOSアプリの設定は**`$HOME/Library/Preferences`**にあり、iOSでは`/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`にあります。&#x20;
+macOSアプリの設定は**`$HOME/Library/Preferences`**にあり、iOSでは`/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`にあります。
 
 macOSでは、cliツール**`defaults`**を使用して**Preferencesファイルを変更**できます。
 
 **`/usr/sbin/cfprefsd`**はXPCサービス`com.apple.cfprefsd.daemon`と`com.apple.cfprefsd.agent`を主張し、設定を変更するなどのアクションを実行するために呼び出すことができます。
 
-## System Notifications
+## OpenDirectory permissions.plist
 
-### Darwin Notifications
+ファイル`/System/Library/OpenDirectory/permissions.plist`はノード属性に適用される権限を含み、SIPによって保護されています。\
+このファイルは特定のユーザーにUUID（uidではなく）によって権限を付与し、`ShadowHashData`、`HeimdalSRPKey`、`KerberosKeys`などの特定の機密情報にアクセスできるようにします：
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
+## システム通知
 
-通知の主要なデーモンは**`/usr/sbin/notifyd`**です。通知を受信するためには、クライアントは`com.apple.system.notification_center` Machポートを通じて登録する必要があります（`sudo lsmp -p <pid notifyd>`で確認できます）。デーモンは`/etc/notify.conf`ファイルで設定可能です。
+### Darwin通知
 
-通知に使用される名前はユニークな逆DNS表記であり、通知がそのうちの1つに送信されると、それを処理できると示したクライアントが受信します。
+通知の主要なデーモンは**`/usr/sbin/notifyd`**です。通知を受け取るためには、クライアントは`com.apple.system.notification_center` Machポートを通じて登録する必要があります（`sudo lsmp -p <pid notifyd>`で確認できます）。デーモンは`/etc/notify.conf`ファイルで設定可能です。
+
+通知に使用される名前はユニークな逆DNS表記であり、通知がその一つに送信されると、それを処理できると示したクライアントが受け取ります。
 
 現在の状態をダンプし（すべての名前を確認する）、notifydプロセスにSIGUSR2信号を送信し、生成されたファイル`/var/run/notifyd_<pid>.status`を読み取ることが可能です。
 ```bash
@@ -201,16 +243,16 @@ common: com.apple.security.octagon.joined-with-bottle
 ```
 ### Distributed Notification Center
 
-**Distributed Notification Center**の主なバイナリは**`/usr/sbin/distnoted`**であり、通知を送信する別の方法です。いくつかのXPCサービスを公開し、クライアントを検証しようとするチェックを実行します。
+**Distributed Notification Center** の主要なバイナリは **`/usr/sbin/distnoted`** であり、通知を送信する別の方法です。いくつかの XPC サービスを公開し、クライアントを検証するためのチェックを実行します。
 
 ### Apple Push Notifications (APN)
 
-この場合、アプリケーションは**トピック**に登録できます。クライアントは**`apsd`**を介してAppleのサーバーに連絡し、トークンを生成します。\
-その後、プロバイダーもトークンを生成し、Appleのサーバーに接続してクライアントにメッセージを送信できるようになります。これらのメッセージは、**`apsd`**によってローカルで受信され、通知を待っているアプリケーションに中継されます。
+この場合、アプリケーションは **トピック** に登録できます。クライアントは **`apsd`** を介して Apple のサーバーに連絡し、トークンを生成します。\
+その後、プロバイダーもトークンを生成し、Apple のサーバーに接続してクライアントにメッセージを送信できるようになります。これらのメッセージは **`apsd`** によってローカルで受信され、通知はそれを待っているアプリケーションに中継されます。
 
-設定は`/Library/Preferences/com.apple.apsd.plist`にあります。
+設定は `/Library/Preferences/com.apple.apsd.plist` にあります。
 
-macOSには`/Library/Application\ Support/ApplePushService/aps.db`に、iOSには`/var/mobile/Library/ApplePushService`にメッセージのローカルデータベースがあります。これには3つのテーブルがあります：`incoming_messages`、`outgoing_messages`、および`channel`。
+macOS には `/Library/Application\ Support/ApplePushService/aps.db` に、iOS には `/var/mobile/Library/ApplePushService` にメッセージのローカルデータベースがあります。これには 3 つのテーブルがあります: `incoming_messages`、`outgoing_messages`、および `channel`。
 ```bash
 sudo sqlite3 /Library/Application\ Support/ApplePushService/aps.db
 ```
@@ -227,8 +269,8 @@ sudo sqlite3 /Library/Application\ Support/ApplePushService/aps.db
 * **`NSUserNotificationCenter`**: これはMacOSのiOS掲示板です。通知のデータベースは`/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`にあります。
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
