@@ -1,8 +1,8 @@
 # macOS Sensitive Locations & Interesting Daemons
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -20,7 +20,7 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 ### Shadow Passwords
 
 La password shadow è memorizzata con la configurazione dell'utente in plists situati in **`/var/db/dslocal/nodes/Default/users/`**.\
-Il seguente oneliner può essere utilizzato per estrarre **tutte le informazioni sugli utenti** (inclusi i dati dell'hash):
+Il seguente oneliner può essere utilizzato per estrarre **tutte le informazioni sugli utenti** (inclusi i dati degli hash):
 
 {% code overflow="wrap" %}
 ```bash
@@ -38,7 +38,13 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
-### Dump della Keychain
+Un altro modo per ottenere il `ShadowHashData` di un utente è utilizzare `dscl`: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
+
+### /etc/master.passwd
+
+Questo file è **utilizzato solo** quando il sistema è in **modalità utente singolo** (quindi non molto frequentemente).
+
+### Keychain Dump
 
 Nota che quando si utilizza il binario di sicurezza per **estrarre le password decrittografate**, verranno visualizzati diversi prompt che chiederanno all'utente di consentire questa operazione.
 ```bash
@@ -52,7 +58,7 @@ security dump-keychain -d #Dump all the info, included secrets (the user will be
 ### [Keychaindump](https://github.com/juuso/keychaindump)
 
 {% hint style="danger" %}
-In base a questo commento [juuso/keychaindump#10 (commento)](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760), sembra che questi strumenti non funzionino più in Big Sur.
+In base a questo commento [juuso/keychaindump#10 (comment)](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760), sembra che questi strumenti non funzionino più in Big Sur.
 {% endhint %}
 
 ### Panoramica di Keychaindump
@@ -169,19 +175,55 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 
 ## Preferenze
 
-In macOS, le preferenze delle app si trovano in **`$HOME/Library/Preferences`** e in iOS si trovano in `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.&#x20;
+In macOS, le preferenze delle app si trovano in **`$HOME/Library/Preferences`** e in iOS si trovano in `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.
 
 In macOS, lo strumento cli **`defaults`** può essere utilizzato per **modificare il file delle Preferenze**.
 
 **`/usr/sbin/cfprefsd`** gestisce i servizi XPC `com.apple.cfprefsd.daemon` e `com.apple.cfprefsd.agent` e può essere chiamato per eseguire azioni come modificare le preferenze.
 
+## OpenDirectory permissions.plist
+
+Il file `/System/Library/OpenDirectory/permissions.plist` contiene le autorizzazioni applicate sugli attributi dei nodi ed è protetto da SIP.\
+Questo file concede autorizzazioni a utenti specifici tramite UUID (e non uid) in modo che possano accedere a informazioni sensibili specifiche come `ShadowHashData`, `HeimdalSRPKey` e `KerberosKeys`, tra gli altri:
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
 ## Notifiche di Sistema
 
 ### Notifiche Darwin
 
-Il principale demone per le notifiche è **`/usr/sbin/notifyd`**. Per ricevere notifiche, i client devono registrarsi tramite il port Mach `com.apple.system.notification_center` (controllali con `sudo lsmp -p <pid notifyd>`). Il demone è configurabile con il file `/etc/notify.conf`.
+Il demone principale per le notifiche è **`/usr/sbin/notifyd`**. Per ricevere notifiche, i client devono registrarsi tramite il Mach port `com.apple.system.notification_center` (controllali con `sudo lsmp -p <pid notifyd>`). Il demone è configurabile con il file `/etc/notify.conf`.
 
-I nomi utilizzati per le notifiche sono notazioni DNS inverse uniche e quando una notifica viene inviata a uno di essi, il client (o i client) che hanno indicato di poterla gestire la riceveranno.
+I nomi utilizzati per le notifiche sono notazioni DNS inverse uniche e quando una notifica viene inviata a uno di essi, il/i client che hanno indicato di poterla gestire la riceveranno.
 
 È possibile dumpare lo stato attuale (e vedere tutti i nomi) inviando il segnale SIGUSR2 al processo notifyd e leggendo il file generato: `/var/run/notifyd_<pid>.status`:
 ```bash
@@ -227,8 +269,8 @@ Queste sono le notifiche che l'utente dovrebbe vedere sullo schermo:
 * **`NSUserNotificationCenter`**: Questa è la bacheca di iOS in MacOS. Il database con le notifiche si trova in `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
