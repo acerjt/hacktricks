@@ -1,8 +1,8 @@
 # macOS Sensitive Locations & Interesting Daemons
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
+Još jedan način da se dobije `ShadowHashData` korisnika je korišćenjem `dscl`: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
+
+### /etc/master.passwd
+
+Ova datoteka se **koristi samo** kada sistem radi u **jedno-korisničkom režimu** (dakle, ne vrlo često).
+
 ### Keychain Dump
 
-Napomena da prilikom korišćenja security binarnog fajla za **izvlačenje dekriptovanih lozinki**, nekoliko prompteva će tražiti od korisnika da dozvoli ovu operaciju.
+Imajte na umu da prilikom korišćenja sigurnosne binarne datoteke za **izvlačenje dekriptovanih lozinki**, nekoliko upita će tražiti od korisnika da dozvoli ovu operaciju.
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -57,7 +63,7 @@ Na osnovu ovog komentara [juuso/keychaindump#10 (comment)](https://github.com/ju
 
 ### Pregled Keychaindump-a
 
-Alat pod nazivom **keychaindump** razvijen je za ekstrakciju lozinki iz macOS ključanika, ali se suočava sa ograničenjima na novijim verzijama macOS-a kao što je Big Sur, kako je naznačeno u [diskusiji](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760). Korišćenje **keychaindump** zahteva od napadača da dobije pristup i eskalira privilegije na **root**. Alat koristi činjenicu da je ključanik po defaultu otključan prilikom prijave korisnika radi pogodnosti, omogućavajući aplikacijama da mu pristupaju bez ponovnog traženja lozinke korisnika. Međutim, ako korisnik odluči da zaključa svoj ključanik nakon svake upotrebe, **keychaindump** postaje neefikasan.
+Alat pod nazivom **keychaindump** razvijen je za ekstrakciju lozinki iz macOS ključanika, ali se suočava sa ograničenjima na novijim verzijama macOS-a kao što je Big Sur, kako je naznačeno u [diskusiji](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760). Korišćenje **keychaindump** zahteva od napadača da dobije pristup i eskalira privilegije na **root**. Alat koristi činjenicu da je ključanik po defaultu otključan prilikom prijave korisnika radi pogodnosti, omogućavajući aplikacijama da mu pristupe bez ponovnog traženja lozinke korisnika. Međutim, ako korisnik odluči da zaključa svoj ključanik nakon svake upotrebe, **keychaindump** postaje neefikasan.
 
 **Keychaindump** funkcioniše tako što cilja specifičan proces nazvan **securityd**, koji Apple opisuje kao demon za autorizaciju i kriptografske operacije, što je ključno za pristup ključaniku. Proces ekstrakcije uključuje identifikaciju **Master Key**-a izvedenog iz lozinke za prijavu korisnika. Ovaj ključ je neophodan za čitanje datoteke ključanika. Da bi locirao **Master Key**, **keychaindump** skenira memorijski heap **securityd** koristeći komandu `vmmap`, tražeći potencijalne ključeve unutar oblasti označenih kao `MALLOC_TINY`. Sledeća komanda se koristi za inspekciju ovih memorijskih lokacija:
 ```bash
@@ -169,19 +175,55 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 
 ## Preferences
 
-U macOS aplikacijama, podešavanja se nalaze u **`$HOME/Library/Preferences`**, a u iOS-u su u `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.&#x20;
+U macOS aplikacijama, podešavanja se nalaze u **`$HOME/Library/Preferences`**, a u iOS-u su u `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.
 
-U macOS-u, cli alat **`defaults`** može se koristiti za **modifikaciju datoteke sa podešavanjima**.
+U macOS-u, cli alat **`defaults`** može se koristiti za **modifikovanje Preferences datoteke**.
 
-**`/usr/sbin/cfprefsd`** preuzima XPC usluge `com.apple.cfprefsd.daemon` i `com.apple.cfprefsd.agent` i može se pozvati da izvrši radnje kao što je modifikacija podešavanja.
+**`/usr/sbin/cfprefsd`** zahteva XPC usluge `com.apple.cfprefsd.daemon` i `com.apple.cfprefsd.agent` i može se pozvati da izvrši radnje kao što je modifikovanje podešavanja.
 
-## System Notifications
+## OpenDirectory permissions.plist
 
-### Darwin Notifications
+Datoteka `/System/Library/OpenDirectory/permissions.plist` sadrži dozvole primenjene na atribute čvora i zaštićena je SIP-om.\
+Ova datoteka dodeljuje dozvole specifičnim korisnicima po UUID-u (a ne uid-u) kako bi mogli da pristupe specifičnim osetljivim informacijama kao što su `ShadowHashData`, `HeimdalSRPKey` i `KerberosKeys` među ostalima:
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
+## Sistemske Notifikacije
 
-Glavni daemon za obaveštenja je **`/usr/sbin/notifyd`**. Da bi primali obaveštenja, klijenti moraju da se registruju putem Mach porta `com.apple.system.notification_center` (proverite ih sa `sudo lsmp -p <pid notifyd>`). Daemon se može konfigurisati datotekom `/etc/notify.conf`.
+### Darwin Notifikacije
 
-Imena koja se koriste za obaveštenja su jedinstvene obrnute DNS notacije i kada se obaveštenje pošalje jednom od njih, klijent(i) koji su naznačili da mogu da ga obrade će ga primiti.
+Glavni daemon za notifikacije je **`/usr/sbin/notifyd`**. Da bi primali notifikacije, klijenti moraju da se registruju preko `com.apple.system.notification_center` Mach porta (proverite ih sa `sudo lsmp -p <pid notifyd>`). Daemon se može konfigurisati sa datotekom `/etc/notify.conf`.
+
+Imena koja se koriste za notifikacije su jedinstvene obrnute DNS notacije i kada se notifikacija pošalje jednom od njih, klijent(i) koji su naznačili da mogu da je obrade će je primiti.
 
 Moguće je dumpovati trenutni status (i videti sva imena) slanjem signala SIGUSR2 procesu notifyd i čitanjem generisane datoteke: `/var/run/notifyd_<pid>.status`:
 ```bash
@@ -222,21 +264,21 @@ Takođe je moguće dobiti informacije o daemonu i vezama koristeći:
 
 Ovo su obaveštenja koja korisnik treba da vidi na ekranu:
 
-* **`CFUserNotification`**: Ovaj API pruža način da se na ekranu prikaže iskačuće obaveštenje sa porukom.
+* **`CFUserNotification`**: Ovaj API pruža način da se na ekranu prikaže iskačuća poruka.
 * **Oglasna tabla**: Ovo prikazuje u iOS-u baner koji nestaje i biće sačuvan u Centru za obaveštenja.
-* **`NSUserNotificationCenter`**: Ovo je oglasna tabla iOS-a u MacOS-u. Baza podataka sa obaveštenjima se nalazi u `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
+* **`NSUserNotificationCenter`**: Ovo je oglasna tabla u iOS-u na MacOS-u. Baza podataka sa obaveštenjima se nalazi u `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
-<summary>Podrška HackTricks</summary>
+<summary>Support HackTricks</summary>
 
-* Proverite [**planove pretplate**](https://github.com/sponsors/carlospolop)!
-* **Pridružite se** 💬 [**Discord grupi**](https://discord.gg/hRep4RUj7f) ili [**telegram grupi**](https://t.me/peass) ili **pratite** nas na **Twitteru** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Podelite hakerske trikove slanjem PR-ova na** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repozitorijume.
+* Check the [**subscription plans**](https://github.com/sponsors/carlospolop)!
+* **Join the** 💬 [**Discord group**](https://discord.gg/hRep4RUj7f) or the [**telegram group**](https://t.me/peass) or **follow** us on **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Share hacking tricks by submitting PRs to the** [**HackTricks**](https://github.com/carlospolop/hacktricks) and [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
 
 </details>
 {% endhint %}
