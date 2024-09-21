@@ -1,8 +1,8 @@
-# macOS Users
+# macOS Users & External Accounts
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -15,8 +15,7 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 </details>
 {% endhint %}
 
-
-### Common Users
+## Common Users
 
 *   **Daemon**: Usuario reservado para demonios del sistema. Los nombres de cuenta de demonios predeterminados suelen comenzar con un "\_":
 
@@ -33,16 +32,21 @@ for i in "${state[@]}"; do sysadminctl -"${i}" status; done;
 * **Nadie**: Los procesos se ejecutan con este usuario cuando se requieren permisos mínimos.
 * **Root**
 
-### Privilegios de Usuario
+## Privilegios de Usuario
 
 * **Usuario Estándar:** El más básico de los usuarios. Este usuario necesita permisos otorgados por un usuario administrador al intentar instalar software o realizar otras tareas avanzadas. No puede hacerlo por su cuenta.
 * **Usuario Administrador**: Un usuario que opera la mayor parte del tiempo como un usuario estándar, pero también se le permite realizar acciones de root, como instalar software y otras tareas administrativas. Todos los usuarios que pertenecen al grupo de administradores **tienen acceso a root a través del archivo sudoers**.
 * **Root**: Root es un usuario que puede realizar casi cualquier acción (hay limitaciones impuestas por protecciones como la Protección de Integridad del Sistema).
-* Por ejemplo, root no podrá colocar un archivo dentro de `/System`
+* Por ejemplo, root no podrá colocar un archivo dentro de `/System`.
+
+## Cuentas Externas
+
+MacOS también admite iniciar sesión a través de proveedores de identidad externos como FaceBook, Google... El principal daemon que realiza este trabajo es `accountsd` (`/System/Library/Frameworks/Accounts.framework//Versions/A/Support/accountsd`) y es posible encontrar plugins utilizados para la autenticación externa dentro de la carpeta `/System/Library/Accounts/Authentication/`.\
+Además, `accountsd` obtiene la lista de tipos de cuentas de `/Library/Preferences/SystemConfiguration/com.apple.accounts.exists.plist`.
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
