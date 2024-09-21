@@ -1,8 +1,8 @@
 # macOS Чутливі Локації та Цікаві Демони
 
 {% hint style="success" %}
-Вивчайте та практикуйте AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Вивчайте та практикуйте GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Вивчайте та практикуйте AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Вивчайте та практикуйте GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -20,7 +20,7 @@
 ### Тіні Паролів
 
 Тіньовий пароль зберігається з конфігурацією користувача в plist-файлах, розташованих у **`/var/db/dslocal/nodes/Default/users/`**.\
-Наступний однорядник можна використовувати для вивантаження **всіх відомостей про користувачів** (включаючи інформацію про хеші):
+Наступний однорядник можна використовувати для виведення **всієї інформації про користувачів** (включаючи інформацію про хеш): 
 
 {% code overflow="wrap" %}
 ```bash
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
+Інший спосіб отримати `ShadowHashData` користувача - це використання `dscl`: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
+
+### /etc/master.passwd
+
+Цей файл **використовується тільки** коли система працює в **однокористувацькому режимі** (тому не дуже часто).
+
 ### Вивантаження ключів
 
-Зверніть увагу, що при використанні бінарного файлу security для **вивантаження розшифрованих паролів** кілька запитів попросять користувача дозволити цю операцію.
+Зверніть увагу, що при використанні бінарного файлу безпеки для **вивантаження розшифрованих паролів**, кілька запитів попросять користувача дозволити цю операцію.
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -57,13 +63,13 @@ security dump-keychain -d #Dump all the info, included secrets (the user will be
 
 ### Огляд Keychaindump
 
-Інструмент під назвою **keychaindump** був розроблений для витягування паролів з ключниць macOS, але він стикається з обмеженнями на новіших версіях macOS, таких як Big Sur, як зазначено в [обговоренні](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760). Використання **keychaindump** вимагає від зловмисника отримати доступ і підвищити привілеї до **root**. Інструмент використовує той факт, що ключниця за замовчуванням розблокована під час входу користувача для зручності, що дозволяє додаткам отримувати до неї доступ без повторного введення пароля користувача. Однак, якщо користувач вирішить заблокувати свою ключницю після кожного використання, **keychaindump** стає неефективним.
+Інструмент під назвою **keychaindump** був розроблений для витягування паролів з ключниць macOS, але стикається з обмеженнями на новіших версіях macOS, таких як Big Sur, як зазначено в [обговоренні](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760). Використання **keychaindump** вимагає від зловмисника отримати доступ і підвищити привілеї до **root**. Інструмент використовує той факт, що ключниця за замовчуванням розблокована під час входу користувача для зручності, що дозволяє додаткам отримувати до неї доступ без повторного введення пароля користувача. Однак, якщо користувач вирішить заблокувати свою ключницю після кожного використання, **keychaindump** стає неефективним.
 
-**Keychaindump** працює, націлюючись на конкретний процес під назвою **securityd**, який Apple описує як демон для авторизації та криптографічних операцій, що є критично важливим для доступу до ключниці. Процес витягування включає в себе ідентифікацію **Master Key**, отриманого з пароля для входу користувача. Цей ключ є необхідним для читання файлу ключниці. Щоб знайти **Master Key**, **keychaindump** сканує купу пам'яті **securityd** за допомогою команди `vmmap`, шукаючи потенційні ключі в областях, позначених як `MALLOC_TINY`. Для перевірки цих пам'яткових місць використовується наступна команда:
+**Keychaindump** працює, націлюючись на конкретний процес під назвою **securityd**, який Apple описує як демон для авторизації та криптографічних операцій, що є критично важливим для доступу до ключниці. Процес витягування включає в себе ідентифікацію **Master Key**, отриманого з пароля для входу користувача. Цей ключ є необхідним для читання файлу ключниці. Щоб знайти **Master Key**, **keychaindump** сканує купу пам'яті **securityd** за допомогою команди `vmmap`, шукаючи потенційні ключі в областях, позначених як `MALLOC_TINY`. Наступна команда використовується для перевірки цих пам'яткових місць:
 ```bash
 sudo vmmap <securityd PID> | grep MALLOC_TINY
 ```
-Після ідентифікації потенційних майстер-ключів, **keychaindump** шукає в купах конкретний шаблон (`0x0000000000000018`), який вказує на кандидата для майстер-ключа. Додаткові кроки, включаючи деобфускацію, необхідні для використання цього ключа, як зазначено в вихідному коді **keychaindump**. Аналітики, які зосереджуються на цій області, повинні звернути увагу на те, що критичні дані для дешифрування ключа зберігаються в пам'яті процесу **securityd**. Приклад команди для запуску **keychaindump**:
+Після ідентифікації потенційних майстер-ключів, **keychaindump** шукає в купах за специфічним шаблоном (`0x0000000000000018`), який вказує на кандидата для майстер-ключа. Додаткові кроки, включаючи деобфускацію, необхідні для використання цього ключа, як зазначено в вихідному коді **keychaindump**. Аналітики, які зосереджуються на цій області, повинні звернути увагу на те, що критичні дані для дешифрування ключа зберігаються в пам'яті процесу **securityd**. Приклад команди для запуску **keychaindump**:
 ```bash
 sudo ./keychaindump
 ```
@@ -76,13 +82,13 @@ sudo ./keychaindump
 * Загальні паролі
 * Приватні ключі
 * Публічні ключі
-* Сертифікати X509
+* X509 сертифікати
 * Захищені нотатки
 * Паролі Appleshare
 
 Знаючи пароль для розблокування ключниці, майстер-ключ, отриманий за допомогою [volafox](https://github.com/n0fate/volafox) або [volatility](https://github.com/volatilityfoundation/volatility), або файл розблокування, такий як SystemKey, Chainbreaker також надасть паролі у відкритому вигляді.
 
-Без одного з цих методів розблокування ключниці Chainbreaker відобразить всю іншу доступну інформацію.
+Без одного з цих методів розблокування ключниці, Chainbreaker відобразить всю іншу доступну інформацію.
 
 #### **Dump keychain keys**
 ```bash
@@ -126,7 +132,7 @@ python2.7 chainbreaker.py --dump-all --password-prompt /Users/<username>/Library
 ```
 ### kcpassword
 
-Файл **kcpassword** - це файл, який містить **пароль для входу користувача**, але лише якщо власник системи **увімкнув автоматичний вхід**. Тому користувач буде автоматично увійдений без запиту пароля (що не дуже безпечно).
+Файл **kcpassword** - це файл, який містить **пароль для входу користувача**, але лише якщо власник системи **увімкнув автоматичний вхід**. Тому користувач буде автоматично увійдений без запиту пароля (що не є дуже безпечним).
 
 Пароль зберігається у файлі **`/etc/kcpassword`** xored з ключем **`0x7D 0x89 0x52 0x23 0xD2 0xBC 0xDD 0xEA 0xA3 0xB9 0x1F`**. Якщо пароль користувача довший за ключ, ключ буде повторно використано.\
 Це робить пароль досить легким для відновлення, наприклад, за допомогою скриптів, таких як [**цей**](https://gist.github.com/opshope/32f65875d45215c3677d).
@@ -167,21 +173,57 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 ```
 {% endcode %}
 
-## Налаштування
+## Preferences
 
-У macOS налаштування програм знаходяться в **`$HOME/Library/Preferences`**, а в iOS вони знаходяться в `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.&#x20;
+В macOS налаштування розташовані в **`$HOME/Library/Preferences`**, а в iOS вони знаходяться в `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.
 
-У macOS інструмент командного рядка **`defaults`** може бути використаний для **зміни файлу налаштувань**.
+В macOS інструмент командного рядка **`defaults`** може бути використаний для **зміни файлу налаштувань**.
 
 **`/usr/sbin/cfprefsd`** заявляє про XPC сервіси `com.apple.cfprefsd.daemon` та `com.apple.cfprefsd.agent` і може бути викликаний для виконання дій, таких як зміна налаштувань.
 
+## OpenDirectory permissions.plist
+
+Файл `/System/Library/OpenDirectory/permissions.plist` містить дозволи, застосовані до атрибутів вузлів, і захищений SIP.\
+Цей файл надає дозволи конкретним користувачам за UUID (а не uid), щоб вони могли отримувати доступ до конкретної чутливої інформації, такої як `ShadowHashData`, `HeimdalSRPKey` та `KerberosKeys`, серед інших:
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
 ## Системні сповіщення
 
 ### Сповіщення Darwin
 
-Основний демон для сповіщень - **`/usr/sbin/notifyd`**. Щоб отримувати сповіщення, клієнти повинні зареєструватися через Mach порт `com.apple.system.notification_center` (перевірте їх за допомогою `sudo lsmp -p <pid notifyd>`). Демон налаштовується за допомогою файлу `/etc/notify.conf`.
+Головний демон для сповіщень - **`/usr/sbin/notifyd`**. Щоб отримувати сповіщення, клієнти повинні зареєструватися через Mach-порт `com.apple.system.notification_center` (перевірте їх за допомогою `sudo lsmp -p <pid notifyd>`). Демон налаштовується за допомогою файлу `/etc/notify.conf`.
 
-Імена, що використовуються для сповіщень, є унікальними зворотними DNS позначеннями, і коли сповіщення надсилається одному з них, клієнти, які вказали, що можуть його обробити, отримають його.
+Імена, що використовуються для сповіщень, є унікальними зворотними DNS-нотаціями, і коли сповіщення надсилається одному з них, клієнти, які вказали, що можуть його обробити, отримають його.
 
 Можливо скинути поточний статус (і побачити всі імена), надіславши сигнал SIGUSR2 процесу notifyd і прочитавши згенерований файл: `/var/run/notifyd_<pid>.status`:
 ```bash
@@ -205,7 +247,7 @@ common: com.apple.security.octagon.joined-with-bottle
 
 ### Apple Push Notifications (APN)
 
-У цьому випадку програми можуть реєструватися для **тем**. Клієнт згенерує токен, зв'язавшись з серверами Apple через **`apsd`**.\
+У цьому випадку програми можуть реєструватися для **тем**. Клієнт згенерує токен, зв'язуючись з серверами Apple через **`apsd`**.\
 Потім постачальники також згенерують токен і зможуть підключитися до серверів Apple, щоб надсилати повідомлення клієнтам. Ці повідомлення будуть локально отримані **`apsd`**, який передасть сповіщення програмі, що чекає на нього.
 
 Налаштування розташовані в `/Library/Preferences/com.apple.apsd.plist`.
@@ -227,8 +269,8 @@ sudo sqlite3 /Library/Application\ Support/ApplePushService/aps.db
 * **`NSUserNotificationCenter`**: Це дошка оголошень iOS у MacOS. База даних зі сповіщеннями знаходиться в `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
