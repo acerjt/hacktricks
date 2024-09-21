@@ -1,15 +1,15 @@
 # macOS Ευαίσθητες Τοποθεσίες & Ενδιαφέροντες Daemons
 
 {% hint style="success" %}
-Μάθετε & εξασκηθείτε στο AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Μάθετε & εξασκηθείτε στο GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Μάθετε & εξασκηθείτε στο AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Μάθετε & εξασκηθείτε στο GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
 <summary>Υποστήριξη HackTricks</summary>
 
 * Ελέγξτε τα [**σχέδια συνδρομής**](https://github.com/sponsors/carlospolop)!
-* **Εγγραφείτε στο** 💬 [**Discord group**](https://discord.gg/hRep4RUj7f) ή στο [**telegram group**](https://t.me/peass) ή **ακολουθήστε** μας στο **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Εγγραφείτε στην** 💬 [**ομάδα Discord**](https://discord.gg/hRep4RUj7f) ή στην [**ομάδα telegram**](https://t.me/peass) ή **ακολουθήστε** μας στο **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
 * **Μοιραστείτε κόλπα hacking υποβάλλοντας PRs στα** [**HackTricks**](https://github.com/carlospolop/hacktricks) και [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
 
 </details>
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
+Ένας άλλος τρόπος για να αποκτήσετε το `ShadowHashData` ενός χρήστη είναι χρησιμοποιώντας το `dscl`: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
+
+### /etc/master.passwd
+
+Αυτό το αρχείο χρησιμοποιείται **μόνο** όταν το σύστημα εκτελείται σε **λειτουργία ενός χρήστη** (οπότε όχι πολύ συχνά).
+
 ### Keychain Dump
 
-Σημειώστε ότι όταν χρησιμοποιείτε το δυαδικό αρχείο security για να **εκφορτώσετε τους αποκρυπτογραφημένους κωδικούς πρόσβασης**, αρκετές προτροπές θα ζητήσουν από τον χρήστη να επιτρέψει αυτή τη λειτουργία.
+Σημειώστε ότι όταν χρησιμοποιείτε το εκτελέσιμο security για να **εκχυλίσετε τους αποκρυπτογραφημένους κωδικούς πρόσβασης**, αρκετές προτροπές θα ζητήσουν από τον χρήστη να επιτρέψει αυτή τη λειτουργία.
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -169,21 +175,57 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 
 ## Προτιμήσεις
 
-Στις εφαρμογές macOS, οι προτιμήσεις βρίσκονται στο **`$HOME/Library/Preferences`** και στο iOS βρίσκονται στο `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.&#x20;
+Στις εφαρμογές macOS, οι προτιμήσεις βρίσκονται στο **`$HOME/Library/Preferences`** και στο iOS είναι στο `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.
 
 Στο macOS, το εργαλείο cli **`defaults`** μπορεί να χρησιμοποιηθεί για **να τροποποιήσει το αρχείο Προτιμήσεων**.
 
 **`/usr/sbin/cfprefsd`** διεκδικεί τις υπηρεσίες XPC `com.apple.cfprefsd.daemon` και `com.apple.cfprefsd.agent` και μπορεί να κληθεί για να εκτελέσει ενέργειες όπως η τροποποίηση προτιμήσεων.
 
-## Συστήματα Ειδοποιήσεων
+## OpenDirectory permissions.plist
 
-### Ειδοποιήσεις Darwin
+Το αρχείο `/System/Library/OpenDirectory/permissions.plist` περιέχει δικαιώματα που εφαρμόζονται σε χαρακτηριστικά κόμβων και προστατεύεται από το SIP.\
+Αυτό το αρχείο παραχωρεί δικαιώματα σε συγκεκριμένους χρήστες με UUID (και όχι uid) ώστε να μπορούν να έχουν πρόσβαση σε συγκεκριμένες ευαίσθητες πληροφορίες όπως `ShadowHashData`, `HeimdalSRPKey` και `KerberosKeys` μεταξύ άλλων:
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
+## System Notifications
 
-Ο κύριος δαίμονας για τις ειδοποιήσεις είναι **`/usr/sbin/notifyd`**. Για να λάβουν ειδοποιήσεις, οι πελάτες πρέπει να εγγραφούν μέσω της Mach θύρας `com.apple.system.notification_center` (ελέγξτε τις με `sudo lsmp -p <pid notifyd>`). Ο δαίμονας είναι ρυθμιζόμενος με το αρχείο `/etc/notify.conf`.
+### Darwin Notifications
+
+Ο κύριος δαίμονας για τις ειδοποιήσεις είναι **`/usr/sbin/notifyd`**. Για να λάβουν ειδοποιήσεις, οι πελάτες πρέπει να εγγραφούν μέσω του Mach port `com.apple.system.notification_center` (ελέγξτε τους με `sudo lsmp -p <pid notifyd>`). Ο δαίμονας είναι ρυθμιζόμενος με το αρχείο `/etc/notify.conf`.
 
 Τα ονόματα που χρησιμοποιούνται για τις ειδοποιήσεις είναι μοναδικές αντίστροφες σημειώσεις DNS και όταν μια ειδοποίηση αποστέλλεται σε ένα από αυτά, οι πελάτες που έχουν δηλώσει ότι μπορούν να την χειριστούν θα την λάβουν.
 
-Είναι δυνατόν να εκφορτωθεί η τρέχουσα κατάσταση (και να δουν όλα τα ονόματα) στέλνοντας το σήμα SIGUSR2 στη διαδικασία notifyd και διαβάζοντας το παραγόμενο αρχείο: `/var/run/notifyd_<pid>.status`:
+Είναι δυνατόν να εκφορτώσετε την τρέχουσα κατάσταση (και να δείτε όλα τα ονόματα) στέλνοντας το σήμα SIGUSR2 στη διαδικασία notifyd και διαβάζοντας το παραγόμενο αρχείο: `/var/run/notifyd_<pid>.status`:
 ```bash
 ps -ef | grep -i notifyd
 0   376     1   0 15Mar24 ??        27:40.97 /usr/sbin/notifyd
@@ -205,7 +247,7 @@ common: com.apple.security.octagon.joined-with-bottle
 
 ### Apple Push Notifications (APN)
 
-Σε αυτή την περίπτωση, οι εφαρμογές μπορούν να εγγραφούν για **topics**. Ο πελάτης θα δημιουργήσει ένα token επικοινωνώντας με τους διακομιστές της Apple μέσω του **`apsd`**.\
+Σε αυτή την περίπτωση, οι εφαρμογές μπορούν να εγγραφούν για **θέματα**. Ο πελάτης θα δημιουργήσει ένα token επικοινωνώντας με τους διακομιστές της Apple μέσω του **`apsd`**.\
 Στη συνέχεια, οι πάροχοι θα έχουν επίσης δημιουργήσει ένα token και θα μπορούν να συνδεθούν με τους διακομιστές της Apple για να στείλουν μηνύματα στους πελάτες. Αυτά τα μηνύματα θα γίνονται τοπικά δεκτά από το **`apsd`** το οποίο θα προωθήσει την ειδοποίηση στην εφαρμογή που την περιμένει.
 
 Οι προτιμήσεις βρίσκονται στο `/Library/Preferences/com.apple.apsd.plist`.
@@ -227,8 +269,8 @@ sudo sqlite3 /Library/Application\ Support/ApplePushService/aps.db
 * **`NSUserNotificationCenter`**: Αυτό είναι το bulletin board iOS στο MacOS. Η βάση δεδομένων με τις ειδοποιήσεις βρίσκεται στο `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
