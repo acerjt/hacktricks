@@ -1,8 +1,8 @@
 # macOS Sensitive Locations & Interesting Daemons
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
-### Dump do Keychain
+Outra maneira de obter o `ShadowHashData` de um usuário é usando `dscl`: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
 
-Observe que ao usar o binário de segurança para **extrair as senhas descriptografadas**, vários prompts solicitarão ao usuário que permita essa operação.
+### /etc/master.passwd
+
+Este arquivo é **usado apenas** quando o sistema está rodando em **modo de usuário único** (então não muito frequentemente).
+
+### Keychain Dump
+
+Observe que ao usar o binário de segurança para **extrair as senhas descriptografadas**, vários prompts pedirão ao usuário para permitir essa operação.
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -63,7 +69,7 @@ Uma ferramenta chamada **keychaindump** foi desenvolvida para extrair senhas dos
 ```bash
 sudo vmmap <securityd PID> | grep MALLOC_TINY
 ```
-Após identificar chaves mestres potenciais, **keychaindump** procura nos heaps por um padrão específico (`0x0000000000000018`) que indica um candidato para a chave mestre. Passos adicionais, incluindo deobfuscação, são necessários para utilizar esta chave, conforme descrito no código-fonte do **keychaindump**. Analistas focando nesta área devem notar que os dados cruciais para descriptografar o chaveiro estão armazenados na memória do processo **securityd**. Um exemplo de comando para executar o **keychaindump** é:
+Após identificar chaves mestres potenciais, **keychaindump** procura nos heaps por um padrão específico (`0x0000000000000018`) que indica um candidato para a chave mestre. Passos adicionais, incluindo desofuscação, são necessários para utilizar esta chave, conforme descrito no código-fonte do **keychaindump**. Analistas que se concentram nesta área devem notar que os dados cruciais para descriptografar o chaveiro estão armazenados na memória do processo **securityd**. Um exemplo de comando para executar o **keychaindump** é:
 ```bash
 sudo ./keychaindump
 ```
@@ -117,9 +123,9 @@ python vol.py -i ~/Desktop/show/macosxml.mem -o keychaindump
 #Try to extract the passwords using the extracted keychain passwords
 python2.7 chainbreaker.py --dump-all --key 0293847570022761234562947e0bcd5bc04d196ad2345697 /Library/Keychains/System.keychain
 ```
-#### **Extrair chaves do chaveiro (com senhas) usando a senha do usuário**
+#### **Extrair chaves do keychain (com senhas) usando a senha do usuário**
 
-Se você souber a senha do usuário, pode usá-la para **extrair e descriptografar chaveiros que pertencem ao usuário**.
+Se você souber a senha do usuário, pode usá-la para **extrair e descriptografar keychains que pertencem ao usuário**.
 ```bash
 #Prompt to ask for the password
 python2.7 chainbreaker.py --dump-all --password-prompt /Users/<username>/Library/Keychains/login.keychain-db
@@ -145,7 +151,7 @@ sqlite3 $HOME/Suggestions/snippets.db 'select * from emailSnippets'
 
 Você pode encontrar os dados de Notificações em `$(getconf DARWIN_USER_DIR)/com.apple.notificationcenter/`
 
-A maior parte das informações interessantes estará em **blob**. Portanto, você precisará **extrair** esse conteúdo e **transformá-lo** em **legível** **por humanos** ou usar **`strings`**. Para acessá-lo, você pode fazer: 
+A maior parte das informações interessantes estará em **blob**. Portanto, você precisará **extrair** esse conteúdo e **transformá-lo** em **legível** **para humanos** ou usar **`strings`**. Para acessá-lo, você pode fazer: 
 
 {% code overflow="wrap" %}
 ```bash
@@ -169,19 +175,55 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 
 ## Preferências
 
-Em aplicativos macOS, as preferências estão localizadas em **`$HOME/Library/Preferences`** e no iOS estão em `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.&#x20;
+Em aplicativos macOS, as preferências estão localizadas em **`$HOME/Library/Preferences`** e em iOS estão em `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.
 
 No macOS, a ferramenta de linha de comando **`defaults`** pode ser usada para **modificar o arquivo de Preferências**.
 
 **`/usr/sbin/cfprefsd`** reivindica os serviços XPC `com.apple.cfprefsd.daemon` e `com.apple.cfprefsd.agent` e pode ser chamado para realizar ações como modificar preferências.
 
+## OpenDirectory permissions.plist
+
+O arquivo `/System/Library/OpenDirectory/permissions.plist` contém permissões aplicadas em atributos de nó e é protegido pelo SIP.\
+Este arquivo concede permissões a usuários específicos por UUID (e não uid) para que possam acessar informações sensíveis específicas, como `ShadowHashData`, `HeimdalSRPKey` e `KerberosKeys`, entre outros:
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
 ## Notificações do Sistema
 
 ### Notificações Darwin
 
-O principal daemon para notificações é **`/usr/sbin/notifyd`**. Para receber notificações, os clientes devem se registrar através da porta Mach `com.apple.system.notification_center` (verifique-os com `sudo lsmp -p <pid notifyd>`). O daemon é configurável com o arquivo `/etc/notify.conf`.
+O daemon principal para notificações é **`/usr/sbin/notifyd`**. Para receber notificações, os clientes devem se registrar através da porta Mach `com.apple.system.notification_center` (verifique-os com `sudo lsmp -p <pid notifyd>`). O daemon é configurável com o arquivo `/etc/notify.conf`.
 
-Os nomes usados para notificações são notações DNS reversas únicas e, quando uma notificação é enviada a um deles, o(s) cliente(s) que indicaram que podem lidar com isso a receberão.
+Os nomes usados para notificações são notações DNS reversas únicas e, quando uma notificação é enviada para um deles, o(s) cliente(s) que indicaram que podem lidar com isso a receberão.
 
 É possível despejar o status atual (e ver todos os nomes) enviando o sinal SIGUSR2 para o processo notifyd e lendo o arquivo gerado: `/var/run/notifyd_<pid>.status`:
 ```bash
@@ -227,8 +269,8 @@ Estas são notificações que o usuário deve ver na tela:
 * **`NSUserNotificationCenter`**: Este é o quadro de avisos do iOS no MacOS. O banco de dados com as notificações está localizado em `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 

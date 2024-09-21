@@ -1,8 +1,8 @@
-# macOS Users
+# macOS Users & External Accounts
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -15,8 +15,7 @@ Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-s
 </details>
 {% endhint %}
 
-
-### Common Users
+## Common Users
 
 *   **Daemon**: Usuário reservado para daemons do sistema. Os nomes das contas de daemon padrão geralmente começam com um "\_":
 
@@ -33,16 +32,21 @@ for i in "${state[@]}"; do sysadminctl -"${i}" status; done;
 * **Ninguém**: Processos são executados com este usuário quando permissões mínimas são necessárias
 * **Root**
 
-### Privilégios do Usuário
+## Privilégios do Usuário
 
-* **Usuário Padrão:** O mais básico dos usuários. Este usuário precisa de permissões concedidas por um usuário administrador ao tentar instalar software ou realizar outras tarefas avançadas. Eles não conseguem fazer isso sozinhos.
-* **Usuário Administrador**: Um usuário que opera na maior parte do tempo como um usuário padrão, mas também é permitido realizar ações de root, como instalar software e outras tarefas administrativas. Todos os usuários pertencentes ao grupo de administradores têm **acesso ao root via o arquivo sudoers**.
+* **Usuário Padrão:** O usuário mais básico. Este usuário precisa de permissões concedidas por um usuário administrador ao tentar instalar software ou realizar outras tarefas avançadas. Eles não conseguem fazer isso sozinhos.
+* **Usuário Administrador**: Um usuário que opera na maior parte do tempo como um usuário padrão, mas também é permitido realizar ações de root, como instalar software e outras tarefas administrativas. Todos os usuários pertencentes ao grupo de administradores **têm acesso ao root via o arquivo sudoers**.
 * **Root**: Root é um usuário permitido a realizar quase qualquer ação (existem limitações impostas por proteções como a Proteção de Integridade do Sistema).
 * Por exemplo, o root não poderá colocar um arquivo dentro de `/System`
 
+## Contas Externas
+
+O MacOS também suporta login via provedores de identidade externos, como FaceBook, Google... O principal daemon que realiza esse trabalho é `accountsd` (`/System/Library/Frameworks/Accounts.framework//Versions/A/Support/accountsd`) e é possível encontrar plugins usados para autenticação externa dentro da pasta `/System/Library/Accounts/Authentication/`.\
+Além disso, `accountsd` obtém a lista de tipos de conta de `/Library/Preferences/SystemConfiguration/com.apple.accounts.exists.plist`.
+
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
