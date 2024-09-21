@@ -1,8 +1,8 @@
 # macOS 敏感位置与有趣的守护进程
 
 {% hint style="success" %}
-学习与实践 AWS 黑客技术：<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks 培训 AWS 红队专家 (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-学习与实践 GCP 黑客技术：<img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks 培训 GCP 红队专家 (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+学习与实践 AWS 黑客技术：<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks 培训 AWS 红队专家 (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+学习与实践 GCP 黑客技术：<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks 培训 GCP 红队专家 (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -17,9 +17,9 @@
 
 ## 密码
 
-### Shadow 密码
+### 隐藏密码
 
-Shadow 密码与用户的配置一起存储在 **`/var/db/dslocal/nodes/Default/users/`** 中的 plist 文件中。\
+隐藏密码与用户的配置一起存储在位于 **`/var/db/dslocal/nodes/Default/users/`** 的 plist 文件中。\
 以下单行命令可用于转储 **所有用户的信息**（包括哈希信息）：
 
 {% code overflow="wrap" %}
@@ -30,7 +30,7 @@ for l in /var/db/dslocal/nodes/Default/users/*; do if [ -r "$l" ];then echo "$l"
 
 [**像这样的脚本**](https://gist.github.com/teddziuba/3ff08bdda120d1f7822f3baf52e606c2) 或 [**这个**](https://github.com/octomagon/davegrohl.git) 可以用来将哈希转换为 **hashcat** **格式**。
 
-一个替代的一行命令将以 hashcat 格式 `-m 7100`（macOS PBKDF2-SHA512）转储所有非服务账户的凭据：
+一个替代的一行命令将以 hashcat 格式 `-m 7100` （macOS PBKDF2-SHA512）转储所有非服务账户的凭据：
 
 {% code overflow="wrap" %}
 ```bash
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
+获取用户的 `ShadowHashData` 的另一种方法是使用 `dscl`: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
+
+### /etc/master.passwd
+
+此文件**仅在**系统以**单用户模式**运行时使用（因此不太频繁）。
+
 ### 钥匙串转储
 
-请注意，当使用 security 二进制文件 **转储解密的密码** 时，会有几个提示要求用户允许此操作。
+请注意，当使用安全二进制文件**转储解密的密码**时，会有几个提示要求用户允许此操作。
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -63,7 +69,7 @@ security dump-keychain -d #Dump all the info, included secrets (the user will be
 ```bash
 sudo vmmap <securityd PID> | grep MALLOC_TINY
 ```
-在识别潜在的主密钥后，**keychaindump** 在堆中搜索特定模式（`0x0000000000000018`），这表明是主密钥的候选者。要利用此密钥，还需要进一步的步骤，包括去混淆，这在 **keychaindump** 的源代码中有说明。专注于该领域的分析师应注意，解密钥链的关键数据存储在 **securityd** 进程的内存中。运行 **keychaindump** 的示例命令是：
+在识别潜在的主密钥后，**keychaindump** 在堆中搜索特定模式（`0x0000000000000018`），这表明是主密钥的候选者。要利用此密钥，还需要进一步的步骤，包括去混淆，这在 **keychaindump** 的源代码中有说明。专注于该领域的分析师应注意，解密钥匙串的关键数据存储在 **securityd** 进程的内存中。运行 **keychaindump** 的示例命令是：
 ```bash
 sudo ./keychaindump
 ```
@@ -119,14 +125,14 @@ python2.7 chainbreaker.py --dump-all --key 0293847570022761234562947e0bcd5bc04d1
 ```
 #### **使用用户密码转储钥匙串密钥（带密码）**
 
-如果您知道用户的密码，您可以使用它来**转储和解密属于用户的钥匙串**。
+如果您知道用户的密码，您可以使用它来**转储和解密属于该用户的钥匙串**。
 ```bash
 #Prompt to ask for the password
 python2.7 chainbreaker.py --dump-all --password-prompt /Users/<username>/Library/Keychains/login.keychain-db
 ```
 ### kcpassword
 
-**kcpassword** 文件是一个保存 **用户登录密码** 的文件，但仅在系统所有者 **启用自动登录** 的情况下。因此，用户将自动登录，而无需输入密码（这并不是很安全）。
+**kcpassword** 文件是一个保存 **用户登录密码** 的文件，但仅在系统所有者 **启用了自动登录** 的情况下。因此，用户将自动登录，而无需输入密码（这并不是很安全）。
 
 密码存储在文件 **`/etc/kcpassword`** 中，使用密钥 **`0x7D 0x89 0x52 0x23 0xD2 0xBC 0xDD 0xEA 0xA3 0xB9 0x1F`** 进行异或加密。如果用户的密码长度超过密钥，密钥将被重复使用。\
 这使得密码相对容易恢复，例如使用像 [**这个**](https://gist.github.com/opshope/32f65875d45215c3677d) 的脚本。
@@ -169,19 +175,55 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 
 ## 偏好设置
 
-在 macOS 应用中，偏好设置位于 **`$HOME/Library/Preferences`**，而在 iOS 中则位于 `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`。&#x20;
+在 macOS 应用中，偏好设置位于 **`$HOME/Library/Preferences`**，而在 iOS 中则位于 `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`。
 
 在 macOS 中，可以使用命令行工具 **`defaults`** 来 **修改偏好设置文件**。
 
 **`/usr/sbin/cfprefsd`** 声称 XPC 服务 `com.apple.cfprefsd.daemon` 和 `com.apple.cfprefsd.agent`，并可以被调用以执行诸如修改偏好设置等操作。
 
+## OpenDirectory permissions.plist
+
+文件 `/System/Library/OpenDirectory/permissions.plist` 包含应用于节点属性的权限，并受到 SIP 保护。\
+该文件通过 UUID（而不是 uid）授予特定用户权限，以便他们能够访问特定的敏感信息，如 `ShadowHashData`、`HeimdalSRPKey` 和 `KerberosKeys` 等：
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
 ## 系统通知
 
 ### Darwin 通知
 
-通知的主要守护进程是 **`/usr/sbin/notifyd`**。为了接收通知，客户端必须通过 `com.apple.system.notification_center` Mach 端口注册（使用 `sudo lsmp -p <pid notifyd>` 检查它们）。该守护进程可以通过文件 `/etc/notify.conf` 进行配置。
+主要的通知守护进程是 **`/usr/sbin/notifyd`**。为了接收通知，客户端必须通过 `com.apple.system.notification_center` Mach 端口注册（使用 `sudo lsmp -p <pid notifyd>` 检查它们）。该守护进程可以通过文件 `/etc/notify.conf` 进行配置。
 
-用于通知的名称是唯一的反向 DNS 表示法，当通知发送到其中一个名称时，已指示可以处理它的客户端将接收到该通知。
+用于通知的名称是唯一的反向 DNS 表示法，当发送通知到其中一个名称时，已指示可以处理它的客户端将接收到该通知。
 
 可以通过向 notifyd 进程发送 SIGUSR2 信号来转储当前状态（并查看所有名称），并读取生成的文件：`/var/run/notifyd_<pid>.status`：
 ```bash
@@ -227,16 +269,16 @@ sudo sqlite3 /Library/Application\ Support/ApplePushService/aps.db
 * **`NSUserNotificationCenter`**：这是 MacOS 中的 iOS 公告板。通知的数据库位于 `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+学习和实践 AWS 渗透测试：<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+学习和实践 GCP 渗透测试：<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
 <summary>支持 HackTricks</summary>
 
 * 查看 [**订阅计划**](https://github.com/sponsors/carlospolop)!
-* **加入** 💬 [**Discord 群组**](https://discord.gg/hRep4RUj7f) 或 [**电报群组**](https://t.me/peass) 或 **关注** 我们的 **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **通过向** [**HackTricks**](https://github.com/carlospolop/hacktricks) 和 [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github 仓库提交 PR 来分享黑客技巧。
+* **加入** 💬 [**Discord 群组**](https://discord.gg/hRep4RUj7f) 或 [**Telegram 群组**](https://t.me/peass) 或 **关注** 我们的 **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **通过向** [**HackTricks**](https://github.com/carlospolop/hacktricks) 和 [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) GitHub 仓库提交 PR 来分享黑客技巧。
 
 </details>
 {% endhint %}
