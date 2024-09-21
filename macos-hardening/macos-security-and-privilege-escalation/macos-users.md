@@ -1,8 +1,8 @@
-# Utilisateurs macOS
+# Utilisateurs macOS & Comptes Externes
 
 {% hint style="success" %}
-Apprenez et pratiquez le Hacking AWS :<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Apprenez et pratiquez le Hacking GCP : <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Apprenez et pratiquez le Hacking AWS :<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Apprenez et pratiquez le Hacking GCP : <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -10,13 +10,12 @@ Apprenez et pratiquez le Hacking GCP : <img src="/.gitbook/assets/grte.png" alt=
 
 * Consultez les [**plans d'abonnement**](https://github.com/sponsors/carlospolop) !
 * **Rejoignez le** 💬 [**groupe Discord**](https://discord.gg/hRep4RUj7f) ou le [**groupe telegram**](https://t.me/peass) ou **suivez-nous sur** **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Partagez des astuces de hacking en soumettant des PR aux** [**HackTricks**](https://github.com/carlospolop/hacktricks) et [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) dépôts github.
+* **Partagez des astuces de hacking en soumettant des PRs aux** [**HackTricks**](https://github.com/carlospolop/hacktricks) et [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) dépôts github.
 
 </details>
 {% endhint %}
 
-
-### Utilisateurs communs
+## Utilisateurs Communs
 
 *   **Daemon** : Utilisateur réservé aux démons système. Les noms de compte de démon par défaut commencent généralement par un "\_":
 
@@ -33,16 +32,21 @@ for i in "${state[@]}"; do sysadminctl -"${i}" status; done;
 * **Personne** : Les processus sont exécutés avec cet utilisateur lorsque des permissions minimales sont requises
 * **Root**
 
-### Privilèges Utilisateur
+## Privilèges Utilisateur
 
 * **Utilisateur Standard :** L'utilisateur le plus basique. Cet utilisateur a besoin de permissions accordées par un utilisateur admin lorsqu'il tente d'installer des logiciels ou d'effectuer d'autres tâches avancées. Il ne peut pas le faire seul.
 * **Utilisateur Admin** : Un utilisateur qui opère la plupart du temps en tant qu'utilisateur standard mais qui est également autorisé à effectuer des actions root telles que l'installation de logiciels et d'autres tâches administratives. Tous les utilisateurs appartenant au groupe admin ont **accès à root via le fichier sudoers**.
-* **Root** : Root est un utilisateur autorisé à effectuer presque n'importe quelle action (il existe des limitations imposées par des protections comme la Protection de l'Intégrité du Système).
+* **Root** : Root est un utilisateur autorisé à effectuer presque n'importe quelle action (il y a des limitations imposées par des protections comme la Protection de l'Intégrité du Système).
 * Par exemple, root ne pourra pas placer un fichier dans `/System`
 
+## Comptes Externes
+
+MacOS prend également en charge la connexion via des fournisseurs d'identité externes tels que FaceBook, Google... Le principal démon effectuant ce travail est `accountsd` (`/System/Library/Frameworks/Accounts.framework//Versions/A/Support/accountsd`) et il est possible de trouver des plugins utilisés pour l'authentification externe dans le dossier `/System/Library/Accounts/Authentication/`.\
+De plus, `accountsd` obtient la liste des types de comptes à partir de `/Library/Preferences/SystemConfiguration/com.apple.accounts.exists.plist`.
+
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 

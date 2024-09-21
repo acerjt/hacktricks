@@ -1,8 +1,8 @@
 # macOS Sensitive Locations & Interesting Daemons
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
-### Dump de trousseau
+Une autre façon d'obtenir le `ShadowHashData` d'un utilisateur est d'utiliser `dscl`: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
 
-Notez que lors de l'utilisation du binaire de sécurité pour **extraire les mots de passe déchiffrés**, plusieurs invites demanderont à l'utilisateur d'autoriser cette opération.
+### /etc/master.passwd
+
+Ce fichier est **uniquement utilisé** lorsque le système fonctionne en **mode utilisateur unique** (donc pas très fréquemment).
+
+### Keychain Dump
+
+Notez que lors de l'utilisation du binaire de sécurité pour **extraire les mots de passe déchiffrés**, plusieurs invites demanderont à l'utilisateur de permettre cette opération.
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -71,7 +77,7 @@ sudo ./keychaindump
 
 [**Chainbreaker**](https://github.com/n0fate/chainbreaker) peut être utilisé pour extraire les types d'informations suivants d'un trousseau OSX de manière forensiquement valide :
 
-* Mot de passe de trousseau haché, adapté pour le craquage avec [hashcat](https://hashcat.net/hashcat/) ou [John the Ripper](https://www.openwall.com/john/)
+* Mot de passe de trousseau haché, adapté pour le cracking avec [hashcat](https://hashcat.net/hashcat/) ou [John the Ripper](https://www.openwall.com/john/)
 * Mots de passe Internet
 * Mots de passe génériques
 * Clés privées
@@ -119,7 +125,7 @@ python2.7 chainbreaker.py --dump-all --key 0293847570022761234562947e0bcd5bc04d1
 ```
 #### **Dump des clés du trousseau (avec mots de passe) en utilisant le mot de passe de l'utilisateur**
 
-Si vous connaissez le mot de passe de l'utilisateur, vous pouvez l'utiliser pour **extraire et déchiffrer les trousseaux qui appartiennent à l'utilisateur**.
+Si vous connaissez le mot de passe de l'utilisateur, vous pouvez l'utiliser pour **dump et déchiffrer les trousseaux qui appartiennent à l'utilisateur**.
 ```bash
 #Prompt to ask for the password
 python2.7 chainbreaker.py --dump-all --password-prompt /Users/<username>/Library/Keychains/login.keychain-db
@@ -169,13 +175,49 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 
 ## Préférences
 
-Dans les applications macOS, les préférences se trouvent dans **`$HOME/Library/Preferences`** et dans iOS, elles se trouvent dans `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.&#x20;
+Dans les applications macOS, les préférences se trouvent dans **`$HOME/Library/Preferences`** et dans iOS, elles se trouvent dans `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.
 
 Dans macOS, l'outil cli **`defaults`** peut être utilisé pour **modifier le fichier de préférences**.
 
 **`/usr/sbin/cfprefsd`** revendique les services XPC `com.apple.cfprefsd.daemon` et `com.apple.cfprefsd.agent` et peut être appelé pour effectuer des actions telles que modifier les préférences.
 
-## Notifications système
+## OpenDirectory permissions.plist
+
+Le fichier `/System/Library/OpenDirectory/permissions.plist` contient des permissions appliquées sur les attributs de nœud et est protégé par SIP.\
+Ce fichier accorde des permissions à des utilisateurs spécifiques par UUID (et non par uid) afin qu'ils puissent accéder à des informations sensibles spécifiques telles que `ShadowHashData`, `HeimdalSRPKey` et `KerberosKeys`, entre autres :
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
+## Notifications du système
 
 ### Notifications Darwin
 
@@ -183,7 +225,7 @@ Le principal démon pour les notifications est **`/usr/sbin/notifyd`**. Afin de 
 
 Les noms utilisés pour les notifications sont des notations DNS inversées uniques et lorsqu'une notification est envoyée à l'un d'eux, le(s) client(s) qui ont indiqué qu'ils peuvent la gérer la recevront.
 
-Il est possible de dumper l'état actuel (et de voir tous les noms) en envoyant le signal SIGUSR2 au processus notifyd et en lisant le fichier généré : `/var/run/notifyd_<pid>.status` :
+Il est possible de vider l'état actuel (et de voir tous les noms) en envoyant le signal SIGUSR2 au processus notifyd et en lisant le fichier généré : `/var/run/notifyd_<pid>.status` :
 ```bash
 ps -ef | grep -i notifyd
 0   376     1   0 15Mar24 ??        27:40.97 /usr/sbin/notifyd
@@ -208,7 +250,7 @@ Le **Distributed Notification Center** dont le binaire principal est **`/usr/sbi
 Dans ce cas, les applications peuvent s'inscrire à des **topics**. Le client générera un jeton en contactant les serveurs d'Apple via **`apsd`**.\
 Ensuite, les fournisseurs auront également généré un jeton et pourront se connecter aux serveurs d'Apple pour envoyer des messages aux clients. Ces messages seront reçus localement par **`apsd`** qui relayera la notification à l'application qui l'attend.
 
-Les préférences sont situées dans `/Library/Preferences/com.apple.apsd.plist`.
+Les préférences se trouvent dans `/Library/Preferences/com.apple.apsd.plist`.
 
 Il existe une base de données locale de messages située dans macOS à `/Library/Application\ Support/ApplePushService/aps.db` et dans iOS à `/var/mobile/Library/ApplePushService`. Elle contient 3 tables : `incoming_messages`, `outgoing_messages` et `channel`.
 ```bash
@@ -227,8 +269,8 @@ Ce sont des notifications que l'utilisateur devrait voir à l'écran :
 * **`NSUserNotificationCenter`** : C'est le tableau d'affichage iOS sur MacOS. La base de données avec les notifications est située dans `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
