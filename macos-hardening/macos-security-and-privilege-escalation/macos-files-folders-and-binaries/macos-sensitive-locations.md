@@ -1,14 +1,14 @@
 # macOS Sensitiewe Lokasies & Interessante Daemons
 
 {% hint style="success" %}
-Leer & oefen AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Opleiding AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Leer & oefen GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Opleiding GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Leer & oefen AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Opleiding AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Leer & oefen GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Opleiding GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
 <summary>Ondersteun HackTricks</summary>
 
-* Kyk na die [**intekening planne**](https://github.com/sponsors/carlospolop)!
+* Kyk na die [**subskripsie planne**](https://github.com/sponsors/carlospolop)!
 * **Sluit aan by die** 💬 [**Discord groep**](https://discord.gg/hRep4RUj7f) of die [**telegram groep**](https://t.me/peass) of **volg** ons op **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
 * **Deel hacking truuks deur PRs in te dien na die** [**HackTricks**](https://github.com/carlospolop/hacktricks) en [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
 
@@ -38,9 +38,15 @@ sudo bash -c 'for i in $(find /var/db/dslocal/nodes/Default/users -type f -regex
 ```
 {% endcode %}
 
-### Sleutelsak Dump
+'n Ander manier om die `ShadowHashData` van 'n gebruiker te verkry, is deur `dscl` te gebruik: ``sudo dscl . -read /Users/`whoami` ShadowHashData``
 
-Let daarop dat wanneer die sekuriteit-binary gebruik word om **die wagwoorde ontcijfer** te dump, verskeie vrae die gebruiker sal vra om hierdie operasie toe te laat.
+### /etc/master.passwd
+
+Hierdie lêer word **slegs gebruik** wanneer die stelsel in **enkele-gebruiker modus** loop (so nie baie gereeld nie).
+
+### Sleutelhouer Dump
+
+Let daarop dat wanneer die sekuriteit-binary gebruik word om die **ontsleutelde wagwoorde te dump**, verskeie vrae die gebruiker sal vra om hierdie operasie toe te laat.
 ```bash
 #security
 security dump-trust-settings [-s] [-d] #List certificates
@@ -57,7 +63,7 @@ Op grond van hierdie kommentaar [juuso/keychaindump#10 (comment)](https://github
 
 ### Keychaindump Oorsig
 
-'n Gereedskap genaamd **keychaindump** is ontwikkel om wagwoorde uit macOS sleutelhouers te onttrek, maar dit ondervind beperkings op nuwer macOS weergawes soos Big Sur, soos aangedui in 'n [bespreking](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760). Die gebruik van **keychaindump** vereis dat die aanvaller toegang verkry en bevoegdhede tot **root** verhoog. Die gereedskap benut die feit dat die sleutelhouer standaard ontgrendel is by gebruikersaanmelding vir gerief, wat toepassings toelaat om dit te benader sonder om die gebruiker se wagwoord herhaaldelik te vereis. As 'n gebruiker egter kies om hul sleutelhouer na elke gebruik te sluit, word **keychaindump** ondoeltreffend.
+'n Gereedskap genaamd **keychaindump** is ontwikkel om wagwoorde uit macOS sleutelhouers te onttrek, maar dit ondervind beperkings op nuwer macOS weergawes soos Big Sur, soos aangedui in 'n [bespreking](https://github.com/juuso/keychaindump/issues/10#issuecomment-751218760). Die gebruik van **keychaindump** vereis dat die aanvaller toegang verkry en voorregte tot **root** verhoog. Die gereedskap benut die feit dat die sleutelhouer standaard ontgrendel is by gebruikersaanmelding vir gerief, wat toelaat dat toepassings toegang daartoe verkry sonder om die gebruiker se wagwoord herhaaldelik te vereis. As 'n gebruiker egter kies om hul sleutelhouer na elke gebruik te vergrendel, word **keychaindump** ondoeltreffend.
 
 **Keychaindump** werk deur 'n spesifieke proses genaamd **securityd** te teiken, wat deur Apple beskryf word as 'n daemon vir magtiging en kriptografiese operasies, wat noodsaaklik is vir toegang tot die sleutelhouer. Die onttrekkingsproses behels die identifisering van 'n **Master Key** wat afgelei is van die gebruiker se aanmeldwagwoord. Hierdie sleutel is noodsaaklik om die sleutelhouer-lêer te lees. Om die **Master Key** te vind, skandeer **keychaindump** die geheuehoop van **securityd** met behulp van die `vmmap` opdrag, op soek na potensiële sleutels binne areas wat as `MALLOC_TINY` gemerk is. Die volgende opdrag word gebruik om hierdie geheue-lokasies te ondersoek:
 ```bash
@@ -69,9 +75,9 @@ sudo ./keychaindump
 ```
 ### chainbreaker
 
-[**Chainbreaker**](https://github.com/n0fate/chainbreaker) kan gebruik word om die volgende tipes inligting uit 'n OSX sleutelketting op 'n forensies-gesonde manier te onttrek:
+[**Chainbreaker**](https://github.com/n0fate/chainbreaker) kan gebruik word om die volgende tipes inligting uit 'n OSX sleutelketting op 'n forensies-korrekte manier te onttrek:
 
-* Gehashde Sleutelketing wagwoord, geskik vir kraken met [hashcat](https://hashcat.net/hashcat/) of [John the Ripper](https://www.openwall.com/john/)
+* Gehashede Sleutelkettingswagwoord, geskik vir kraken met [hashcat](https://hashcat.net/hashcat/) of [John the Ripper](https://www.openwall.com/john/)
 * Internet Wagwoorde
 * Generiese Wagwoorde
 * Privaat Sleutels
@@ -80,11 +86,11 @@ sudo ./keychaindump
 * Veilige Aantekeninge
 * Appleshare Wagwoorde
 
-Gegewe die sleutelketing ontgrendel wagwoord, 'n meester sleutel verkry met behulp van [volafox](https://github.com/n0fate/volafox) of [volatility](https://github.com/volatilityfoundation/volatility), of 'n ontgrendel lêer soos SystemKey, sal Chainbreaker ook platteks wagwoorde verskaf.
+Gegewe die sleutelkettingsontsluitwagwoord, 'n meester sleutel verkry met behulp van [volafox](https://github.com/n0fate/volafox) of [volatility](https://github.com/volatilityfoundation/volatility), of 'n ontsluitlêer soos SystemKey, sal Chainbreaker ook plattekswagwoorde verskaf.
 
-Sonder een van hierdie metodes om die Sleutelketing te ontgrendel, sal Chainbreaker al die ander beskikbare inligting vertoon.
+Sonder een van hierdie metodes om die Sleutelketing te ontsluit, sal Chainbreaker al die ander beskikbare inligting vertoon.
 
-#### **Dump sleutelketing sleutels**
+#### **Dump sleutelkettingsleutels**
 ```bash
 #Dump all keys of the keychain (without the passwords)
 python2.7 chainbreaker.py --dump-all /Library/Keychains/System.keychain
@@ -169,19 +175,55 @@ for i in $(sqlite3 ~/Library/Group\ Containers/group.com.apple.notes/NoteStore.s
 
 ## Voorkeure
 
-In macOS toepassings is voorkeure geleë in **`$HOME/Library/Preferences`** en in iOS is dit in `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.&#x20;
+In macOS toepassings is voorkeure geleë in **`$HOME/Library/Preferences`** en in iOS is dit in `/var/mobile/Containers/Data/Application/<UUID>/Library/Preferences`.
 
 In macOS kan die cli-gereedskap **`defaults`** gebruik word om die **Voorkeur lêer** te **wysig**.
 
-**`/usr/sbin/cfprefsd`** eis die XPC dienste `com.apple.cfprefsd.daemon` en `com.apple.cfprefsd.agent` en kan geroep word om aksies soos om voorkeure te wysig, uit te voer.
+**`/usr/sbin/cfprefsd`** eis die XPC dienste `com.apple.cfprefsd.daemon` en `com.apple.cfprefsd.agent` en kan geroep word om aksies uit te voer soos om voorkeure te wysig.
 
-## Stelselnotasies
+## OpenDirectory permissions.plist
 
-### Darwin Notasies
+Die lêer `/System/Library/OpenDirectory/permissions.plist` bevat toestemmings wat op knoopattributen toegepas word en is beskerm deur SIP.\
+Hierdie lêer verleen toestemmings aan spesifieke gebruikers deur UUID (en nie uid nie) sodat hulle toegang kan verkry tot spesifieke sensitiewe inligting soos `ShadowHashData`, `HeimdalSRPKey` en `KerberosKeys` onder andere:
+```xml
+[...]
+<key>dsRecTypeStandard:Computers</key>
+<dict>
+<key>dsAttrTypeNative:ShadowHashData</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+<key>dsAttrTypeNative:KerberosKeys</key>
+<array>
+<dict>
+<!-- allow wheel even though it's implicit -->
+<key>uuid</key>
+<string>ABCDEFAB-CDEF-ABCD-EFAB-CDEF00000000</string>
+<key>permissions</key>
+<array>
+<string>readattr</string>
+<string>writeattr</string>
+</array>
+</dict>
+</array>
+[...]
+```
+## Stelselskennisgewings
 
-Die hoofdaemon vir notasies is **`/usr/sbin/notifyd`**. Om notasies te ontvang, moet kliënte registreer deur die `com.apple.system.notification_center` Mach-poort (kontroleer dit met `sudo lsmp -p <pid notifyd>`). Die daemon is konfigureerbaar met die lêer `/etc/notify.conf`.
+### Darwin Kenner
 
-Die name wat vir notasies gebruik word, is unieke omgekeerde DNS-notasies en wanneer 'n notasie na een van hulle gestuur word, sal die kliënt(e) wat aangedui het dat hulle dit kan hanteer, dit ontvang.
+Die hoof daemon vir kennisgewings is **`/usr/sbin/notifyd`**. Om kennisgewings te ontvang, moet kliënte registreer deur die `com.apple.system.notification_center` Mach-poort (kontroleer dit met `sudo lsmp -p <pid notifyd>`). Die daemon is konfigureerbaar met die lêer `/etc/notify.conf`.
+
+Die name wat vir kennisgewings gebruik word, is unieke omgekeerde DNS-notasies en wanneer 'n kennisgewing na een van hulle gestuur word, sal die kliënt(e) wat aangedui het dat hulle dit kan hanteer, dit ontvang.
 
 Dit is moontlik om die huidige status te dump (en al die name te sien) deur die sein SIGUSR2 na die notifyd-proses te stuur en die gegenereerde lêer te lees: `/var/run/notifyd_<pid>.status`:
 ```bash
@@ -201,11 +243,11 @@ common: com.apple.security.octagon.joined-with-bottle
 ```
 ### Verspreide Kennisgewing Sentrum
 
-Die **Verspreide Kennisgewing Sentrum** waarvan die hoof binêre **`/usr/sbin/distnoted`** is, is 'n ander manier om kennisgewings te stuur. Dit stel 'n paar XPC dienste bloot en dit voer 'n paar kontroles uit om te probeer om kliënte te verifieer.
+Die **Verspreide Kennisgewing Sentrum** waarvan die hoof-binary **`/usr/sbin/distnoted`** is, is 'n ander manier om kennisgewings te stuur. Dit stel 'n paar XPC-dienste bloot en dit voer 'n paar kontroles uit om te probeer om kliënte te verifieer.
 
 ### Apple Push Kennisgewings (APN)
 
-In hierdie geval kan toepassings registreer vir **onderwerpe**. Die kliënt sal 'n token genereer deur Apple se bedieners te kontak deur middel van **`apsd`**.\
+In hierdie geval kan toepassings registreer vir **onderwerpe**. Die kliënt sal 'n token genereer deur Apple se bedieners te kontak via **`apsd`**.\
 Dan sal verskaffers ook 'n token genereer en in staat wees om met Apple se bedieners te verbind om boodskappe aan die kliënte te stuur. Hierdie boodskappe sal plaaslik deur **`apsd`** ontvang word wat die kennisgewing aan die toepassing wat daarop wag, sal oordra.
 
 Die voorkeure is geleë in `/Library/Preferences/com.apple.apsd.plist`.
@@ -220,15 +262,15 @@ Dit is ook moontlik om inligting oor die daemon en verbindings te verkry met:
 ```
 ## User Notifications
 
-Hierdie is kennisgewings wat die gebruiker op die skerm moet sien:
+Dit is kennisgewings wat die gebruiker op die skerm moet sien:
 
 * **`CFUserNotification`**: Hierdie API bied 'n manier om 'n pop-up met 'n boodskap op die skerm te wys.
 * **Die Bulletin Board**: Dit wys in iOS 'n banner wat verdwyn en in die Kennisgewing Sentrum gestoor sal word.
 * **`NSUserNotificationCenter`**: Dit is die iOS bulletin board in MacOS. Die databasis met die kennisgewings is geleë in `/var/folders/<user temp>/0/com.apple.notificationcenter/db2/db`
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="/.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="/.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="/.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="/.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
