@@ -15,7 +15,7 @@ Aprenda e pratique Hacking GCP: <img src="../../.gitbook/assets/grte.png" alt=""
 </details>
 {% endhint %}
 
-<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Se você está interessado em **carreira de hacking** e hackear o inhackeável - **estamos contratando!** (_fluência em polonês escrita e falada é necessária_).
 
@@ -23,7 +23,7 @@ Se você está interessado em **carreira de hacking** e hackear o inhackeável -
 
 ## Descobertas de ativos
 
-> Então, foi dito a você que tudo que pertence a alguma empresa está dentro do escopo, e você quer descobrir o que essa empresa realmente possui.
+> Então, foi dito que tudo que pertence a alguma empresa está dentro do escopo, e você quer descobrir o que essa empresa realmente possui.
 
 O objetivo desta fase é obter todas as **empresas pertencentes à empresa principal** e, em seguida, todos os **ativos** dessas empresas. Para isso, vamos:
 
@@ -34,7 +34,7 @@ O objetivo desta fase é obter todas as **empresas pertencentes à empresa princ
 
 ### **Aquisições**
 
-Primeiramente, precisamos saber quais **outras empresas são propriedade da empresa principal**.\
+Primeiro de tudo, precisamos saber quais **outras empresas são propriedade da empresa principal**.\
 Uma opção é visitar [https://www.crunchbase.com/](https://www.crunchbase.com), **pesquisar** pela **empresa principal** e **clicar** em "**aquisições**". Lá você verá outras empresas adquiridas pela principal.\
 Outra opção é visitar a página da **Wikipedia** da empresa principal e procurar por **aquisições**.
 
@@ -45,7 +45,7 @@ Outra opção é visitar a página da **Wikipedia** da empresa principal e procu
 Um número de sistema autônomo (**ASN**) é um **número único** atribuído a um **sistema autônomo** (AS) pela **Internet Assigned Numbers Authority (IANA)**.\
 Um **AS** consiste em **blocos** de **endereços IP** que têm uma política claramente definida para acessar redes externas e são administrados por uma única organização, mas podem ser compostos por vários operadores.
 
-É interessante descobrir se a **empresa atribuiu algum ASN** para encontrar seus **intervalos de IP.** Será interessante realizar um **teste de vulnerabilidade** contra todos os **hosts** dentro do **escopo** e **procurar por domínios** dentro desses IPs.\
+É interessante descobrir se a **empresa tem algum ASN atribuído** para encontrar seus **intervalos de IP.** Será interessante realizar um **teste de vulnerabilidade** contra todos os **hosts** dentro do **escopo** e **procurar por domínios** dentro desses IPs.\
 Você pode **pesquisar** pelo **nome** da empresa, por **IP** ou por **domínio** em [**https://bgp.he.net/**](https://bgp.he.net)**.**\
 **Dependendo da região da empresa, esses links podem ser úteis para coletar mais dados:** [**AFRINIC**](https://www.afrinic.net) **(África),** [**Arin**](https://www.arin.net/about/welcome/region/)**(América do Norte),** [**APNIC**](https://www.apnic.net) **(Ásia),** [**LACNIC**](https://www.lacnic.net) **(América Latina),** [**RIPE NCC**](https://www.ripe.net) **(Europa). De qualquer forma, provavelmente todas as** informações úteis **(intervalos de IP e Whois)** já aparecem no primeiro link.
 ```bash
@@ -76,20 +76,20 @@ Você pode encontrar o IP e ASN de um domínio usando [http://ipv4info.com/](htt
 ### **Procurando vulnerabilidades**
 
 Neste ponto, sabemos **todos os ativos dentro do escopo**, então, se você tiver permissão, pode lançar algum **scanner de vulnerabilidades** (Nessus, OpenVAS) sobre todos os hosts.\
-Além disso, você pode lançar alguns [**scans de porta**](../pentesting-network/#discovering-hosts-from-the-outside) **ou usar serviços como** shodan **para encontrar** portas abertas **e, dependendo do que você encontrar, deve** dar uma olhada neste livro sobre como pentestar vários serviços possíveis em execução.\
+Além disso, você pode lançar alguns [**scans de porta**](../pentesting-network/#discovering-hosts-from-the-outside) **ou usar serviços como** shodan **para encontrar** portas abertas **e dependendo do que você encontrar, deve** dar uma olhada neste livro sobre como pentestar vários serviços possíveis em execução.\
 **Além disso, pode valer a pena mencionar que você também pode preparar algumas listas de** nomes de usuário **e** senhas **padrão e tentar** bruteforçar serviços com [https://github.com/x90skysn3k/brutespray](https://github.com/x90skysn3k/brutespray).
 
 ## Domínios
 
 > Sabemos todas as empresas dentro do escopo e seus ativos, é hora de encontrar os domínios dentro do escopo.
 
-_Por favor, note que nas técnicas propostas a seguir você também pode encontrar subdomínios e que essa informação não deve ser subestimada._
+_Por favor, note que nas técnicas propostas a seguir você também pode encontrar subdomínios e essa informação não deve ser subestimada._
 
 Primeiro de tudo, você deve procurar o(s) **domínio(s) principal(is)** de cada empresa. Por exemplo, para _Tesla Inc._ será _tesla.com_.
 
 ### **DNS Reverso**
 
-Como você encontrou todos os intervalos de IP dos domínios, pode tentar realizar **consultas de dns reverso** nesses **IPs para encontrar mais domínios dentro do escopo**. Tente usar algum servidor DNS da vítima ou algum servidor DNS bem conhecido (1.1.1.1, 8.8.8.8)
+Como você encontrou todos os intervalos de IP dos domínios, pode tentar realizar **consultas de dns reverso** nesses **IPs para encontrar mais domínios dentro do escopo**. Tente usar algum servidor dns da vítima ou algum servidor dns bem conhecido (1.1.1.1, 8.8.8.8)
 ```bash
 dnsrecon -r <DNS Range> -n <IP_DNS>   #DNS reverse of all of the addresses
 dnsrecon -d facebook.com -r 157.240.221.35/24 #Using facebooks dns
@@ -188,7 +188,7 @@ Aparentemente, é comum que as pessoas atribuam subdomínios a IPs que pertencem
 
 **Shodan**
 
-Como você já sabe o nome da organização que possui o espaço de IP. Você pode pesquisar por esses dados no shodan usando: `org:"Tesla, Inc."` Verifique os hosts encontrados em busca de novos domínios inesperados no certificado TLS.
+Como você já sabe o nome da organização que possui o espaço de IP. Você pode pesquisar por esses dados no shodan usando: `org:"Tesla, Inc."` Verifique os hosts encontrados para novos domínios inesperados no certificado TLS.
 
 Você poderia acessar o **certificado TLS** da página principal, obter o **nome da Organização** e então procurar esse nome dentro dos **certificados TLS** de todas as páginas conhecidas pelo **shodan** com o filtro: `ssl:"Tesla Motors"` ou usar uma ferramenta como [**sslsearch**](https://github.com/HarshVaragiya/sslsearch).
 
@@ -404,7 +404,7 @@ gotator -sub subdomains.txt -silent [-perm /tmp/words-permutations.txt]
 ```
 altdns -i subdomains.txt -w /tmp/words-permutations.txt -o /tmp/asd3
 ```
-* [**dmut**](https://github.com/bp0lr/dmut): Outra ferramenta para realizar permutações, mutações e alterações de subdomínios. Esta ferramenta fará brute force do resultado (não suporta dns wild card).
+* [**dmut**](https://github.com/bp0lr/dmut): Outra ferramenta para realizar permutações, mutações e alterações de subdomínios. Esta ferramenta fará brute force do resultado (não suporta wildcard dns).
 * Você pode obter a lista de palavras de permutações do dmut [**aqui**](https://raw.githubusercontent.com/bp0lr/dmut/main/words.txt).
 ```bash
 cat subdomains.txt | dmut -d /tmp/words-permutations.txt -w 100 \
@@ -426,7 +426,7 @@ echo www | subzuf facebook.com
 ```
 ### **Fluxo de Trabalho de Descoberta de Subdomínios**
 
-Confira este post no blog que escrevi sobre como **automatizar a descoberta de subdomínios** a partir de um domínio usando **Trickest workflows**, para que eu não precise lançar manualmente um monte de ferramentas no meu computador:
+Confira este post no blog que escrevi sobre como **automatizar a descoberta de subdomínios** a partir de um domínio usando **fluxos de trabalho do Trickest** para que eu não precise lançar manualmente um monte de ferramentas no meu computador:
 
 {% embed url="https://trickest.com/blog/full-subdomain-discovery-using-workflow/" %}
 
@@ -462,7 +462,7 @@ Com esta técnica, você pode até conseguir acessar endpoints internos/ocultos.
 
 ### **CORS Brute Force**
 
-Às vezes, você encontrará páginas que retornam apenas o cabeçalho _**Access-Control-Allow-Origin**_ quando um domínio/subdomínio válido é definido no cabeçalho _**Origin**_. Nesses cenários, você pode abusar desse comportamento para **descobrir** novos **subdomínios**.
+Às vezes, você encontrará páginas que retornam o cabeçalho _**Access-Control-Allow-Origin**_ apenas quando um domínio/subdomínio válido é definido no cabeçalho _**Origin**_. Nesses cenários, você pode abusar desse comportamento para **descobrir** novos **subdomínios**.
 ```bash
 ffuf -w subdomains-top1million-5000.txt -u http://10.10.10.208 -H 'Origin: http://FUZZ.crossfit.htb' -mr "Access-Control-Allow-Origin" -ignore-body
 ```
@@ -473,9 +473,9 @@ Além disso, como neste ponto você já conhecerá todos os domínios dentro do 
 
 ### **Monitorização**
 
-Você pode **monitorar** se **novos subdomínios** de um domínio são criados monitorando os **Logs de Transparência de Certificados** [**sublert** ](https://github.com/yassineaboukir/sublert/blob/master/sublert.py).
+Você pode **monitorar** se **novos subdomínios** de um domínio são criados monitorando os **Logs de Transparência de Certificados** [**sublert** ](https://github.com/yassineaboukir/sublert/blob/master/sublert.py)faz.
 
-### **Procurando vulnerabilidades**
+### **Procurando por vulnerabilidades**
 
 Verifique possíveis [**subdomain takeovers**](../../pentesting-web/domain-subdomain-takeover.md#subdomain-takeover).\
 Se o **subdomínio** estiver apontando para algum **S3 bucket**, [**verifique as permissões**](../../network-services-pentesting/pentesting-web/buckets/).
@@ -494,7 +494,7 @@ Usando serviços das seguintes **APIs gratuitas**, você também pode encontrar 
 
 Você também pode verificar domínios apontando para um endereço IP específico usando a ferramenta [**hakip2host**](https://github.com/hakluke/hakip2host)
 
-### **Procurando vulnerabilidades**
+### **Procurando por vulnerabilidades**
 
 **Varra todas as portas dos IPs que não pertencem a CDNs** (pois você provavelmente não encontrará nada interessante lá). Nos serviços em execução descobertos, você pode ser **capaz de encontrar vulnerabilidades**.
 
@@ -506,7 +506,7 @@ Você também pode verificar domínios apontando para um endereço IP específic
 
 Nos passos anteriores, você provavelmente já realizou alguma **reconhecimento dos IPs e domínios descobertos**, então você pode já ter **encontrado todos os possíveis servidores web**. No entanto, se você não encontrou, agora vamos ver algumas **dicas rápidas para procurar servidores web** dentro do escopo.
 
-Por favor, note que isso será **orientado para descoberta de aplicativos web**, então você deve **realizar a varredura de vulnerabilidades** e **varredura de portas** também (**se permitido** pelo escopo).
+Por favor, note que isso será **orientado para descoberta de aplicativos web**, então você deve **realizar a vulnerabilidade** e **varredura de portas** também (**se permitido** pelo escopo).
 
 Um **método rápido** para descobrir **portas abertas** relacionadas a **servidores** web usando [**masscan** pode ser encontrado aqui](../pentesting-network/#http-port-discovery).\
 Outra ferramenta amigável para procurar servidores web é [**httprobe**](https://github.com/tomnomnom/httprobe)**,** [**fprobe**](https://github.com/theblackturtle/fprobe) e [**httpx**](https://github.com/projectdiscovery/httpx). Você apenas passa uma lista de domínios e ela tentará se conectar à porta 80 (http) e 443 (https). Além disso, você pode indicar para tentar outras portas:
@@ -532,7 +532,7 @@ Você também precisará de listas de palavras de **palavras comuns usadas em bu
 * [https://raw.githubusercontent.com/infosec-au/altdns/master/words.txt](https://raw.githubusercontent.com/infosec-au/altdns/master/words.txt)
 * [https://raw.githubusercontent.com/jordanpotti/AWSBucketDump/master/BucketNames.txt](https://raw.githubusercontent.com/jordanpotti/AWSBucketDump/master/BucketNames.txt)
 
-Então, com essas palavras, você deve gerar **permutations** (verifique o [**Second Round DNS Brute-Force**](./#second-dns-bruteforce-round) para mais informações).
+Em seguida, com essas palavras, você deve gerar **permutations** (verifique o [**Second Round DNS Brute-Force**](./#second-dns-bruteforce-round) para mais informações).
 
 Com as listas de palavras resultantes, você pode usar ferramentas como [**cloud\_enum**](https://github.com/initstring/cloud\_enum)**,** [**CloudScraper**](https://github.com/jordanpotti/CloudScraper)**,** [**cloudlist**](https://github.com/projectdiscovery/cloudlist) **ou** [**S3Scanner**](https://github.com/sa7mon/S3Scanner)**.**
 
@@ -587,7 +587,7 @@ Verifique também esta **página** para potenciais **dorks do github** que você
 
 ### Vazamentos de Pastas
 
-Às vezes, atacantes ou apenas trabalhadores irão **publicar conteúdo da empresa em um site de paste**. Isso pode ou não conter **informações sensíveis**, mas é muito interessante procurar por isso.\
+Às vezes, atacantes ou apenas trabalhadores **publicam conteúdo da empresa em um site de paste**. Isso pode ou não conter **informações sensíveis**, mas é muito interessante procurar por isso.\
 Você pode usar a ferramenta [**Pastos**](https://github.com/carlospolop/Pastos) para pesquisar em mais de 80 sites de paste ao mesmo tempo.
 
 ### Dorks do Google
@@ -616,9 +616,9 @@ Existem também serviços gratuitos que permitem que você **escaneie repositór
 
 ## [**Metodologia de Pentesting Web**](../../network-services-pentesting/pentesting-web/)
 
-A **maioria das vulnerabilidades** encontradas por caçadores de bugs reside dentro de **aplicações web**, então, neste ponto, eu gostaria de falar sobre uma **metodologia de teste de aplicações web**, e você pode [**encontrar essas informações aqui**](../../network-services-pentesting/pentesting-web/).
+A **maioria das vulnerabilidades** encontradas por caçadores de bugs reside dentro de **aplicações web**, então, neste ponto, gostaria de falar sobre uma **metodologia de teste de aplicações web**, e você pode [**encontrar essas informações aqui**](../../network-services-pentesting/pentesting-web/).
 
-Eu também quero fazer uma menção especial à seção [**Ferramentas de Scanners Automáticos de Web de Código Aberto**](../../network-services-pentesting/pentesting-web/#automatic-scanners), pois, se você não deve esperar que elas encontrem vulnerabilidades muito sensíveis, elas são úteis para implementá-las em **fluxos de trabalho para ter algumas informações iniciais da web.**
+Quero também fazer uma menção especial à seção [**Ferramentas de Scanners Automáticos de Web de Código Aberto**](../../network-services-pentesting/pentesting-web/#automatic-scanners), pois, se você não deve esperar que elas encontrem vulnerabilidades muito sensíveis, elas são úteis para implementá-las em **fluxos de trabalho para ter algumas informações iniciais da web.**
 
 ## Recapitulação
 
@@ -649,15 +649,15 @@ Existem várias ferramentas por aí que realizarão parte das ações propostas 
 
 * Todos os cursos gratuitos de [**@Jhaddix**](https://twitter.com/Jhaddix) como [**A Metodologia do Caçador de Bugs v4.0 - Edição Recon**](https://www.youtube.com/watch?v=p4JgIu1mceI)
 
-<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Se você está interessado em uma **carreira em hacking** e hackear o inhackeável - **estamos contratando!** (_fluência em polonês escrita e falada é necessária_).
 
 {% embed url="https://www.stmcyber.com/careers" %}
 
 {% hint style="success" %}
-Aprenda e pratique Hacking em AWS:<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
-Aprenda e pratique Hacking em GCP: <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Aprenda e pratique Hacking AWS:<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Aprenda e pratique Hacking GCP: <img src="../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
