@@ -15,7 +15,7 @@ Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 If you are interested in **hacking career** and hack the unhackable - **we are hiring!** (_se requiere polaco fluido escrito y hablado_).
 
@@ -94,7 +94,7 @@ Para más información sobre esta técnica, consulta el Github o:
 
 ### MemExec
 
-[**Memexec**](https://github.com/arget13/memexec) es el siguiente paso natural de DDexec. Es un **shellcode demonizado de DDexec**, por lo que cada vez que quieras **ejecutar un binario diferente** no necesitas relanzar DDexec, solo puedes ejecutar el shellcode de memexec a través de la técnica DDexec y luego **comunicarte con este demonio para pasar nuevos binarios para cargar y ejecutar**.
+[**Memexec**](https://github.com/arget13/memexec) es el siguiente paso natural de DDexec. Es un **DDexec shellcode demonizado**, por lo que cada vez que quieras **ejecutar un binario diferente** no necesitas relanzar DDexec, solo puedes ejecutar el shellcode de memexec a través de la técnica DDexec y luego **comunicarte con este demonio para pasar nuevos binarios para cargar y ejecutar**.
 
 Puedes encontrar un ejemplo de cómo usar **memexec para ejecutar binarios desde un reverse shell de PHP** en [https://github.com/arget13/memexec/blob/main/a.php](https://github.com/arget13/memexec/blob/main/a.php).
 
@@ -132,7 +132,7 @@ Sin embargo, en este tipo de contenedores, estas protecciones generalmente exist
 
 Puedes encontrar **ejemplos** sobre cómo **explotar algunas vulnerabilidades RCE** para obtener **reverse shells** de lenguajes de scripting y ejecutar binarios desde la memoria en [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE).
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Si estás interesado en una **carrera de hacking** y hackear lo inhackeable - **¡estamos contratando!** (_se requiere polaco fluido escrito y hablado_).
 
@@ -146,7 +146,7 @@ Aprende y practica Hacking en GCP: <img src="../../../.gitbook/assets/grte.png" 
 
 <summary>Apoya a HackTricks</summary>
 
-* Consulta los [**planes de suscripción**](https://github.com/sponsors/carlospolop)!
+* ¡Consulta los [**planes de suscripción**](https://github.com/sponsors/carlospolop)!
 * **Únete al** 💬 [**grupo de Discord**](https://discord.gg/hRep4RUj7f) o al [**grupo de telegram**](https://t.me/peass) o **síguenos** en **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
 * **Comparte trucos de hacking enviando PRs a los** [**HackTricks**](https://github.com/carlospolop/hacktricks) y [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repositorios de github.
 
