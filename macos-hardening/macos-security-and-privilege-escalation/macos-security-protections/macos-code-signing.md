@@ -19,10 +19,10 @@ Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="
 
 Mach-o バイナリには、バイナリ内の署名の **オフセット** と **サイズ** を示す **`LC_CODE_SIGNATURE`** というロードコマンドが含まれています。実際、GUIツールのMachOViewを使用すると、バイナリの最後にこの情報を含む **Code Signature** というセクションを見つけることができます：
 
-<figure><img src="../../../.gitbook/assets/image.png" alt="" width="431"><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1).png" alt="" width="431"><figcaption></figcaption></figure>
 
 Code Signatureのマジックヘッダーは **`0xFADE0CC0`** です。次に、これらを含むスーパーブロブの長さやブロブの数などの情報があります。\
-この情報は、[こちらのソースコード](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs\_blobs.h#L276)で見つけることができます：
+この情報は、[こちらのソースコード](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs\_blobs.h#L276) で見つけることができます：
 ```c
 /*
 * Structure of an embedded-signature SuperBlob
@@ -58,7 +58,7 @@ __attribute__ ((aligned(1)));
 
 ## コードディレクトリブロブ
 
-[コードディレクトリブロブの宣言をコード内で見つけることができます](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs\_blobs.h#L104):
+[コードディレクトリブロブの宣言をコード内で見つけることができます](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs_blobs.h#L104):
 ```c
 typedef struct __CodeDirectory {
 uint32_t magic;                                 /* magic number (CSMAGIC_CODEDIRECTORY) */
@@ -175,7 +175,7 @@ MacOSアプリケーションは、バイナリ内で実行するために必要
 
 ## Code Signing Flags
 
-すべてのプロセスには、カーネルによって開始される`status`として知られるビットマスクが関連付けられており、その一部は**コード署名**によって上書きされる可能性があります。コード署名に含めることができるこれらのフラグは[コードで定義されています](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs_blobs.h#L36)：
+すべてのプロセスには、カーネルによって開始される`status`として知られるビットマスクが関連付けられており、その一部は**コード署名**によって上書きされる可能性があります。これらのフラグは、[コード内で定義されています](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs_blobs.h#L36)：
 ```c
 /* code signing attributes of a process */
 #define CS_VALID                    0x00000001  /* dynamically valid */
@@ -226,7 +226,7 @@ Note that the function [**exec\_mach\_imgact**](https://github.com/apple-oss-dis
 
 各アプリケーションは、実行可能であるために満たさなければならない **要件** をいくつか **保持** しています。もし **アプリケーションに満たされていない要件が含まれている場合**、それは実行されません（おそらく変更されているためです）。
 
-バイナリの要件は **特別な文法** を使用し、**式** のストリームとして表現され、`0xfade0c00` をマジックとして使用してバイナリデータとしてエンコードされ、その **ハッシュは特別なコードスロットに保存されます**。
+バイナリの要件は **特別な文法** を使用し、**式** のストリームとして表現され、`0xfade0c00` をマジックとして使用してバイナリとしてエンコードされ、その **ハッシュは特別なコードスロットに保存されます**。
 
 バイナリの要件は、次のコマンドを実行することで確認できます：
 
@@ -243,7 +243,7 @@ designated => identifier "org.whispersystems.signal-desktop" and anchor apple ge
 {% endcode %}
 
 {% hint style="info" %}
-この署名が認証情報、TeamID、ID、権限、およびその他のデータを確認できることに注意してください。
+この署名が認証情報、TeamID、ID、権限、その他多くのデータを確認できることに注意してください。
 {% endhint %}
 
 さらに、`csreq`ツールを使用していくつかのコンパイルされた要件を生成することが可能です：
@@ -262,7 +262,7 @@ od -A x -t x1 /tmp/output.csreq
 ```
 {% endcode %}
 
-この情報にアクセスし、`Security.framework`のいくつかのAPIを使用して要件を作成または変更することが可能です：
+この情報にアクセスし、`Security.framework`のいくつかのAPIを使用して要件を作成または変更することが可能です。
 
 #### **有効性の確認**
 
@@ -308,7 +308,7 @@ od -A x -t x1 /tmp/output.csreq
 
 ## コード署名の強制
 
-**カーネル**は、アプリのコードを実行する前に**コード署名を確認**します。さらに、メモリ内に新しいコードを書き込み実行するための一つの方法は、`mprotect`が`MAP_JIT`フラグで呼び出されることを悪用することです。この操作を行うには、アプリケーションに特別な権限が必要です。
+**カーネル**は、アプリのコードを実行する前に**コード署名を確認**します。さらに、メモリ内に新しいコードを書き込み、実行するための一つの方法は、`mprotect`が`MAP_JIT`フラグで呼び出されることを悪用することです。この操作を行うには、アプリケーションに特別な権限が必要です。
 
 ## `cs_blobs` & `cs_blob`
 
@@ -384,7 +384,7 @@ GCPハッキングを学び、実践する：<img src="../../../.gitbook/assets/
 <summary>HackTricksをサポートする</summary>
 
 * [**サブスクリプションプラン**](https://github.com/sponsors/carlospolop)を確認してください！
-* **💬 [**Discordグループ**](https://discord.gg/hRep4RUj7f)または[**テレグラムグループ**](https://t.me/peass)に参加するか、**Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**をフォローしてください。**
+* **💬 [**Discordグループ**](https://discord.gg/hRep4RUj7f)または[**Telegramグループ**](https://t.me/peass)に参加するか、**Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**をフォローしてください。**
 * **ハッキングのトリックを共有するには、[**HackTricks**](https://github.com/carlospolop/hacktricks)および[**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud)のGitHubリポジトリにPRを提出してください。**
 
 </details>
