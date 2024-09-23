@@ -15,11 +15,11 @@ Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="
 </details>
 {% endhint %}
 
-## Basic Information
+## Informazioni di base
 
-I file Mach-o contengono un comando di caricamento chiamato **`LC_CODE_SIGNATURE`** che indica l'**offset** e la **dimensione** delle firme all'interno del binario. In realtà, utilizzando lo strumento GUI MachOView, è possibile trovare alla fine del binario una sezione chiamata **Code Signature** con queste informazioni:
+I binari Mach-o contengono un comando di caricamento chiamato **`LC_CODE_SIGNATURE`** che indica l'**offset** e la **dimensione** delle firme all'interno del binario. In realtà, utilizzando lo strumento GUI MachOView, è possibile trovare alla fine del binario una sezione chiamata **Code Signature** con queste informazioni:
 
-<figure><img src="../../../.gitbook/assets/image.png" alt="" width="431"><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1).png" alt="" width="431"><figcaption></figcaption></figure>
 
 L'intestazione magica della Code Signature è **`0xFADE0CC0`**. Poi hai informazioni come la lunghezza e il numero di blob del superBlob che le contiene.\
 È possibile trovare queste informazioni nel [codice sorgente qui](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs\_blobs.h#L276):
@@ -119,7 +119,7 @@ Nota che ci sono diverse versioni di questa struct dove quelle vecchie potrebber
 ## Pagine di Firma del Codice
 
 Hashare il binario completo sarebbe inefficiente e persino inutile se viene caricato in memoria solo parzialmente. Pertanto, la firma del codice è in realtà un hash di hash dove ogni pagina binaria è hashata individualmente.\
-In effetti, nel precedente codice **Code Directory** puoi vedere che **la dimensione della pagina è specificata** in uno dei suoi campi. Inoltre, se la dimensione del binario non è un multiplo della dimensione di una pagina, il campo **CodeLimit** specifica dove si trova la fine della firma.
+In realtà, nel precedente codice **Code Directory** puoi vedere che **la dimensione della pagina è specificata** in uno dei suoi campi. Inoltre, se la dimensione del binario non è un multiplo della dimensione di una pagina, il campo **CodeLimit** specifica dove si trova la fine della firma.
 ```bash
 # Get all hashes of /bin/ps
 codesign -d -vvvvvv /bin/ps
@@ -226,7 +226,7 @@ Nota che la funzione [**exec\_mach\_imgact**](https://github.com/apple-oss-distr
 
 Ogni applicazione memorizza alcuni **requisiti** che deve **soddisfare** per poter essere eseguita. Se i **requisiti dell'applicazione non sono soddisfatti dall'applicazione**, non verrà eseguita (poiché probabilmente è stata alterata).
 
-I requisiti di un binario utilizzano una **grammatica speciale** che è un flusso di **espressioni** e sono codificati come blob utilizzando `0xfade0c00` come magic il cui **hash è memorizzato in uno slot di codice speciale**.
+I requisiti di un binario utilizzano una **grammatica speciale** che è un flusso di **espressioni** e sono codificati come blob utilizzando `0xfade0c00` come magic, il cui **hash è memorizzato in uno slot di codice speciale**.
 
 I requisiti di un binario possono essere visualizzati eseguendo:
 
@@ -243,7 +243,7 @@ designated => identifier "org.whispersystems.signal-desktop" and anchor apple ge
 {% endcode %}
 
 {% hint style="info" %}
-Nota come queste firme possono controllare informazioni come certificazione, TeamID, ID, diritti e molti altri dati.
+Nota come queste firme possano controllare informazioni come certificazione, TeamID, ID, diritti e molti altri dati.
 {% endhint %}
 
 Inoltre, è possibile generare alcuni requisiti compilati utilizzando lo strumento `csreq`:
@@ -308,11 +308,11 @@ od -A x -t x1 /tmp/output.csreq
 
 ## Applicazione della Firma del Codice
 
-Il **kernel** è quello che **controlla la firma del codice** prima di consentire l'esecuzione del codice dell'app. Inoltre, un modo per poter scrivere ed eseguire nuovo codice in memoria è abusare di JIT se `mprotect` viene chiamato con il flag `MAP_JIT`. Nota che l'applicazione ha bisogno di un diritto speciale per poterlo fare.
+Il **kernel** è quello che **controlla la firma del codice** prima di consentire l'esecuzione del codice dell'app. Inoltre, un modo per poter scrivere ed eseguire nuovo codice in memoria è abusare di JIT se `mprotect` viene chiamato con il flag `MAP_JIT`. Nota che l'applicazione ha bisogno di un diritto speciale per poter fare questo.
 
 ## `cs_blobs` & `cs_blob`
 
-[**cs\_blob**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/sys/ubc_internal.h#L106) la struct contiene le informazioni sui diritti dell'entitlement del processo in esecuzione su di esso. `csb_platform_binary` informa anche se l'applicazione è un binario di piattaforma (che viene controllato in momenti diversi dal sistema operativo per applicare meccanismi di sicurezza come proteggere i diritti SEND alle porte di task di questi processi).
+[**cs\_blob**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/sys/ubc\_internal.h#L106) struct contiene le informazioni sui diritti dell'entitlement del processo in esecuzione su di esso. `csb_platform_binary` informa anche se l'applicazione è un binario di piattaforma (che viene controllato in momenti diversi dal sistema operativo per applicare meccanismi di sicurezza come proteggere i diritti SEND alle porte di task di questi processi).
 ```c
 struct cs_blob {
 struct cs_blob  *csb_next;
@@ -385,7 +385,7 @@ Impara e pratica il hacking GCP: <img src="../../../.gitbook/assets/grte.png" al
 
 * Controlla i [**piani di abbonamento**](https://github.com/sponsors/carlospolop)!
 * **Unisciti al** 💬 [**gruppo Discord**](https://discord.gg/hRep4RUj7f) o al [**gruppo telegram**](https://t.me/peass) o **seguici** su **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Condividi trucchi di hacking inviando PR ai** [**HackTricks**](https://github.com/carlospolop/hacktricks) e [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repository su github.
+* **Condividi trucchi di hacking inviando PR ai** [**HackTricks**](https://github.com/carlospolop/hacktricks) e [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repository github.
 
 </details>
 {% endhint %}
