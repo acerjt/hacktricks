@@ -6,11 +6,11 @@ Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="
 
 <details>
 
-<summary>Support HackTricks</summary>
+<summary>Podrška HackTricks</summary>
 
-* Check the [**subscription plans**](https://github.com/sponsors/carlospolop)!
-* **Join the** 💬 [**Discord group**](https://discord.gg/hRep4RUj7f) or the [**telegram group**](https://t.me/peass) or **follow** us on **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Share hacking tricks by submitting PRs to the** [**HackTricks**](https://github.com/carlospolop/hacktricks) and [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
+* Proverite [**planove pretplate**](https://github.com/sponsors/carlospolop)!
+* **Pridružite se** 💬 [**Discord grupi**](https://discord.gg/hRep4RUj7f) ili [**telegram grupi**](https://t.me/peass) ili **pratite** nas na **Twitteru** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Podelite hakerske trikove slanjem PR-ova na** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repozitorijume.
 
 </details>
 {% endhint %}
@@ -19,9 +19,9 @@ Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="
 
 Mach-o binarni fajlovi sadrže komandu za učitavanje pod nazivom **`LC_CODE_SIGNATURE`** koja označava **offset** i **veličinu** potpisa unutar binarnog fajla. U stvari, koristeći GUI alat MachOView, moguće je pronaći na kraju binarnog fajla sekciju pod nazivom **Code Signature** sa ovom informacijom:
 
-<figure><img src="../../../.gitbook/assets/image.png" alt="" width="431"><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1).png" alt="" width="431"><figcaption></figcaption></figure>
 
-Magični zaglavlje Potpisa Koda je **`0xFADE0CC0`**. Zatim imate informacije kao što su dužina i broj blobova superBlob-a koji ih sadrže.\
+Magični header Code Signature je **`0xFADE0CC0`**. Zatim imate informacije kao što su dužina i broj blobova superBlob-a koji ih sadrže.\
 Moguće je pronaći ove informacije u [izvoru ovde](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs\_blobs.h#L276):
 ```c
 /*
@@ -118,8 +118,8 @@ Napomena da postoje različite verzije ove strukture gde starije mogu sadržati 
 
 ## Stranice za potpisivanje koda
 
-Hashovanje celog binarnog fajla bi bilo neefikasno i čak beskorisno ako je učitan samo delimično u memoriji. Stoga, potpis koda je zapravo hash hash-eva gde je svaka binarna stranica hash-ovana pojedinačno.\
-U stvari, u prethodnom **Direktorijumu koda** možete videti da je **veličina stranice specificirana** u jednom od njegovih polja. Štaviše, ako veličina binarnog fajla nije višekratnik veličine stranice, polje **CodeLimit** specificira gde je kraj potpisa.
+Hashovanje celog binarnog fajla bi bilo neefikasno i čak beskorisno ako je učitan u memoriju samo delimično. Stoga, potpis koda je zapravo hash hash-eva gde je svaka binarna stranica hash-ovana pojedinačno.\
+U stvari, u prethodnom **Direktorijumu koda** možete videti da je **veličina stranice navedena** u jednom od njegovih polja. Štaviše, ako veličina binarnog fajla nije višekratnik veličine stranice, polje **CodeLimit** specificira gde je kraj potpisa.
 ```bash
 # Get all hashes of /bin/ps
 codesign -d -vvvvvv /bin/ps
@@ -163,7 +163,7 @@ Napomena da aplikacije mogu sadržati **entitlement blob** gde su svi entitlemen
 
 MacOS aplikacije nemaju sve što im je potrebno za izvršavanje unutar binarnog fajla, već koriste i **spoljne resurse** (obično unutar aplikacionog **bundle**). Stoga, postoje neki slotovi unutar binarnog fajla koji će sadržati hashove nekih interesantnih spoljašnjih resursa kako bi se proverilo da nisu modifikovani.
 
-U stvari, moguće je videti u strukturi Code Directory parametar nazvan **`nSpecialSlots`** koji označava broj posebnih slotova. Ne postoji poseban slot 0, a najčešći (od -1 do -6) su:
+U stvari, moguće je videti u strukturi Code Directory parametar pod nazivom **`nSpecialSlots`** koji označava broj posebnih slotova. Ne postoji poseban slot 0, a najčešći (od -1 do -6) su:
 
 * Hash `info.plist` (ili onaj unutar `__TEXT.__info__plist`).
 * Hash Zahteva
@@ -220,11 +220,11 @@ CS_RESTRICT | CS_ENFORCEMENT | CS_REQUIRE_LV | CS_RUNTIME | CS_LINKER_SIGNED)
 
 #define CS_ENTITLEMENT_FLAGS        (CS_GET_TASK_ALLOW | CS_INSTALLER | CS_DATAVAULT_CONTROLLER | CS_NVRAM_UNRESTRICTED)
 ```
-Note that the function [**exec\_mach\_imgact**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/kern/kern\_exec.c#L1420) can also add the `CS_EXEC_*` flags dynamically when starting the execution.
+Note that the function [**exec\_mach\_imgact**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/kern/kern\_exec.c#L1420) može takođe dinamički dodati `CS_EXEC_*` zastavice prilikom pokretanja izvršavanja.
 
 ## Zahtevi za potpisivanje koda
 
-Svaka aplikacija čuva neke **zahteve** koje mora **ispuniti** da bi mogla da se izvrši. Ako **aplikacija sadrži zahteve koji nisu ispunjeni**, neće biti izvršena (jer je verovatno izmenjena).
+Svaka aplikacija čuva neke **zahteve** koje mora **ispuniti** da bi mogla da se izvrši. Ako **aplikacija sadrži zahteve koji nisu ispunjeni od strane aplikacije**, neće biti izvršena (jer je verovatno izmenjena).
 
 Zahtevi binarnog fajla koriste **posebnu gramatiku** koja je niz **izraza** i kodirani su kao blobovi koristeći `0xfade0c00` kao magični broj čiji je **hash sačuvan u posebnom slotu za kod**.
 
@@ -312,7 +312,7 @@ Moguće je pristupiti ovim informacijama i kreirati ili modifikovati zahteve pom
 
 ## `cs_blobs` & `cs_blob`
 
-[**cs\_blob**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/sys/ubc\_internal.h#L106) struktura sadrži informacije o dozvoli pokrenutog procesa na njemu. `csb_platform_binary` takođe obaveštava da li je aplikacija platforma binarni (što OS proverava u različitim momentima da bi primenio bezbednosne mehanizme kao što su zaštita SEND prava na portovima zadataka ovih procesa).
+[**cs\_blob**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/sys/ubc\_internal.h#L106) struktura sadrži informacije o dozvoli pokrenutog procesa na njemu. `csb_platform_binary` takođe obaveštava da li je aplikacija platformni binarni (što OS proverava u različitim momentima da bi primenio bezbednosne mehanizme kao što su zaštita SEND prava na portovima zadataka ovih procesa).
 ```c
 struct cs_blob {
 struct cs_blob  *csb_next;
@@ -381,7 +381,7 @@ Učite i vežbajte GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt
 
 <details>
 
-<summary>Podržite HackTricks</summary>
+<summary>Podrška HackTricks</summary>
 
 * Proverite [**planove pretplate**](https://github.com/sponsors/carlospolop)!
 * **Pridružite se** 💬 [**Discord grupi**](https://discord.gg/hRep4RUj7f) ili [**telegram grupi**](https://t.me/peass) ili **pratite** nas na **Twitteru** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
