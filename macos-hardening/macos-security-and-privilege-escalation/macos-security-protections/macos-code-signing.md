@@ -17,11 +17,11 @@ Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="
 
 ## Basic Information
 
-Pliki binarne Mach-o zawierają polecenie ładujące zwane **`LC_CODE_SIGNATURE`**, które wskazuje **offset** i **rozmiar** podpisów wewnątrz binarnego pliku. W rzeczywistości, używając narzędzia GUI MachOView, można znaleźć na końcu pliku binarnego sekcję o nazwie **Code Signature** z tymi informacjami:
+Binarne Mach-o zawierają polecenie ładujące zwane **`LC_CODE_SIGNATURE`**, które wskazuje **offset** i **rozmiar** podpisów wewnątrz binarnego pliku. W rzeczywistości, używając narzędzia GUI MachOView, można znaleźć na końcu binarnego pliku sekcję o nazwie **Code Signature** z tymi informacjami:
 
-<figure><img src="../../../.gitbook/assets/image.png" alt="" width="431"><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1).png" alt="" width="431"><figcaption></figcaption></figure>
 
-Magiczny nagłówek podpisu kodu to **`0xFADE0CC0`**. Następnie znajdują się informacje takie jak długość i liczba blobów superBlob, które je zawierają.\
+Magiczny nagłówek podpisu kodu to **`0xFADE0CC0`**. Następnie masz informacje takie jak długość i liczba blobów superBlob, które je zawierają.\
 Można znaleźć te informacje w [kodzie źródłowym tutaj](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs\_blobs.h#L276):
 ```c
 /*
@@ -116,7 +116,7 @@ __attribute__ ((aligned(1)));
 ```
 Zauważ, że istnieją różne wersje tej struktury, w których starsze mogą zawierać mniej informacji.
 
-## Strony podpisywania kodu
+## Strony podpisu kodu
 
 Haszowanie pełnego binarnego pliku byłoby nieefektywne, a nawet bezużyteczne, jeśli jest on ładowany w pamięci tylko częściowo. Dlatego podpis kodu jest w rzeczywistości haszem haszy, gdzie każda strona binarna jest haszowana indywidualnie.\
 W rzeczywistości, w poprzednim kodzie **Code Directory** możesz zobaczyć, że **rozmiar strony jest określony** w jednym z jego pól. Co więcej, jeśli rozmiar binarnego pliku nie jest wielokrotnością rozmiaru strony, pole **CodeLimit** określa, gdzie kończy się podpis.
@@ -157,7 +157,7 @@ openssl sha256 /tmp/*.page.*
 ```
 ## Entitlements Blob
 
-Zauważ, że aplikacje mogą również zawierać **blob uprawnień**, w którym zdefiniowane są wszystkie uprawnienia. Co więcej, niektóre binaria iOS mogą mieć swoje uprawnienia określone w specjalnym slocie -7 (zamiast w specjalnym slocie -5 uprawnień).
+Zauważ, że aplikacje mogą również zawierać **blob uprawnień**, w którym zdefiniowane są wszystkie uprawnienia. Co więcej, niektóre binaria iOS mogą mieć swoje uprawnienia określone w specjalnym slocie -7 (zamiast w specjalnym slocie -5).
 
 ## Special Slots
 
@@ -246,7 +246,7 @@ designated => identifier "org.whispersystems.signal-desktop" and anchor apple ge
 Zauważ, jak te podpisy mogą sprawdzać takie rzeczy jak informacje o certyfikacie, TeamID, identyfikatory, uprawnienia i wiele innych danych.
 {% endhint %}
 
-Ponadto możliwe jest generowanie skompilowanych wymagań za pomocą narzędzia `csreq`:
+Ponadto możliwe jest generowanie niektórych skompilowanych wymagań za pomocą narzędzia `csreq`:
 
 {% code overflow="wrap" %}
 ```bash
@@ -274,10 +274,10 @@ Możliwe jest uzyskanie dostępu do tych informacji oraz tworzenie lub modyfikow
 
 * **`SecRequirementCreateWithData`:** Tworzy `SecRequirementRef` z danych binarnych reprezentujących wymaganie.
 * **`SecRequirementCreateWithString`:** Tworzy `SecRequirementRef` z wyrażenia tekstowego wymagania.
-* **`SecRequirementCopy[Data/String]`**: Pobiera binarną reprezentację danych `SecRequirementRef`.
+* **`SecRequirementCopy[Data/String]`**: Pobiera reprezentację danych binarnych `SecRequirementRef`.
 * **`SecRequirementCreateGroup`**: Tworzy wymaganie dla członkostwa w grupie aplikacji.
 
-#### **Uzyskiwanie informacji o podpisie kodu**
+#### **Uzyskiwanie informacji o podpisywaniu kodu**
 
 * **`SecStaticCodeCreateWithPath`**: Inicjalizuje obiekt `SecStaticCodeRef` z ścieżki systemu plików do inspekcji podpisów kodu.
 * **`SecCodeCopySigningInformation`**: Uzyskuje informacje o podpisie z `SecCodeRef` lub `SecStaticCodeRef`.
@@ -301,14 +301,14 @@ Możliwe jest uzyskanie dostępu do tych informacji oraz tworzenie lub modyfikow
 * **`SecCodeGetTypeID`**: Zwraca identyfikator typu dla obiektów `SecCodeRef`.
 * **`SecRequirementGetTypeID`**: Uzyskuje CFTypeID `SecRequirementRef`.
 
-#### **Flagi i stałe podpisu kodu**
+#### **Flagi i stałe podpisywania kodu**
 
 * **`kSecCSDefaultFlags`**: Domyślne flagi używane w wielu funkcjach Security.framework do operacji podpisywania kodu.
 * **`kSecCSSigningInformation`**: Flaga używana do określenia, że informacje o podpisie powinny być pobrane.
 
 ## Egzekwowanie podpisu kodu
 
-**Jądro** to to, które **sprawdza podpis kodu** przed zezwoleniem na wykonanie kodu aplikacji. Ponadto, jednym ze sposobów na możliwość zapisu i wykonania nowego kodu w pamięci jest nadużycie JIT, jeśli `mprotect` jest wywoływane z flagą `MAP_JIT`. Należy zauważyć, że aplikacja potrzebuje specjalnego uprawnienia, aby móc to zrobić.
+**Jądro** to to, które **sprawdza podpis kodu** przed zezwoleniem na wykonanie kodu aplikacji. Ponadto, jednym ze sposobów na możliwość pisania i wykonywania nowego kodu w pamięci jest nadużycie JIT, jeśli `mprotect` jest wywoływane z flagą `MAP_JIT`. Należy zauważyć, że aplikacja potrzebuje specjalnego uprawnienia, aby móc to zrobić.
 
 ## `cs_blobs` & `cs_blob`
 
@@ -385,7 +385,7 @@ Ucz się i ćwicz Hacking GCP: <img src="../../../.gitbook/assets/grte.png" alt=
 
 * Sprawdź [**plany subskrypcyjne**](https://github.com/sponsors/carlospolop)!
 * **Dołącz do** 💬 [**grupy Discord**](https://discord.gg/hRep4RUj7f) lub [**grupy telegramowej**](https://t.me/peass) lub **śledź** nas na **Twitterze** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Dziel się trikami hackingowymi, przesyłając PR-y do** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repozytoriów github.
+* **Dziel się trikami hackingowymi, przesyłając PR-y do** [**HackTricks**](https://github.com/carlospolop/hacktricks) i [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) repozytoriów na githubie.
 
 </details>
 {% endhint %}
