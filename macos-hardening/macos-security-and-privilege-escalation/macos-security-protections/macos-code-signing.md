@@ -19,9 +19,9 @@
 
 Mach-o 二进制文件包含一个加载命令 **`LC_CODE_SIGNATURE`**，指示二进制文件内部签名的 **偏移量** 和 **大小**。实际上，使用 GUI 工具 MachOView，可以在二进制文件的末尾找到一个名为 **Code Signature** 的部分，其中包含这些信息：
 
-<figure><img src="../../../.gitbook/assets/image.png" alt="" width="431"><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1).png" alt="" width="431"><figcaption></figcaption></figure>
 
-代码签名的魔术头是 **`0xFADE0CC0`**。然后你会看到一些信息，例如包含它们的 superBlob 的长度和 blob 的数量。\
+代码签名的魔术头是 **`0xFADE0CC0`**。然后你会得到一些信息，例如 superBlob 的长度和 blob 的数量。\
 可以在 [源代码这里](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs\_blobs.h#L276) 找到这些信息：
 ```c
 /*
@@ -118,8 +118,8 @@ __attribute__ ((aligned(1)));
 
 ## 签名代码页面
 
-对完整二进制文件进行哈希会低效，甚至在其仅部分加载到内存时毫无用处。因此，代码签名实际上是哈希的哈希，其中每个二进制页面单独进行哈希。\
-实际上，在之前的 **Code Directory** 代码中，您可以看到 **页面大小在其字段中被指定**。此外，如果二进制文件的大小不是页面大小的倍数，字段 **CodeLimit** 指定了签名的结束位置。
+对完整二进制文件进行哈希会低效且无用，因为它可能只在内存中部分加载。因此，代码签名实际上是哈希的哈希，其中每个二进制页面都是单独哈希的。\
+实际上，在之前的 **Code Directory** 代码中，您可以看到 **页面大小在其字段之一中被指定**。此外，如果二进制文件的大小不是页面大小的倍数，字段 **CodeLimit** 指定了签名的结束位置。
 ```bash
 # Get all hashes of /bin/ps
 codesign -d -vvvvvv /bin/ps
@@ -224,7 +224,7 @@ CS_RESTRICT | CS_ENFORCEMENT | CS_REQUIRE_LV | CS_RUNTIME | CS_LINKER_SIGNED)
 
 ## 代码签名要求
 
-每个应用程序存储一些 **要求**，它必须 **满足** 以便能够执行。如果 **应用程序包含的要求未被应用程序满足**，则不会执行（因为它可能已被更改）。
+每个应用程序存储一些 **要求**，它必须 **满足** 这些要求才能被执行。如果 **应用程序包含的要求未被应用程序满足**，则不会执行（因为它可能已被更改）。
 
 二进制文件的要求使用 **特殊语法**，这是一个 **表达式** 的流，并使用 `0xfade0c00` 作为魔法值编码为 blobs，其 **哈希存储在特殊代码槽中**。
 
@@ -272,8 +272,8 @@ od -A x -t x1 /tmp/output.csreq
 
 #### **创建和管理代码要求**
 
-* **`SecRequirementCreateWithData`：** 从表示要求的二进制数据创建 `SecRequirementRef`。
-* **`SecRequirementCreateWithString`：** 从要求的字符串表达式创建 `SecRequirementRef`。
+* **`SecRequirementCreateWithData`**：从表示要求的二进制数据创建 `SecRequirementRef`。
+* **`SecRequirementCreateWithString`**：从要求的字符串表达式创建 `SecRequirementRef`。
 * **`SecRequirementCopy[Data/String]`**：检索 `SecRequirementRef` 的二进制数据表示。
 * **`SecRequirementCreateGroup`**：为应用程序组成员资格创建要求。
 
@@ -385,7 +385,7 @@ bool csb_csm_managed;
 
 * 查看 [**订阅计划**](https://github.com/sponsors/carlospolop)!
 * **加入** 💬 [**Discord 群组**](https://discord.gg/hRep4RUj7f) 或 [**Telegram 群组**](https://t.me/peass) 或 **在** **Twitter** 🐦 **上关注我们** [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **通过向** [**HackTricks**](https://github.com/carlospolop/hacktricks) 和 [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) GitHub 仓库提交 PR 来分享黑客技巧。
+* **通过向** [**HackTricks**](https://github.com/carlospolop/hacktricks) 和 [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) GitHub 仓库提交 PR 分享黑客技巧。
 
 </details>
 {% endhint %}

