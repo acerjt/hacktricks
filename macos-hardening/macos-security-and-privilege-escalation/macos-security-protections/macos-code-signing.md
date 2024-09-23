@@ -19,7 +19,7 @@ Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="
 
 Les binaires Mach-o contiennent une commande de chargement appelée **`LC_CODE_SIGNATURE`** qui indique le **décalage** et la **taille** des signatures à l'intérieur du binaire. En fait, en utilisant l'outil GUI MachOView, il est possible de trouver à la fin du binaire une section appelée **Code Signature** avec ces informations :
 
-<figure><img src="../../../.gitbook/assets/image.png" alt="" width="431"><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1).png" alt="" width="431"><figcaption></figcaption></figure>
 
 L'en-tête magique de la Code Signature est **`0xFADE0CC0`**. Ensuite, vous avez des informations telles que la longueur et le nombre de blobs du superBlob qui les contient.\
 Il est possible de trouver ces informations dans le [code source ici](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs\_blobs.h#L276):
@@ -119,7 +119,7 @@ Notez qu'il existe différentes versions de cette structure où les anciennes pe
 ## Pages de signature de code
 
 Hacher le binaire complet serait inefficace et même inutile s'il n'est chargé en mémoire que partiellement. Par conséquent, la signature de code est en réalité un hachage de hachages où chaque page binaire est hachée individuellement.\
-En fait, dans le code **Code Directory** précédent, vous pouvez voir que **la taille de la page est spécifiée** dans l'un de ses champs. De plus, si la taille du binaire n'est pas un multiple de la taille d'une page, le champ **CodeLimit** spécifie où se termine la signature.
+En fait, dans le code **Code Directory** précédent, vous pouvez voir que la **taille de la page est spécifiée** dans l'un de ses champs. De plus, si la taille du binaire n'est pas un multiple de la taille d'une page, le champ **CodeLimit** spécifie où se termine la signature.
 ```bash
 # Get all hashes of /bin/ps
 codesign -d -vvvvvv /bin/ps
@@ -224,11 +224,11 @@ Notez que la fonction [**exec\_mach\_imgact**](https://github.com/apple-oss-dist
 
 ## Exigences de signature de code
 
-Chaque application stocke des **exigences** qu'elle doit **satisfaire** pour pouvoir être exécutée. Si les **exigences de l'application ne sont pas satisfaites par l'application**, elle ne sera pas exécutée (car elle a probablement été modifiée).
+Chaque application stocke des **exigences** qu'elle doit **satisfaire** pour pouvoir être exécutée. Si les **exigences de l'application ne sont pas satisfaites**, elle ne sera pas exécutée (car elle a probablement été modifiée).
 
-Les exigences d'un binaire utilisent une **grammaire spéciale** qui est un flux d'**expressions** et sont encodées sous forme de blobs en utilisant `0xfade0c00` comme magie dont le **hash est stocké dans un slot de code spécial**.
+Les exigences d'un binaire utilisent une **grammaire spéciale** qui est un flux d'**expressions** et sont encodées sous forme de blobs en utilisant `0xfade0c00` comme magie dont le **hash est stocké dans un emplacement de code spécial**.
 
-Les exigences d'un binaire peuvent être vues en exécutant : 
+Les exigences d'un binaire peuvent être consultées en exécutant : 
 
 {% code overflow="wrap" %}
 ```bash
@@ -246,7 +246,7 @@ designated => identifier "org.whispersystems.signal-desktop" and anchor apple ge
 Notez comment ces signatures peuvent vérifier des éléments tels que les informations de certification, TeamID, IDs, droits et de nombreuses autres données.
 {% endhint %}
 
-De plus, il est possible de générer des exigences compilées à l'aide de l'outil `csreq` :
+De plus, il est possible de générer certaines exigences compilées en utilisant l'outil `csreq` :
 
 {% code overflow="wrap" %}
 ```bash
@@ -266,7 +266,7 @@ Il est possible d'accéder à ces informations et de créer ou modifier des exig
 
 #### **Vérification de la validité**
 
-* **`Sec[Static]CodeCheckValidity`** : Vérifie la validité de SecCodeRef par exigence.
+* **`Sec[Static]CodeCheckValidity`** : Vérifie la validité de SecCodeRef par rapport à l'exigence.
 * **`SecRequirementEvaluate`** : Valide l'exigence dans le contexte du certificat.
 * **`SecTaskValidateForRequirement`** : Valide un SecTask en cours par rapport à l'exigence `CFString`.
 
@@ -312,7 +312,7 @@ Le **noyau** est celui qui **vérifie la signature de code** avant de permettre 
 
 ## `cs_blobs` & `cs_blob`
 
-[**cs\_blob**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/sys/ubc\_internal.h#L106) la structure contient des informations sur le droit du processus en cours. `csb_platform_binary` informe également si l'application est un binaire de plateforme (ce qui est vérifié à différents moments par le système d'exploitation pour appliquer des mécanismes de sécurité comme protéger les droits SEND aux ports de tâche de ces processus).
+[**cs\_blob**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/sys/ubc\_internal.h#L106) struct contient les informations sur le droit du processus en cours. `csb_platform_binary` informe également si l'application est un binaire de plateforme (ce qui est vérifié à différents moments par le système d'exploitation pour appliquer des mécanismes de sécurité comme protéger les droits SEND aux ports de tâche de ces processus).
 ```c
 struct cs_blob {
 struct cs_blob  *csb_next;
