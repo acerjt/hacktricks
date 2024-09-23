@@ -19,7 +19,7 @@ Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="
 
 Los binarios Mach-o contienen un comando de carga llamado **`LC_CODE_SIGNATURE`** que indica el **offset** y el **tamaño** de las firmas dentro del binario. De hecho, utilizando la herramienta GUI MachOView, es posible encontrar al final del binario una sección llamada **Code Signature** con esta información:
 
-<figure><img src="../../../.gitbook/assets/image.png" alt="" width="431"><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1).png" alt="" width="431"><figcaption></figcaption></figure>
 
 El encabezado mágico de la Code Signature es **`0xFADE0CC0`**. Luego tienes información como la longitud y el número de blobs del superBlob que los contiene.\
 Es posible encontrar esta información en el [código fuente aquí](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs\_blobs.h#L276):
@@ -119,7 +119,7 @@ Note que hay diferentes versiones de esta estructura donde las antiguas pueden c
 ## Páginas de Firma de Código
 
 Hacer un hash del binario completo sería ineficiente e incluso inútil si solo se carga en memoria parcialmente. Por lo tanto, la firma de código es en realidad un hash de hashes donde cada página binaria se hash individualmente.\
-De hecho, en el código del **Directorio de Código** anterior, puedes ver que **el tamaño de la página está especificado** en uno de sus campos. Además, si el tamaño del binario no es un múltiplo del tamaño de una página, el campo **CodeLimit** especifica dónde está el final de la firma.
+De hecho, en el anterior código de **Directorio de Código** puedes ver que el **tamaño de página está especificado** en uno de sus campos. Además, si el tamaño del binario no es un múltiplo del tamaño de una página, el campo **CodeLimit** especifica dónde está el final de la firma.
 ```bash
 # Get all hashes of /bin/ps
 codesign -d -vvvvvv /bin/ps
@@ -312,7 +312,7 @@ El **kernel** es el que **verifica la firma de código** antes de permitir que e
 
 ## `cs_blobs` & `cs_blob`
 
-[**cs\_blob**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/sys/ubc\_internal.h#L106) la estructura contiene la información sobre el derecho de la proceso en ejecución sobre él. `csb_platform_binary` también informa si la aplicación es un binario de plataforma (lo cual es verificado en diferentes momentos por el OS para aplicar mecanismos de seguridad como proteger los derechos de SEND a los puertos de tarea de estos procesos).
+[**cs\_blob**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/sys/ubc\_internal.h#L106) la estructura contiene la información sobre el derecho del proceso en ejecución sobre él. `csb_platform_binary` también informa si la aplicación es un binario de plataforma (lo cual es verificado en diferentes momentos por el OS para aplicar mecanismos de seguridad como proteger los derechos de SEND a los puertos de tarea de estos procesos).
 ```c
 struct cs_blob {
 struct cs_blob  *csb_next;
