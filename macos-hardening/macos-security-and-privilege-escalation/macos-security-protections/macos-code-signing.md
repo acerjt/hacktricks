@@ -1,27 +1,27 @@
-# Assinatura de Código do macOS
+# macOS Code Signing
 
 {% hint style="success" %}
-Aprenda e pratique Hacking AWS:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
-Aprenda e pratique Hacking GCP: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
 <summary>Support HackTricks</summary>
 
-* Confira os [**planos de assinatura**](https://github.com/sponsors/carlospolop)!
-* **Junte-se ao** 💬 [**grupo do Discord**](https://discord.gg/hRep4RUj7f) ou ao [**grupo do telegram**](https://t.me/peass) ou **siga**-nos no **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Compartilhe truques de hacking enviando PRs para os repositórios do** [**HackTricks**](https://github.com/carlospolop/hacktricks) e [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud).
+* Check the [**subscription plans**](https://github.com/sponsors/carlospolop)!
+* **Join the** 💬 [**Discord group**](https://discord.gg/hRep4RUj7f) or the [**telegram group**](https://t.me/peass) or **follow** us on **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
+* **Share hacking tricks by submitting PRs to the** [**HackTricks**](https://github.com/carlospolop/hacktricks) and [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
 
 </details>
 {% endhint %}
 
-## Informações Básicas
+## Basic Information
 
 Os binários Mach-o contêm um comando de carregamento chamado **`LC_CODE_SIGNATURE`** que indica o **offset** e o **tamanho** das assinaturas dentro do binário. Na verdade, usando a ferramenta GUI MachOView, é possível encontrar no final do binário uma seção chamada **Code Signature** com essas informações:
 
-<figure><img src="../../../.gitbook/assets/image.png" alt="" width="431"><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1).png" alt="" width="431"><figcaption></figcaption></figure>
 
-O cabeçalho mágico da Assinatura de Código é **`0xFADE0CC0`**. Então você tem informações como o comprimento e o número de blobs do superBlob que os contém.\
+O cabeçalho mágico da Code Signature é **`0xFADE0CC0`**. Então você tem informações como o comprimento e o número de blobs do superBlob que os contém.\
 É possível encontrar essas informações no [código-fonte aqui](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs\_blobs.h#L276):
 ```c
 /*
@@ -54,7 +54,7 @@ __attribute__ ((aligned(1)));
 Blobs comuns contidos são Diretório de Código, Requisitos e Direitos e uma Sintaxe de Mensagem Criptográfica (CMS).\
 Além disso, note como os dados codificados nos blobs estão codificados em **Big Endian.**
 
-Além disso, assinaturas podem ser destacadas dos binários e armazenadas em `/var/db/DetachedSignatures` (usado pelo iOS).
+Além disso, as assinaturas podem ser destacadas dos binários e armazenadas em `/var/db/DetachedSignatures` (usado pelo iOS).
 
 ## Blob do Diretório de Código
 
