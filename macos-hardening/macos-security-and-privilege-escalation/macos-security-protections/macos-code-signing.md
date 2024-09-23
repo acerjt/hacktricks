@@ -1,28 +1,28 @@
-# macOS Code Signing
+# macOS 코드 서명
 
 {% hint style="success" %}
-Learn & practice AWS Hacking:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
-Learn & practice GCP Hacking: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
+AWS 해킹 배우기 및 연습하기:<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">[**HackTricks Training AWS Red Team Expert (ARTE)**](https://training.hacktricks.xyz/courses/arte)<img src="../../../.gitbook/assets/arte.png" alt="" data-size="line">\
+GCP 해킹 배우기 및 연습하기: <img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">[**HackTricks Training GCP Red Team Expert (GRTE)**<img src="../../../.gitbook/assets/grte.png" alt="" data-size="line">](https://training.hacktricks.xyz/courses/grte)
 
 <details>
 
-<summary>Support HackTricks</summary>
+<summary>HackTricks 지원하기</summary>
 
-* Check the [**subscription plans**](https://github.com/sponsors/carlospolop)!
-* **Join the** 💬 [**Discord group**](https://discord.gg/hRep4RUj7f) or the [**telegram group**](https://t.me/peass) or **follow** us on **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**.**
-* **Share hacking tricks by submitting PRs to the** [**HackTricks**](https://github.com/carlospolop/hacktricks) and [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) github repos.
+* [**구독 계획**](https://github.com/sponsors/carlospolop) 확인하기!
+* **💬 [**Discord 그룹**](https://discord.gg/hRep4RUj7f) 또는 [**텔레그램 그룹**](https://t.me/peass)에 참여하거나 **Twitter** 🐦 [**@hacktricks\_live**](https://twitter.com/hacktricks\_live)**를 팔로우하세요.**
+* **[**HackTricks**](https://github.com/carlospolop/hacktricks) 및 [**HackTricks Cloud**](https://github.com/carlospolop/hacktricks-cloud) 깃허브 리포지토리에 PR을 제출하여 해킹 트릭을 공유하세요.**
 
 </details>
 {% endhint %}
 
-## Basic Information
+## 기본 정보
 
-Mach-o 바이너리는 **`LC_CODE_SIGNATURE`**라는 로드 명령을 포함하고 있으며, 이는 바이너리 내부의 서명의 **오프셋**과 **크기**를 나타냅니다. 실제로 GUI 도구인 MachOView를 사용하면 바이너리의 끝에서 이 정보를 포함하는 **Code Signature**라는 섹션을 찾을 수 있습니다:
+Mach-o 바이너리는 바이너리 내부의 서명의 **오프셋**과 **크기**를 나타내는 **`LC_CODE_SIGNATURE`**라는 로드 명령을 포함합니다. 실제로 GUI 도구인 MachOView를 사용하면 바이너리의 끝에서 이 정보를 포함하는 **Code Signature**라는 섹션을 찾을 수 있습니다:
 
-<figure><img src="../../../.gitbook/assets/image.png" alt="" width="431"><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/image (1).png" alt="" width="431"><figcaption></figcaption></figure>
 
-Code Signature의 매직 헤더는 **`0xFADE0CC0`**입니다. 그런 다음 이들을 포함하는 superBlob의 길이와 블롭 수와 같은 정보가 있습니다.\
-이 정보는 [여기에서 소스 코드를 찾을 수 있습니다](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs\_blobs.h#L276):
+코드 서명의 매직 헤더는 **`0xFADE0CC0`**입니다. 그런 다음 이들을 포함하는 superBlob의 길이와 블롭 수와 같은 정보가 있습니다.\
+이 정보는 [여기에서 소스 코드](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/osfmk/kern/cs_blobs.h#L276)에서 찾을 수 있습니다:
 ```c
 /*
 * Structure of an embedded-signature SuperBlob
@@ -118,7 +118,7 @@ __attribute__ ((aligned(1)));
 
 ## 서명 코드 페이지
 
-전체 바이너리를 해싱하는 것은 비효율적이며, 메모리에 부분적으로만 로드될 경우에는 무의미합니다. 따라서 코드 서명은 실제로 각 바이너리 페이지가 개별적으로 해싱된 해시의 해시입니다.\
+전체 바이너리를 해싱하는 것은 비효율적이며, 메모리에 부분적으로만 로드될 경우에는 심지어 쓸모가 없습니다. 따라서 코드 서명은 실제로 각 바이너리 페이지가 개별적으로 해싱된 해시의 해시입니다.\
 실제로 이전 **코드 디렉토리** 코드에서 **페이지 크기가 지정된** 것을 볼 수 있습니다. 또한, 바이너리의 크기가 페이지 크기의 배수가 아닐 경우, 필드 **CodeLimit**는 서명의 끝이 어디인지 지정합니다.
 ```bash
 # Get all hashes of /bin/ps
@@ -285,7 +285,7 @@ od -A x -t x1 /tmp/output.csreq
 #### **코드 요구 사항 수정**
 
 * **`SecCodeSignerCreate`**: 코드 서명 작업을 수행하기 위한 `SecCodeSignerRef` 객체를 생성합니다.
-* **`SecCodeSignerSetRequirement`**: 서명 중에 적용할 새로운 요구 사항을 설정합니다.
+* **`SecCodeSignerSetRequirement`**: 서명 중에 적용할 새로운 요구 사항을 코드 서명자에게 설정합니다.
 * **`SecCodeSignerAddSignature`**: 지정된 서명자로 서명되는 코드에 서명을 추가합니다.
 
 #### **요구 사항으로 코드 검증**
@@ -308,11 +308,11 @@ od -A x -t x1 /tmp/output.csreq
 
 ## 코드 서명 강제 적용
 
-**커널**은 앱의 코드가 실행되기 전에 **코드 서명**을 **검사**하는 역할을 합니다. 또한, 메모리에 새로운 코드를 작성하고 실행할 수 있는 한 가지 방법은 `mprotect`가 `MAP_JIT` 플래그와 함께 호출될 때 JIT를 악용하는 것입니다. 이 작업을 수행하려면 애플리케이션에 특별한 권한이 필요합니다.
+**커널**은 앱의 코드가 실행되기 전에 **코드 서명**을 **검사**합니다. 또한, 메모리에 새로운 코드를 작성하고 실행할 수 있는 한 가지 방법은 `mprotect`가 `MAP_JIT` 플래그와 함께 호출될 때 JIT를 악용하는 것입니다. 이 작업을 수행하려면 애플리케이션에 특별한 권한이 필요합니다.
 
 ## `cs_blobs` & `cs_blob`
 
-[**cs\_blob**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/sys/ubc_internal.h#L106) 구조체는 실행 중인 프로세스의 권한에 대한 정보를 포함합니다. `csb_platform_binary`는 애플리케이션이 플랫폼 이진 파일인지 여부도 알려줍니다(이는 보안 메커니즘을 적용하기 위해 OS에 의해 여러 순간에 확인됩니다. 예를 들어, 이러한 프로세스의 작업 포트에 대한 SEND 권한을 보호하는 것입니다).
+[**cs\_blob**](https://github.com/apple-oss-distributions/xnu/blob/94d3b452840153a99b38a3a9659680b2a006908e/bsd/sys/ubc\_internal.h#L106) 구조체는 실행 중인 프로세스의 권한에 대한 정보를 포함합니다. `csb_platform_binary`는 애플리케이션이 플랫폼 이진 파일인지 여부를 알려줍니다(이는 보안 메커니즘을 적용하기 위해 OS에 의해 여러 순간에 확인됩니다. 예를 들어, 이러한 프로세스의 작업 포트에 대한 SEND 권한을 보호하는 것입니다).
 ```c
 struct cs_blob {
 struct cs_blob  *csb_next;
